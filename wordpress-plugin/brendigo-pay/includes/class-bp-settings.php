@@ -51,6 +51,55 @@ final class BP_Pay_Settings
         return base64_encode($iv . $tag . $raw);
     }
 
+    /** The license itself is not persisted; only the encrypted installation credential. */
+    public static function save_activation(string $token, string $siteId): void
+    {
+        $settings = get_option(self::OPTION, []);
+        $settings = is_array($settings) ? $settings : [];
+        $encrypted = self::encrypt($token);
+        if ($encrypted === '') {
+            throw new \RuntimeException('Cannot encrypt API credential');
+        }
+        $settings['token_encrypted'] = $encrypted;
+        $settings['site_id'] = $siteId;
+        update_option(self::OPTION, $settings, false);
+    }
+
+    public static function activate_license(): void
+    {
+        if (!current_user_can('manage_options')) {
+            wp_die(esc_html__('Nemate dopuštenje za aktivaciju.', 'brendigo-pay'));
+        }
+        check_admin_referer('brendigo_pay_activate_license');
+        $license = isset($_POST['bp_license']) && is_string($_POST['bp_license'])
+            ? trim(wp_unslash($_POST['bp_license'])) : '';
+        $success = false;
+        if (preg_match('/^bp_lic_[a-f0-9]{64}$/D', $license)) {
+            $installation = get_option('bp_pay_installation_id', '');
+            if (!is_string($installation) || !preg_match('/^[a-f0-9]{32}$/D', $installation)) {
+                $installation = bin2hex(random_bytes(16));
+                add_option('bp_pay_installation_id', $installation, '', false);
+                $installation = (string) get_option('bp_pay_installation_id', $installation);
+            }
+            if (preg_match('/^[a-f0-9]{32}$/D', $installation)) {
+                $activation = BP_Pay_API::activate_license($license, $installation);
+                if (!is_wp_error($activation)) {
+                    try {
+                        self::save_activation($activation['api_key'], $activation['site_id']);
+                        $success = true;
+                    } catch (\Throwable $e) {
+                        error_log('Brendigo Pay license activation local storage error.');
+                    }
+                }
+            }
+        }
+        wp_safe_redirect(add_query_arg(
+            ['page' => 'brendigo-pay', 'bp_license_status' => $success ? 'success' : 'failure'],
+            admin_url('admin.php')
+        ));
+        exit;
+    }
+
     public static function register(): void
     {
         register_setting('brendigo_pay_group', self::OPTION, [
@@ -108,7 +157,8 @@ final class BP_Pay_Settings
             : '';
         $ok = !is_wp_error($response) && ($response['mode'] ?? '') === 'test'
             && isset($response['origin'], $response['merchant_name'])
-            && (string) $response['origin'] === $localOrigin;
+            && (string) $response['origin'] === $localOrigin
+            && !empty($response['site_id']) && !empty($response['plan']);
         $args = ['page' => 'brendigo-pay', 'bp_connection' => $ok ? 'success' : 'failure'];
         wp_safe_redirect(add_query_arg($args, admin_url('admin.php')));
         exit;
