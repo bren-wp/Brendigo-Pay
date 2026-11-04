@@ -36,6 +36,7 @@ final class BP_Pay_Gateway extends WC_Payment_Gateway
     public function is_available(): bool
     {
         return parent::is_available() && BP_Pay_Settings::api_base() !== '' && BP_Pay_Settings::api_key() !== ''
+            && BP_Pay_Settings::license_is_current()
             && (!function_exists('get_woocommerce_currency') || get_woocommerce_currency() === 'EUR');
     }
 

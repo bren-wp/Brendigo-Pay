@@ -25,9 +25,31 @@ if (!is_array($linkItems)) { $linkItems = []; }
     <?php settings_errors('brendigo_pay_settings'); ?>
     <?php $licenseStatus = isset($_GET['bp_license_status']) ? sanitize_key(wp_unslash($_GET['bp_license_status'])) : ''; ?>
     <?php if ($licenseStatus === 'success'): ?><div class="notice notice-success"><p>Licencija je potvrđena. WordPress je povezan s aktivnim plaćenim paketom na platformi (TEST).</p></div><?php endif; ?>
+    <?php if ($licenseStatus === 'partial'): ?><div class="notice notice-warning"><p>Licencija je prihvaćena, ali sinkronizacija nije potvrđena. Provjerite pristup platformi pa odaberite Sinkroniziraj sada.</p></div><?php endif; ?>
     <?php if ($licenseStatus === 'failure'): ?><div class="notice notice-error"><p>Aktivacija nije uspjela. Provjerite URL platforme, licencni ključ, domenu i paket.</p></div><?php endif; ?>
     <?php if ($status === 'success'): ?><div class="notice notice-success"><p>Veza je uspješno provjerena za ovu WordPress domenu i testni račun.</p></div><?php endif; ?>
     <?php if ($status === 'failure'): ?><div class="notice notice-error"><p>Veza nije potvrđena. Provjerite HTTPS adresu, testni API ključ i dopuštenu domenu.</p></div><?php endif; ?>
+    <?php $sync = BP_Pay_Settings::sync_status(); $syncActive = BP_Pay_Settings::license_is_current(); ?>
+    <section class="bp-admin-panel bp-admin-sync-panel" aria-labelledby="bp-admin-sync-heading">
+        <div class="bp-admin-sync-summary">
+            <div><h2 id="bp-admin-sync-heading">Sinkronizacija WordPress instalacije</h2>
+            <p>Točna domena, licencija i pretplata provjeravaju se na Brendigo Pay platformi. Stanje nije dokaz uplate.</p></div>
+            <span class="bp-admin-sync-badge <?php echo $syncActive ? 'bp-admin-sync-ok' : 'bp-admin-sync-off'; ?>">
+            <?php echo $syncActive ? '✓ Povezano' : 'Nije potvrđeno'; ?></span>
+        </div>
+        <dl class="bp-admin-sync-details">
+            <div><dt>Domena</dt><dd><?php echo esc_html(BP_Pay_Settings::site_origin()); ?></dd></div>
+            <div><dt>Paket</dt><dd><?php echo $syncActive ? esc_html(ucfirst((string) ($sync['plan'] ?? ''))) : 'Nije potvrđeno'; ?></dd></div>
+            <div><dt>Web-stranice</dt><dd><?php echo $syncActive ? esc_html((string) ($sync['websites_used'] ?? 0) . ' / ' . (string) ($sync['website_limit'] ?? 0)) : '—'; ?></dd></div>
+            <div><dt>Vrijedi do</dt><dd><?php echo $syncActive ? esc_html((string) ($sync['expires_at'] ?? '—')) : '—'; ?></dd></div>
+            <div><dt>Zadnja provjera</dt><dd><?php echo !empty($sync['checked_at']) ? esc_html(gmdate('d.m.Y. H:i', (int) $sync['checked_at']) . ' UTC') : 'Nije provjereno'; ?></dd></div>
+        </dl>
+        <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
+            <input type="hidden" name="action" value="brendigo_pay_sync">
+            <?php wp_nonce_field('brendigo_pay_sync'); ?>
+            <button type="submit" class="button bp-admin-outline">↻ Sinkroniziraj sada</button>
+        </form>
+    </section>
     <section class="bp-admin-grid bp-admin-status-grid" id="bp-general">
         <article class="bp-admin-panel bp-admin-connection <?php echo $tokenSet && $url ? 'bp-admin-configured' : ''; ?>">
             <span class="bp-admin-round-check"><?php echo $tokenSet && $url ? '✓' : '!'; ?></span>

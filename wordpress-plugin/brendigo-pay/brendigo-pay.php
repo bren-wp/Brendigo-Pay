@@ -39,6 +39,15 @@ add_action('admin_menu', ['BP_Pay_Settings', 'menu']);
 add_action('admin_init', ['BP_Pay_Settings', 'register']);
 add_action('admin_post_brendigo_pay_test_connection', ['BP_Pay_Settings', 'test_connection']);
 add_action('admin_post_brendigo_pay_activate_license', ['BP_Pay_Settings', 'activate_license']);
+add_action('admin_post_brendigo_pay_sync', ['BP_Pay_Settings', 'manual_sync']);
+add_action('brendigo_pay_site_sync', ['BP_Pay_Settings', 'sync_installation']);
+add_action('init', ['BP_Pay_Settings', 'schedule_sync'], 20);
+if (function_exists('register_activation_hook')) {
+    register_activation_hook(BP_PAY_FILE, ['BP_Pay_Settings', 'schedule_sync']);
+}
+if (function_exists('register_deactivation_hook')) {
+    register_deactivation_hook(BP_PAY_FILE, ['BP_Pay_Settings', 'unschedule_sync']);
+}
 add_shortcode('brendigo_pay', 'bp_pay_shortcode');
 
 function bp_pay_shortcode($atts = []): string
