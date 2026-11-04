@@ -8,7 +8,7 @@ declare(strict_types=1);
 use function BrendigoPay\e;
 use function BrendigoPay\minor_format;
 
-function bp_brand(bool $light = false): string
+function bp_brand(): string
 {
     return '<span class="bp-brand"><img src="/assets/brand-mark.svg" alt="" width="37" height="37"><span>Brendigo <b>Pay</b></span></span>';
 }

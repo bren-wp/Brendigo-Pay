@@ -102,3 +102,11 @@
 .bp-wc-steps{margin-top:17px;}
 @media(max-width:600px){.bp-wc-provider{padding:10px;gap:9px;}.bp-wc-provider-monogram{width:30px;height:30px;flex-basis:30px;font-size:15px;}.bp-wc-provider-end{display:none;}}
 @media(prefers-reduced-motion:reduce){.bp-wc-provider{transition:none;}}
+
+/* v0.8.0 — reference-led payment button and accessibility refinements. */
+.bp-pay-button-icon{display:inline-flex;width:23px;height:23px;justify-content:center;align-items:center;border:1px solid currentColor;border-radius:5px;font-size:14px;flex:none;}
+.bp-pay-button:focus-visible,.bp-wc-provider input:focus-visible{outline:3px solid #06c6b6;outline-offset:3px;}
+.bp-pay-widget-card{width:100%;}
+.bp-wc-provider input{position:relative;z-index:1;}
+.bp-wc-provider-list{min-width:0;}
+@media(max-width:540px){.woocommerce #payment .payment_method_brendigo_pay .payment_box{padding:14px;}.bp-wc-provider-content small{overflow-wrap:anywhere;}}
