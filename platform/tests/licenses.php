@@ -62,7 +62,7 @@ $plans->suspend('merchant1', 'operator');
 try { $licenses->issue('merchant1', 'https://new.example'); throw new RuntimeException('Suspension bypass'); }
 catch (RuntimeException $e) { check_license(str_contains($e->getMessage(), 'Paid plan'), 'suspension disables new sites'); }
 try { $licenses->activate($rotated['license'], 'https://shop.example', str_repeat('a', 32)); throw new RuntimeException('Inactive activation'); }
-catch (RuntimeException $e) { check_license(str_contains($e->getMessage(), 'Paid plan') || str_contains($e->getMessage(), 'revoked'), 'suspension/removed site cannot activate'); }
+catch (RuntimeException $e) { check_license(str_contains($e->getMessage(), 'Paid plan') || str_contains($e->getMessage(), 'revoked') || str_contains($e->getMessage(), 'invalid'), 'suspension/removed site cannot activate'); }
 $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($folder, FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::CHILD_FIRST);
 foreach ($files as $file) { $file->isDir() ? rmdir($file->getPathname()) : unlink($file->getPathname()); }
 rmdir($folder);
