@@ -9,11 +9,13 @@ if (!defined('ABSPATH')) {
 final class BP_Pay_Blocks extends \Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType
 {
     protected $name = 'brendigo_pay';
-    private array $settings = [];
+    // WooCommerce AbstractPaymentMethodType already declares protected $settings.
+    // Never redeclare it as private or typed: PHP fatals when Blocks loads.
 
     public function initialize(): void
     {
-        $this->settings = get_option('woocommerce_brendigo_pay_settings', []);
+        $saved = get_option('woocommerce_brendigo_pay_settings', []);
+        $this->settings = is_array($saved) ? $saved : [];
     }
 
     public function is_active(): bool

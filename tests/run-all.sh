@@ -10,6 +10,7 @@ php platform/tests/providers.php
 python3 platform/tests/smoke.py
 python3 platform/tests/backup_restore.py
 php tests/woocommerce-gateway.php
+php tests/woocommerce-plugin-bootstrap.php
 python3 -m py_compile scripts/visual_audit_wp.py
 python3 tests/ui-contract.py
 python3 tests/security-static.py

@@ -3,7 +3,7 @@ Contributors: brendigo
 Tags: payments, woocommerce, payment links, qr code, checkout
 Requires at least: 6.4
 Requires PHP: 8.1
-Stable tag: 0.8.0
+Stable tag: 0.8.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -30,6 +30,13 @@ Test API token is encrypted with WordPress salt-derived AES-256-GCM, or use BREN
 The platform uses test/sandbox hosted checkout and verifies provider payment status before Woo order completion.
 
 == Changelog ==
+= 0.8.1 =
+* HOTFIX: Fixed fatal error when WooCommerce Checkout Blocks loads the payment integration.
+* Reuse the inherited WooCommerce protected settings property instead of redeclaring a private typed property.
+* Gracefully handle unexpected shortcode attributes and invalid WooCommerce settings payloads.
+* Added PHP runtime compatibility tests that instantiate the Blocks payment integration and exercise plugin hooks.
+* Sandbox only; no live payments or certified 1:1 visual parity.
+
 = 0.8.0 =
 * Refined block editor, payment button icons, QR captions and scoped responsive CSS.
 * Hardened platform authentication rate limits, API response bounds and corrected stale UI/dead code.
