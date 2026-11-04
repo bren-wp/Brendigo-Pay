@@ -7,14 +7,14 @@ import hashlib
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
 
-VERSION = '0.8.3'
+VERSION = '0.8.4'
 ROOT = Path(__file__).resolve().parent.parent
 
 
 def eligible(path: Path) -> bool:
     rel = path.relative_to(ROOT)
     parts = rel.parts
-    if '__pycache__' in parts or '.git' in parts or '.pytest_cache' in parts:
+    if '__pycache__' in parts or '.git' in parts or '.pytest_cache' in parts or '.gradle' in parts or 'build' in parts:
         return False
     if any(part in {'dist', 'node_modules', 'visual-qa'} for part in parts):
         return False

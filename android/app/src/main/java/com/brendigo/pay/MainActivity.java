@@ -201,7 +201,7 @@ public final class MainActivity extends Activity {
         header(false);
         makeScroll();
         LinearLayout welcome = card(23);
-        margin(welcome, 0, dp(27) / dp(1), 0, 0);
+        margin(welcome, 0, 27, 0, 0);
         LinearLayout logo = horizontal();
         addIcon(logo, 55);
         logo.addView(label("Brendigo Pay", 24, NAVY, true));
