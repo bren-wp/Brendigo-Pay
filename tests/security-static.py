@@ -36,7 +36,7 @@ for path in [ROOT / 'platform/public/index.php', ROOT / 'platform/src/Ui.php', R
     assert not re.search(r'(?<![A-Za-z_])(?:eval|shell_exec|passthru|system)\s*\(', text), f'Unsafe function in {path}'
 assert "name=\"card_number\"" not in wp
 assert "name=\"cvc\"" not in wp
-assert "Version: 0.8.5" in wp
+assert "Version: 0.8.6" in wp
 plans = (ROOT / 'platform/src/Plans.php').read_text(encoding='utf-8')
 licenses = (ROOT / 'platform/src/SiteLicenses.php').read_text(encoding='utf-8')
 assert "activeOrFail($merchantId)" in licenses, 'Must enforce active paid plan when issuing licenses'

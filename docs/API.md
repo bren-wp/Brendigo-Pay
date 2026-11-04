@@ -1,4 +1,4 @@
-# Brendigo Pay API — v0.8.4 (SANDBOX)
+# Brendigo Pay API — v0.8.6 (SANDBOX)
 
 **WordPress zaštićeni API** zahtijeva `Authorization: Bearer bp_test_...` s ključem izdanim za jedan HTTPS origin. **Android korisnički API** koristi zaseban `bp_mobile_...` token, koji ne može aktivirati WordPress licencije ni pristupiti administratorskim endpointima. Platforma nema live način rada.
 
@@ -64,7 +64,7 @@ Zaštićeno istim trgovčevim Bearer tokenom kao i `GET /api/v1/me`. Vraća do 1
 WordPress REST proxy `/wp-json/brendigo-pay/v1/links` zahtijeva korisničku ovlast `edit_posts` te nikada ne vraća API token ili tajne platnih pružatelja.
 
 
-## Android merchant API (v0.8.5)
+## Android merchant API (v0.8.6)
 
 Odvojen prostor `/api/v1/mobile/*`, HTTPS only. API nikada ne prima kartične podatke. Svi zahtjevi koriste `Accept: application/json`; POST zahtjevi `Content-Type: application/json`.
 
