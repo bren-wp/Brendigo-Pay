@@ -3,7 +3,7 @@ Contributors: brendigo
 Tags: payments, woocommerce, payment links, qr code, checkout
 Requires at least: 6.4
 Requires PHP: 8.1
-Stable tag: 0.7.0
+Stable tag: 0.7.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -30,6 +30,9 @@ Test API token is encrypted with WordPress salt-derived AES-256-GCM, or use BREN
 The platform uses test/sandbox hosted checkout and verifies provider payment status before Woo order completion.
 
 == Changelog ==
+= 0.7.1 =
+* Refined WordPress admin layout and focus styles, hash-linked accessible navigation.
+
 = 0.7.0 =
 * Development repository migration; standardized Brendigo branding, responsive visual QA and CI lint/tests.
 * Sandbox-only. No live payment functionality.
