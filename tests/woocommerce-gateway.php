@@ -56,6 +56,7 @@ class WC_Order {
 class BP_Pay_Settings {
     public static function api_base(): string { return 'https://pay.example.test'; }
     public static function api_key(): string { return 'test-token'; }
+    public static function license_is_current(): bool { return $GLOBALS['test_license_active'] ?? true; }
 }
 class BP_Pay_API {
     public static array $calls = [];
