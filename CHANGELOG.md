@@ -2,6 +2,7 @@
 
 - Nova nativna Android aplikacija u /android: prijava, pregled stvarnih podataka trgovca, transakcije, platni linkovi, licence i račun.
 - Android Keystore AES-GCM, HTTPS bez redirecta/cleartext prometa, izvanjski browser za web panel, bez SDK-a za analitiku.
+- Android korisnički panel: stvaranje, kopiranje i aktivacija/deaktivacija platnih poveznica u zajedničkom JSON backendu.
 - API: odvojeni merchant-only mobilni tokeni i rute za prijavu, overview, stvaranje linka te odjavu.
 - Jedinstveni JSON backend usklađuje web, korisnički i admin panel, WordPress/WooCommerce i Android.
 - Android CI izvodi Gradle 9 gradnju instalacijskog debug APK-a i nepotpisanog release AAB-a.

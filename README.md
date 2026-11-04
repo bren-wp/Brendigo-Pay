@@ -31,7 +31,7 @@ Platforma prikazuje status pojedine instalacije, verziju dodatka i vrijeme zadnj
 
 Ovo je još uvijek **SANDBOX**. Nakon deploya treba potvrditi produkcijske platne pružatelje, automatiziranu naplatu paketa, identitet trgovca, domensku vlasničku provjeru, WordPress/WooCommerce E2E te regulatornu usklađenost. Snimke u README-u odnose se na stvarni raniji UI, ali ne jamče vizualnu 1:1 identičnost svih referenci.
 
-## Tri plaćena paketa, licence po web-stranici (v0.8.2)
+## Tri plaćena paketa, licence po web-stranici (v0.8.4)
 
 | Paket | Predložena cijena / mj | Dopuštene domene |
 |---|---:|---:|
@@ -89,12 +89,13 @@ Prikazujemo **stvarne snimke lokalno izvršene web-platforme**, nastale automati
 
 ## Jedno mjesto za različite načine naplate
 
-| Modul | Što je dostupno u v0.8.2 |
+| Modul | Što je dostupno u v0.8.4 |
 |---|---|
-| 🖥️ Web | Registracija, prijava, korisnička nadzorna ploča, izvještaji u testnom načinu |
+| 🖥️ Web | Registracija, prijava, korisnička nadzorna ploča, licence, izvještaji i plaćeni paketi |
 | 🔗 Naplatne poveznice | Kreiranje, aktivacija/deaktivacija, javni URL, iznos u EUR |
 | ▦ QR kod | Lokalno generiran QR za HTTPS naplatnu poveznicu |
 | ⓦ WordPress | Gutenberg blokovi, kratki kod, kartice i naplatni gumbi |
+| 📱 Android | Prijava, pregled testnih prihoda, transakcije, linkovi, licence, kreiranje i upravljanje linkovima; izvorno u `/android` |
 | 🛒 WooCommerce | Klasični Checkout i Checkout Block; HPOS kroz WooCommerce CRUD |
 | ◇ Pružatelji | Stripe TEST, PayPal Sandbox, Revolut Sandbox — zahtijevaju integracijsko testiranje |
 | 🗃️ Pohrana | Privatne pojedinačne JSON datoteke u `platform/storage/data/` |
