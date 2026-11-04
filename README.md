@@ -100,7 +100,7 @@ Samo povratak kupca na stranicu za potvrdu nije dokaz stvarne naplate. Konačni 
 ## Instalacija i prvi koraci
 
 1. Preuzmite najnovije izdanje iz [GitHub Releases](https://github.com/bren-wp/Brendigo-Pay/releases).
-2. Postavite web-platformu na vlastiti HTTPS hosting prema [uputama za postavljanje](docs/DEPLOYMENT-0.8.5.md). Poslovni identitet i administratorski pristup trebaju biti sigurno konfigurirani prije javnog pristupa.
+2. Postavite web-platformu na vlastiti HTTPS hosting prema [uputama za postavljanje](docs/DEPLOYMENT-0.8.6.md). Poslovni identitet i administratorski pristup trebaju biti sigurno konfigurirani prije javnog pristupa.
 3. Registrirajte se na webu ili Androidu, odaberite plaćeni plan i pričekajte njegovu aktivaciju.
 4. Na webu otvorite **Web-stranice**, dodajte HTTPS domenu i preuzmite odgovarajuću licencu.
 5. Prenesite ZIP dodatka kroz **WordPress → Dodaci → Dodaj novi → Prenesi dodatak**.
