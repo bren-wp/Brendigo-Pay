@@ -9,7 +9,7 @@
 | Prioritet | Nalaz | Izmjena | Provjera |
 |---|---|---|---|
 | Visok (online izlaganje) | Prijavni limit ključan je bio po IP/e-pošti; izmjena e-pošte omogućavala je daljnje pokušaje s istog IP-a | Dodan zaseban limit 30 neuspjelih pokušaja/IP u 15 minuta uz postojeći limit 8 po kombinaciji IP/e-pošta | `platform/tests/smoke.py` vrti izmjenu 30 e-adresa i provjerava blokiranje valjane prijave |
-| Srednji | WordPress API odgovor nije imao maksimalnu veličinu u klijentu | `limit_response_size=131072`, HTTPS i `wp_safe_remote_request` ostaju obvezni | Statički test `tests/security-static.py` |
+| Srednji | Webhook tijelo ranije se čitalo cijelo prije odbijanja prevelikog zahtjeva | Sva četiri webhook endpointa sada čitaju najviše 1.000.001 bajt, a payload veći od 1 MB odbijaju | Statički test i postojeći provjerni testovi potpisa |\n| Srednji | WordPress API odgovor nije imao maksimalnu veličinu u klijentu | `limit_response_size=131072`, HTTPS i `wp_safe_remote_request` ostaju obvezni | Statički test `tests/security-static.py` |
 | Nizak | Zastarjela footer verzija i stari marketinški opis imali su nejasnoće oko produkcije | Usklađena verzija, SANDBOX statusi i jasne napomene | UI/testovi i pregled README-a |
 
 ## Postojeće sigurnosne kontrole provjerene u kodu

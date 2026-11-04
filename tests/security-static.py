@@ -17,6 +17,7 @@ assert 'session_regenerate_id(true)' in web
 assert 'check_csrf();' in web
 assert "password_hash($password, PASSWORD_ARGON2ID)" in web
 assert "X-Frame-Options: DENY" in web and "Content-Security-Policy:" in web
+assert web.count("file_get_contents('php://input', false, null, 0, 1000001)") == 4, 'Webhook bodies must be size bounded'
 assert "LOCK_EX" in store and "rename($temp, $path)" in store
 assert "'redirection' => 0" in api and "'limit_response_size' => 131072" in api
 assert 'wp_safe_remote_request' in api and "'reject_unsafe_urls' => true" in api

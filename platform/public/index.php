@@ -464,7 +464,7 @@ if ($path === '/webhooks/stripe-connect' && $method === 'POST') {
         http_response_code(404);
         exit;
     }
-    $body = file_get_contents('php://input') ?: '';
+    $body = file_get_contents('php://input', false, null, 0, 1000001) ?: '';
     if (strlen($body) > 1000000 || !verify_stripe_signature($body, (string) ($_SERVER['HTTP_STRIPE_SIGNATURE'] ?? ''), StripeConnectSandbox::webhookSecret())) {
         http_response_code(400);
         exit('Invalid Connect signature');
@@ -572,7 +572,7 @@ if ($method === 'POST' && preg_match('#^/webhooks/revolut/([a-f0-9]{32})$#D', $p
         http_response_code(404);
         exit;
     }
-    $payload = file_get_contents('php://input') ?: '';
+    $payload = file_get_contents('php://input', false, null, 0, 1000001) ?: '';
     if (strlen($payload) > 1000000 || !SandboxProviders::verifyRevolut($payload, (string) ($_SERVER['HTTP_REVOLUT_REQUEST_TIMESTAMP'] ?? ''), (string) ($_SERVER['HTTP_REVOLUT_SIGNATURE'] ?? ''), $settings['webhook_secret'])) {
         http_response_code(400);
         exit('Invalid Revolut signature');
@@ -626,7 +626,7 @@ if ($method === 'POST' && preg_match('#^/webhooks/paypal/([a-f0-9]{32})$#D', $pa
         http_response_code(404);
         exit;
     }
-    $body = file_get_contents('php://input') ?: '';
+    $body = file_get_contents('php://input', false, null, 0, 1000001) ?: '';
     $event = strlen($body) <= 1000000 ? json_decode($body, true) : null;
     if (!is_array($event) || empty($event['id'])) {
         http_response_code(400);
@@ -688,7 +688,7 @@ if ($method === 'POST' && preg_match('#^/webhooks/stripe/([a-f0-9]{32})$#D', $pa
         http_response_code(404);
         exit;
     }
-    $payload = file_get_contents('php://input') ?: '';
+    $payload = file_get_contents('php://input', false, null, 0, 1000001) ?: '';
     if (strlen($payload) > 1000000 || !verify_stripe_signature($payload, (string) ($_SERVER['HTTP_STRIPE_SIGNATURE'] ?? ''), $settings['webhook_secret'])) {
         http_response_code(400);
         exit('Invalid signature');
