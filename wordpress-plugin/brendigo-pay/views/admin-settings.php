@@ -23,25 +23,26 @@ if (!is_array($linkItems)) { $linkItems = []; }
         <a class="bp-admin-tab" href="#bp-docs">▤ Dokumentacija</a>
     </nav>
     <?php settings_errors('brendigo_pay_settings'); ?>
+    <?php $licenseStatus = isset($_GET['bp_license_status']) ? sanitize_key(wp_unslash($_GET['bp_license_status'])) : ''; ?>
+    <?php if ($licenseStatus === 'success'): ?><div class="notice notice-success"><p>Licencija je potvrđena. WordPress je povezan s aktivnim plaćenim paketom na platformi (TEST).</p></div><?php endif; ?>
+    <?php if ($licenseStatus === 'failure'): ?><div class="notice notice-error"><p>Aktivacija nije uspjela. Provjerite URL platforme, licencni ključ, domenu i paket.</p></div><?php endif; ?>
     <?php if ($status === 'success'): ?><div class="notice notice-success"><p>Veza je uspješno provjerena za ovu WordPress domenu i testni račun.</p></div><?php endif; ?>
     <?php if ($status === 'failure'): ?><div class="notice notice-error"><p>Veza nije potvrđena. Provjerite HTTPS adresu, testni API ključ i dopuštenu domenu.</p></div><?php endif; ?>
     <section class="bp-admin-grid bp-admin-status-grid" id="bp-general">
         <article class="bp-admin-panel bp-admin-connection <?php echo $tokenSet && $url ? 'bp-admin-configured' : ''; ?>">
             <span class="bp-admin-round-check"><?php echo $tokenSet && $url ? '✓' : '!'; ?></span>
-            <div><h2><?php echo $tokenSet && $url ? 'Konfigurirano — SANDBOX' : 'Potrebno povezivanje'; ?></h2><p><?php echo $tokenSet && $url ? 'API ključ i URL spremljeni su. Za potvrdu veze pokrenite test.' : 'Upišite URL platforme i API ključ za testni račun.'; ?></p></div>
+            <div><h2><?php echo $tokenSet && $url ? 'Konfigurirano — SANDBOX' : 'Potrebno povezivanje'; ?></h2><p><?php echo $tokenSet && $url ? 'API ključ i URL spremljeni su. Za potvrdu veze pokrenite test.' : 'Spremite URL platforme, a zatim aktivirajte licenciju u obrascu niže.'; ?></p></div>
             <span class="bp-admin-status-pill">TESTNO OKRUŽENJE</span>
         </article>
         <article class="bp-admin-panel"><h2>Okruženje</h2><p>Produkcijska naplata nije omogućena u ovom izdanju.</p><div class="bp-admin-environments"><span class="bp-admin-environment-selected">◉ Sandbox (testno)</span><span class="bp-admin-environment-disabled">◯ Produkcija (nije dostupna)</span></div></article>
     </section>
     <section class="bp-admin-grid bp-admin-keys-grid">
-        <article class="bp-admin-panel"><h2>Ključ i pristup platformi</h2><p>Zaštitite API ključ; spremljeni ključ ostaje skriven i šifriran.</p>
+        <article class="bp-admin-panel"><h2>Pristup web-platformi</h2><p>Prvo spremite HTTPS URL Brendigo Pay platforme. Zatim aktivirajte ključ licencije vezan uz domenu.</p>
             <form id="bp-admin-settings-form" method="post" action="options.php">
                 <?php settings_fields('brendigo_pay_group'); ?>
                 <label for="bp-url">URL platforme <span class="bp-required">*</span></label>
                 <input class="bp-admin-input" type="url" id="bp-url" name="brendigo_pay_settings[url]" value="<?php echo esc_attr($url); ?>" placeholder="https://pay.tvoja-domena.hr" required>
-                <label for="bp-key">API ključ <?php if (!$tokenSet): ?><span class="bp-required">*</span><?php endif; ?></label>
-                <input class="bp-admin-input" type="password" id="bp-key" name="brendigo_pay_settings[api_key]" value="" autocomplete="new-password" placeholder="<?php echo $tokenSet ? 'Ključ je spremljen — ostavite prazno' : 'bp_test_...'; ?>">
-                <p class="description">API ključ generirajte za domenu <?php echo esc_html(home_url('/')); ?>.</p>
+                <p class="description">API token se automatski izdaje nakon uspješne aktivacije licencije. Ručni unos tokena nije potreban.</p>
                 <button type="submit" class="button button-primary bp-admin-button">▣ Spremi postavke</button>
             </form>
             <form class="bp-test-connection" method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
@@ -49,6 +50,18 @@ if (!is_array($linkItems)) { $linkItems = []; }
                 <?php wp_nonce_field('brendigo_pay_test_connection'); ?>
                 <button type="submit" class="button bp-admin-outline">▷ Testiraj povezivanje</button>
             </form>
+        </article>
+        <article class="bp-admin-panel bp-admin-license-panel"><h2>Aktivacija licencije za WordPress</h2>
+            <p>1. Prijavite se u korisnički panel Brendigo Pay. 2. Otvorite <strong>Web-stranice</strong> i registrirajte ovu domenu. 3. Ovdje unesite izdani ključ.</p>
+            <p><strong>Adresa ove stranice:</strong> <code><?php echo esc_html(home_url('/')); ?></code></p>
+            <?php if ($base !== ''): ?><p><a href="<?php echo esc_url($base . '/sites'); ?>" target="_blank" rel="noopener noreferrer">Moje licence i web-stranice ↗</a></p><?php endif; ?>
+            <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
+                <input type="hidden" name="action" value="brendigo_pay_activate_license">
+                <?php wp_nonce_field('brendigo_pay_activate_license'); ?>
+                <label for="bp-license">Licencni ključ <span class="bp-required">*</span></label>
+                <input class="bp-admin-input" type="password" name="bp_license" id="bp-license" required autocomplete="new-password" maxlength="71" pattern="bp_lic_[a-f0-9]{64}" placeholder="bp_lic_...">
+                <button class="button button-primary bp-admin-button" type="submit">Aktiviraj licenciju i poveži</button>
+            </form><p class="description">Licencija se ne sprema u WordPress. API token je lokalno šifriran, a aktivacija je trenutačno samo za sandbox.</p>
         </article>
         <article class="bp-admin-panel"><h2>Webhook i API</h2><p>Statusi narudžbi provjeravaju se putem zaštićenog Brendigo Pay API-ja.</p><label for="bp-display-webhook">Adresa platforme</label><div class="bp-admin-copy-row"><input readonly class="bp-admin-input" id="bp-display-webhook" value="<?php echo esc_attr($base); ?>"><button type="button" class="button bp-copy-field" data-copy-field="bp-display-webhook">Kopiraj</button></div><p class="description">To nije WordPress webhook endpoint. Provjeru transakcije obavlja dodatak prema platformi.</p><div class="bp-admin-tip">♢ Kartični podaci obrađuju se na stranicama platnog pružatelja, ne unutar ovog dodatka.</div></article>
     </section>

@@ -21,7 +21,7 @@ function bp_site_home(): string
         <span class="bp-kicker">⚡ FINTECH SAAS • POVEŽITE SVOJE PLATNE RAČUNE</span>
         <h1 id="hero-heading">Pametna naplata za <span>WordPress, WooCommerce</span> i web</h1>
         <p>Povežite postojeće Stripe, PayPal i Revolut testne račune. Upravljajte naplatnim poveznicama, QR kodovima i integracijama na jednom mjestu.</p>
-        <div class="bp-actions"><a href="/register" class="btn">Isprobaj testnu verziju <span aria-hidden="true">→</span></a><a href="/login" class="btn secondary">Pogledaj nadzornu ploču</a></div>
+        <div class="bp-actions"><a href="/pricing" class="btn">Odaberi paket <span aria-hidden="true">→</span></a><a href="/login" class="btn secondary">Pogledaj nadzornu ploču</a></div>
         <div class="bp-benefits"><span>✓ Jednostavna integracija</span><span>✓ Bez pohrane kartica</span><span>✓ WordPress &amp; WooCommerce</span></div>
     </div>
     <div class="bp-hero-art" aria-label="Prikaz sučelja Brendigo Paya">
@@ -50,15 +50,62 @@ function bp_site_home(): string
 function bp_site_pricing(): string
 {
     ob_start(); ?>
-<section class="bp-pricing-intro"><span class="bp-kicker">⚡ FLEKSIBILNI PLANOVI ZA SVAKI BIZNIS</span><h1>Jednostavne i transparentne <span>cijene</span></h1><p>Odaberite plan koji odgovara vašem poslovanju. Svi prikazani iznosi samo su prijedlog budućeg cjenika, bez omogućene stvarne pretplate.</p><div class="bp-benefits"><span>✓ Brzo pokretanje</span><span>✓ Bez skrivenih troškova platforme</span><span>✓ Za poslovni rast</span></div><div class="bp-pricing-illustration" aria-hidden="true"><b>Brendigo Pay</b><span>▣　)))</span></div></section>
+<section class="bp-pricing-intro">
+    <span class="bp-kicker">⚡ TRI PLAĆENA PAKETA • LICENCIJE PO DOMENI</span>
+    <h1>Jednostavne i transparentne <span>cijene</span></h1>
+    <p>Odaberite plan prema broju WordPress stranica koje povezujete s Brendigo Payom. Nema besplatnog paketa. Cijene su prijedlog cjenika; online naplata pretplate još nije omogućena.</p>
+    <div class="bp-benefits"><span>✓ Tri jasna paketa</span><span>✓ Zaseban ključ za svaku stranicu</span><span>✓ Ograničenja na poslužitelju</span><span>✓ Bez automatske naplate</span></div>
+    <div class="bp-pricing-illustration" aria-hidden="true"><b>Brendigo Pay</b><span>▣　)))</span></div>
+</section>
 <div class="bp-price-cards">
-    <article class="bp-surface"><span class="bp-feature-icon">⚡</span><h2>Start</h2><p>Za manje projekte i početak online naplate.</p><p class="bp-price-value">0 € <small>/ mj</small></p><ul><li>Osnovne funkcionalnosti</li><li>Platni linkovi i QR kodovi</li><li>WordPress dodatak</li><li>Osnovni izvještaji</li></ul><a href="/register" class="btn secondary">Započni besplatno →</a></article>
-    <article class="bp-surface bp-price-featured"><span class="bp-price-ribbon">NAJPOPULARNIJE · KONCEPT</span><span class="bp-feature-icon">◇</span><h2>Business</h2><p>Za rastuće poslovanje i veću prodaju.</p><p class="bp-price-value">49,90 € <small>/ mj</small></p><ul><li>Sve iz Start plana</li><li>Više platnih linkova i QR kodova</li><li>WooCommerce integracija</li><li>Stripe / PayPal / Revolut testni adapteri</li><li>Detaljniji izvještaji</li></ul><a href="/register" class="btn btn-white">Odaberi Business →</a></article>
-    <article class="bp-surface"><span class="bp-feature-icon">♛</span><h2>Pro</h2><p>Za veće sustave i napredne potrebe.</p><p class="bp-price-value">99,90 € <small>/ mj</small></p><ul><li>Sve iz Business plana</li><li>Napredni API pristup</li><li>Više trgovina i korisnika (planirano)</li><li>Napredna analitika (planirano)</li><li>Prioritetna podrška (planirano)</li></ul><a href="/register" class="btn secondary">Odaberi Pro →</a></article>
+    <article class="bp-surface">
+        <span class="bp-feature-icon">⚡</span><h2>Start</h2>
+        <p>Za jednu web-stranicu ili manju trgovinu.</p>
+        <p class="bp-price-value">19,90 € <small>/ mj</small></p>
+        <strong class="bp-tier-sites">1 web-stranica</strong>
+        <ul><li>1 aktivna licencija za WordPress</li><li>Platni linkovi i QR kodovi (TEST)</li><li>WordPress dodatak</li><li>Osnovni izvještaji</li></ul>
+        <a href="/register?plan=start" class="btn secondary">Odaberi Start →</a>
+    </article>
+    <article class="bp-surface bp-price-featured">
+        <span class="bp-price-ribbon">NAJPOPULARNIJE · PRIJEDLOG</span>
+        <span class="bp-feature-icon">◇</span><h2>Business</h2>
+        <p>Za trgovine koje upravljaju s više domena.</p>
+        <p class="bp-price-value">49,90 € <small>/ mj</small></p>
+        <strong class="bp-tier-sites">5 web-stranica</strong>
+        <ul><li>Sve iz Start paketa</li><li>5 zasebnih WordPress licenci</li><li>WooCommerce integracija (TEST)</li><li>Stripe / PayPal / Revolut sandbox</li><li>Detaljniji izvještaji</li></ul>
+        <a href="/register?plan=business" class="btn btn-white">Odaberi Business →</a>
+    </article>
+    <article class="bp-surface">
+        <span class="bp-feature-icon">♛</span><h2>Pro</h2>
+        <p>Za agencije i sustave s mnogo web-stranica.</p>
+        <p class="bp-price-value">99,90 € <small>/ mj</small></p>
+        <strong class="bp-tier-sites">25 web-stranica</strong>
+        <ul><li>Sve iz Business paketa</li><li>25 zasebnih WordPress licenci</li><li>Upravljanje web-stranicama</li><li>API pristup po instalaciji (TEST)</li><li>Administracija licencija</li></ul>
+        <a href="/register?plan=pro" class="btn secondary">Odaberi Pro →</a>
+    </article>
 </div>
-<div class="bp-pricing-details"><section class="bp-surface"><h2>▥ Usporedba planova</h2><div class="table-wrap"><table><thead><tr><th>Značajka</th><th>Start</th><th>Business</th><th>Pro</th></tr></thead><tbody><tr><td>Platni linkovi</td><td>✓</td><td>✓</td><td>✓</td></tr><tr><td>QR kodovi</td><td>✓</td><td>✓</td><td>✓</td></tr><tr><td>WordPress dodatak</td><td>✓</td><td>✓</td><td>✓</td></tr><tr><td>WooCommerce</td><td>—</td><td>✓</td><td>✓</td></tr><tr><td>Više integracija</td><td>—</td><td>✓</td><td>✓</td></tr><tr><td>API pristup</td><td>—</td><td>✓</td><td>✓</td></tr><tr><td>Analitika</td><td>Osnovna</td><td>Detaljna</td><td>Napredna (planirano)</td></tr></tbody></table></div></section>
-<section class="bp-surface bp-faq"><h2>Često postavljana pitanja</h2><details open><summary>Mogu li promijeniti plan kasnije?</summary><p>Paketi su trenutačno samo koncept. Prije komercijalnog pokretanja bit će definirani uvjeti nadogradnje.</p></details><details><summary>Koje metode plaćanja podržavate?</summary><p>Trenutačna razvojna verzija koristi Stripe TEST, PayPal Sandbox i Revolut Sandbox.</p></details><details><summary>Je li WooCommerce obvezan?</summary><p>Nije. Brendigo Pay može se koristiti i na običnom WordPressu ili kao samostalni sustav naplatnih linkova.</p></details><details><summary>Gdje se spremaju podaci?</summary><p>Web-platforma koristi privatne JSON datoteke, dok WordPress i WooCommerce koriste vlastitu standardnu bazu.</p></details><details><summary>Je li produkcija dostupna?</summary><p>Ne. Potrebne su dodatne integracije, vanjska odobrenja, sigurnosni i regulatorni pregledi.</p></details></section></div>
-<section class="bp-bottom-cta"><div><h2>Spremni isprobati Brendigo Pay?</h2><p>Otvorite testni račun i istražite sustav naplate.</p></div><a href="/register" class="btn btn-white">Započni besplatno →</a></section>
+<div class="bp-pricing-details">
+    <section class="bp-surface"><h2>▥ Usporedba paketa</h2>
+        <div class="table-wrap"><table><thead><tr><th>Značajka</th><th>Start</th><th>Business</th><th>Pro</th></tr></thead><tbody>
+            <tr><td>Mjesečna cijena (prijedlog)</td><td>19,90 €</td><td>49,90 €</td><td>99,90 €</td></tr>
+            <tr><td>Najveći broj web-stranica</td><td><strong>1</strong></td><td><strong>5</strong></td><td><strong>25</strong></td></tr>
+            <tr><td>Licenca za svaku WordPress stranicu</td><td>✓</td><td>✓</td><td>✓</td></tr>
+            <tr><td>QR kodovi i naplatne poveznice (TEST)</td><td>✓</td><td>✓</td><td>✓</td></tr>
+            <tr><td>WordPress dodatak</td><td>✓</td><td>✓</td><td>✓</td></tr>
+            <tr><td>WooCommerce</td><td>✓</td><td>✓</td><td>✓</td></tr>
+            <tr><td>Administracija i opoziv licenci</td><td>✓</td><td>✓</td><td>✓</td></tr>
+            <tr><td>Stvarna kartična naplata</td><td>U pripremi</td><td>U pripremi</td><td>U pripremi</td></tr>
+        </tbody></table></div>
+    </section>
+    <section class="bp-surface bp-faq"><h2>Često postavljana pitanja</h2>
+        <details open><summary>Postoji li besplatan paket?</summary><p>Ne. Start, Business i Pro su plaćeni paketi. Otvaranje računa ne aktivira paket, naplatu ni licence.</p></details>
+        <details><summary>Koliko WordPress stranica mogu povezati?</summary><p>Start: 1, Business: 5, Pro: 25. Sustav provjerava limit prilikom izdavanja svake nove licence.</p></details>
+        <details><summary>Kako aktiviram WordPress dodatak?</summary><p>U korisničkom panelu otvorite Web-stranice, dodajte domenu i prepišite jednokratni licencni ključ u dodatak. Povezivanje je moguće samo uz aktivan plaćeni paket.</p></details>
+        <details><summary>Mogu li promijeniti paket?</summary><p>Administrator može potvrditi nadogradnju. Prije prelaska na paket s manjim limitom potrebno je ukloniti višak domena.</p></details>
+        <details><summary>Je li automatska naplata pretplate dostupna?</summary><p>Ne. Trenutačno se paket potvrđuje ručno nakon provjerene uplate. Prikazane cijene još su prijedlog, a stvarne transakcije nisu omogućene.</p></details>
+    </section>
+</div>
+<section class="bp-bottom-cta"><div><h2>Odaberite paket i povežite svoju trgovinu</h2><p>Registrirajte poslovni račun, odaberite jedan od tri plaćena plana i povežite licence nakon aktivacije.</p></div><a href="/register?plan=business" class="btn btn-white">Odaberi paket →</a></section>
 <?php return (string) ob_get_clean();
 }
 
@@ -146,7 +193,12 @@ function bp_merchant_ui(array $user, array $links, array $transactions, string $
 </tbody></table></div></section>
 <?php endif; ?>
 <?php if ($tab === 'integrations'): ?><section class="bp-surface"><h2>Povezivanje pružatelja plaćanja</h2><p>Integracije se konfiguriraju i šifrirano čuvaju na platformi. Navedeni servisi rade u testnom načinu.</p><div class="bp-provider-grid"><span>Stripe TEST</span><span>PayPal Sandbox</span><span>Revolut Sandbox</span></div><p><a href="/settings" class="btn">Otvori postavke integracija →</a></p></section><?php endif; ?>
-<dialog id="bp-new-link" class="bp-link-dialog" aria-labelledby="bp-new-link-title"><div class="bp-dialog-heading"><div><?= bp_brand() ?><h2 id="bp-new-link-title">Novi platni link</h2><p>Kreirajte naplatnu poveznicu za proizvod ili uslugu.</p></div><button type="button" class="bp-dialog-close" data-close-dialog aria-label="Zatvori">×</button></div><div class="bp-dialog-inner"><form method="post" id="bp-create-form" action="/dashboard/links" class="bp-link-form"><?= csrf() ?><label>Naziv proizvoda / usluge <span>*</span><input name="title" maxlength="160" required placeholder="Online tečaj – WordPress" data-preview-title></label><label>Opis <small>(neobvezno)</small><textarea name="description" maxlength="500" rows="4" placeholder="Detaljnije opišite uslugu ili proizvod..." data-preview-description></textarea></label><div class="bp-form-two"><label>Iznos (EUR) <span>*</span><input name="amount" required inputmode="decimal" placeholder="99,90" data-preview-amount></label><label>Valuta<input value="EUR (€)" readonly aria-label="Valuta EUR"></label></div><p class="bp-muted">Plaćanje se izvršava kod povezanog testnog pružatelja. Kartični podaci nikad se ne unose u Brendigo Pay.</p><div class="bp-dialog-actions"><button class="btn secondary" type="button" data-close-dialog>Odustani</button><button type="submit" class="btn">Kreiraj link →</button></div></form><aside class="bp-link-preview"><span class="bp-kicker">PREGLED</span><div class="bp-preview-card"><div class="bp-preview-header"><?= bp_brand() ?></div><b data-live-title>Vaš novi platni link</b><p data-live-description>Unesite podatke u obrazac kako biste vidjeli pregled.</p><strong data-live-amount class="bp-preview-amount">0,00 €</strong><span class="bp-fake-button">Testni naplatni link</span><p class="bp-muted">URL i stvarni QR kod generiraju se nakon spremanja.</p></div></aside></div></dialog>
+<dialog id="bp-new-link" class="bp-link-dialog" aria-labelledby="bp-new-link-title"><div class="bp-dialog-heading"><div><?= bp_brand() ?><h2 id="bp-new-link-title">Novi platni link</h2><p>Kreirajte naplatnu poveznicu za proizvod ili uslugu.</p></div><button type="button" class="bp-dialog-close" data-close-dialog aria-label="Zatvori">×</button></div><div class="bp-dialog-inner"><form method="post" id="bp-create-form" action="/dashboard/links" class="bp-link-form"><?= csrf() ?><label>Naziv proizvoda / usluge <span>*</span><input name="title" maxlength="160" required placeholder="Online tečaj – WordPress" data-preview-title></label><label>Opis <small>(neobvezno)</small><textarea name="description" maxlength="500" rows="4" placeholder="Detaljnije opišite uslugu ili proizvod..." data-preview-description></textarea></label><?php
+    $merchantSites = array_values(array_filter($GLOBALS['store']->all('sites'), static fn(array $site): bool =>
+        ($site['user_id'] ?? '') === $user['id'] && ($site['status'] ?? '') === 'active'));
+    ?>
+    <label>WordPress web-stranica <span>*</span><select name="site_id" required><option value="">Odaberite povezanu domenu</option><?php foreach ($merchantSites as $site): ?><option value="<?= e($site['id']) ?>"><?= e($site['origin']) ?></option><?php endforeach; ?></select></label>
+    <div class="bp-form-two"><label>Iznos (EUR) <span>*</span><input name="amount" required inputmode="decimal" placeholder="99,90" data-preview-amount></label><label>Valuta<input value="EUR (€)" readonly aria-label="Valuta EUR"></label></div><p class="bp-muted">Plaćanje se izvršava kod povezanog testnog pružatelja. Kartični podaci nikad se ne unose u Brendigo Pay.</p><div class="bp-dialog-actions"><button class="btn secondary" type="button" data-close-dialog>Odustani</button><button type="submit" class="btn">Kreiraj link →</button></div></form><aside class="bp-link-preview"><span class="bp-kicker">PREGLED</span><div class="bp-preview-card"><div class="bp-preview-header"><?= bp_brand() ?></div><b data-live-title>Vaš novi platni link</b><p data-live-description>Unesite podatke u obrazac kako biste vidjeli pregled.</p><strong data-live-amount class="bp-preview-amount">0,00 €</strong><span class="bp-fake-button">Testni naplatni link</span><p class="bp-muted">URL i stvarni QR kod generiraju se nakon spremanja.</p></div></aside></div></dialog>
 <dialog id="bp-transaction-dialog" class="bp-transaction-dialog" aria-labelledby="bp-txn-heading"><div class="bp-dialog-heading"><div><span class="bp-kicker">TESTNA TRANSAKCIJA</span><h2 id="bp-txn-heading">Detalji transakcije</h2></div><button type="button" class="bp-dialog-close" data-close-dialog aria-label="Zatvori detalje">×</button></div><dl class="bp-transaction-details"><div><dt>ID transakcije</dt><dd data-txn-output="id"></dd></div><div><dt>Datum</dt><dd data-txn-output="date"></dd></div><div><dt>Opis</dt><dd data-txn-output="description"></dd></div><div><dt>Pružatelj</dt><dd data-txn-output="provider"></dd></div><div><dt>Iznos</dt><dd data-txn-output="amount"></dd></div><div><dt>Status</dt><dd data-txn-output="status"></dd></div></dl><p class="bp-muted">Podaci su iz JSON evidencije vašeg testnog računa. Povrat uplate nije dostupan u ovom izdanju.</p><div class="bp-dialog-actions"><button type="button" class="btn secondary" data-close-dialog>Zatvori</button></div></dialog>
 <?php return (string) ob_get_clean();
 }

@@ -4,7 +4,7 @@ from pathlib import Path
 import re
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION = '0.8.1'
+VERSION = '0.8.2'
 wp = ROOT / 'wordpress-plugin' / 'brendigo-pay'
 required = [
     'assets/public.css', 'assets/admin.css', 'assets/editor.css',
@@ -34,6 +34,12 @@ assert f"VERSION = '{VERSION}'" in package
 for snippet in ['Author: Brendigo', 'https://brendigopay.com', 'https://brendigo.com', 'Text Domain: brendigo-pay']:
     assert snippet in plugin, snippet
 assert 'Contributors: brendigo' in readme
+assert 'bp_lic_[a-f0-9]{64}' in (wp / 'views' / 'admin-settings.php').read_text(encoding='utf-8')
+assert 'admin_post_brendigo_pay_activate_license' in plugin
+assert 'class SiteLicenses' in (ROOT / 'platform/src/SiteLicenses.php').read_text()
+assert 'class Plans' in (ROOT / 'platform/src/Plans.php').read_text()
+for tier, count in [('start', 1), ('business', 5), ('pro', 25)]:
+    assert tier in (ROOT / 'platform/src/Plans.php').read_text()
 
 front = (wp / 'assets' / 'public.css').read_text(encoding='utf-8')
 admin = (wp / 'assets' / 'admin.css').read_text(encoding='utf-8')

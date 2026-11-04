@@ -179,3 +179,5 @@
 .bp-admin-wrap .bp-admin-hero{background-size:cover;}
 .bp-admin-wrap .bp-admin-input:focus-visible{outline:2px solid #315bfa;outline-offset:2px;}
 @media(max-width:1050px){.bp-admin-wrap .bp-admin-provider-grid{grid-template-columns:1fr;}}
+
+.bp-admin-license-panel{min-width:0}.bp-admin-license-panel code{overflow-wrap:anywhere}.bp-admin-license-panel form{display:grid;gap:12px;min-width:0}.bp-admin-license-panel .bp-admin-input{width:100%;max-width:100%}.bp-admin-license-panel a{overflow-wrap:anywhere}@media(max-width:782px){.bp-admin-license-panel .bp-admin-button{min-height:44px;width:100%}}

@@ -30,6 +30,8 @@ $config = [
     'app_key' => base64_encode(random_bytes(SODIUM_CRYPTO_SECRETBOX_KEYBYTES)),
     'data_dir' => $root . '/storage/data',
     'is_local' => in_array($parsed['host'], ['127.0.0.1', 'localhost'], true),
+    // Set only registered operator UUIDs here after verifying operator identity.
+    'admin_user_ids' => [],
 ];
 file_put_contents($file, "<?php\nreturn " . var_export($config, true) . ";\n", LOCK_EX);
 chmod($file, 0600);

@@ -471,3 +471,25 @@ html {overflow-x:clip;}
 @media(max-width:1100px){.bp-home-copy h1{font-size:clamp(2.1rem,3.4vw,2.7rem)}.bp-checkout-provider-fieldset{grid-template-columns:1fr;}.bp-ref-checkout{grid-template-columns:1fr 1fr;}}
 @media(max-width:800px){.bp-home-hero{grid-template-columns:1fr;}.bp-ref-checkout{grid-template-columns:1fr;}.bp-checkout-trust{grid-template-columns:repeat(3,minmax(0,1fr));}.bp-checkout-provider-fieldset{grid-template-columns:repeat(3,minmax(0,1fr));}}
 @media(max-width:560px){.bp-home-copy h1{font-size:clamp(2rem,8vw,2.7rem)}.bp-checkout-provider-fieldset{grid-template-columns:1fr;}.bp-checkout-trust{grid-template-columns:1fr;}.bp-checkout-trust>div+div{border-left:0;border-top:1px solid #e3e9f8;padding-top:12px;}.bp-order-product{grid-template-columns:52px minmax(0,1fr);}.bp-order-product-icon{width:52px;height:52px;}.bp-order-product strong{grid-column:2;}.bp-checkout-heading{padding-top:20px;}.bp-transaction-dialog{width:100vw;border-radius:0;padding:17px;}}
+
+
+/* Brendigo paid-plan website management. */
+.bp-license-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:0 0 20px}
+.bp-license-summary article{display:flex;flex-direction:column;gap:8px;min-width:0}
+.bp-license-summary small{font-weight:700;color:#5c6c8a}
+.bp-license-summary strong{font-size:clamp(1.45rem,3vw,2rem);color:#101d59;line-height:1.1}
+.bp-license-summary span{font-size:.85rem;color:#52617b;overflow-wrap:anywhere}
+.bp-site-registration{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,1fr);gap:22px;margin-bottom:20px;align-items:center}
+.bp-site-registration h2{margin-top:0}
+.bp-site-form{display:grid;gap:14px;min-width:0}
+.bp-site-form label{display:grid;gap:6px;font-weight:700}
+.bp-site-form input{min-width:0;max-width:100%;width:100%;box-sizing:border-box}
+.bp-site-form .btn:disabled{cursor:not-allowed;opacity:.5}
+.bp-license-once pre{white-space:pre-wrap;overflow-wrap:anywhere;user-select:all}
+.bp-admin-grant{display:grid;gap:8px;min-width:180px}
+.bp-admin-grant input[type=date],.bp-admin-grant select{min-width:0;width:100%;max-width:100%}
+.bp-admin-grant label{display:flex;align-items:center;gap:8px;font-size:.79rem}
+@media(max-width:800px){.bp-site-registration{grid-template-columns:1fr}}
+@media(max-width:520px){.bp-license-summary{grid-template-columns:1fr}.bp-site-registration{padding:16px!important}.bp-site-form .btn{width:100%}}
+
+.bp-tier-sites{display:block;color:#183bc9;background:#eaf1ff;border-radius:10px;padding:9px 12px;margin:10px 0 14px;font-size:1rem}.bp-price-featured .bp-tier-sites{color:#fff;background:#224dbb}.bp-price-cards .btn{width:100%;justify-content:center;text-align:center}.bp-link-form select[name=site_id]{width:100%;max-width:100%;min-height:42px;border:1px solid #c9d5ee;border-radius:9px;padding:8px 11px;background:#fff;color:#101b42}@media(max-width:700px){.bp-price-cards{grid-template-columns:1fr;}.bp-pricing-details{grid-template-columns:1fr}}

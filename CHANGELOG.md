@@ -1,5 +1,17 @@
 # Povijest izdanja
 
+## 0.8.2 — 2026-11-04 (SANDBOX)
+
+- Model tri plaćena plana s fizičkim limitima instalacija Start 1, Business 5, Pro 25; uklonjen besplatni paket iz cjenika.
+- Registracija odabire željeni plan, a samo verificirani operator ručno može potvrditi plaćenu pretplatu u zasebnom administratorskom panelu.
+- Korisnički panel `/sites`: registracija HTTPS domene, pregled dostupnih/iskorištenih licenci, rotacija i opoziv/domenska kvota.
+- WordPress dodatak: aktivacijski obrazac razmjenjuje domenski licencni ključ za šifrirano spremljeni site-scoped sandbox API token.
+- Domain/site isolation na API endpointima i server-side kontrola aktivnog plana.
+- Dodani regresijski testovi kvota, odobravanja plaćenog paketa i aktivacije licence.
+- Ostaje SANDBOX-only: nema automatskog plaćanja pretplata, live PSP integracije ili potvrđene vizualne 1:1 podudarnosti.
+
+
+
 ## 0.8.1 — 2026-11-04 (SANDBOX) — kritični WordPress/WooCommerce hotfix
 
 - Uklonjena nekompatibilna `private array $settings` deklaracija iz `BP_Pay_Blocks`: WooCommerce `AbstractPaymentMethodType` već ima naslijeđeno `protected $settings`, čije preklapanje uzrokuje PHP fatal prilikom `woocommerce_blocks_loaded`.
