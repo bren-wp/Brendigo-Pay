@@ -1,0 +1,38 @@
+name: Publish Brendigo Pay sandbox release
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/release-sandbox.yml'
+permissions:
+  contents: write
+jobs:
+  sandbox-release:
+    if: github.repository == 'bren-wp/Brendigo-Pay'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: curl, sodium, openssl, mbstring
+          coverage: none
+      - name: Offline regression checks
+        run: bash tests/run-all.sh
+      - name: Package Brendigo Pay SANDBOX
+        run: python3 scripts/package_release.py --output dist
+      - name: Publish or update sandbox prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="$(grep -m1 "VERSION = " scripts/package_release.py | cut -d"'" -f2)"
+          TAG="v${VERSION}"
+          FILES=(dist/*.zip dist/SHA256SUMS.txt)
+          if gh release view "${TAG}" >/dev/null 2>&1; then
+            gh release upload "${TAG}" "${FILES[@]}" --clobber
+          else
+            gh release create "${TAG}" "${FILES[@]}" --target "${GITHUB_SHA}" --title "Brendigo Pay ${TAG} (SANDBOX)" --prerelease --notes "Development release only. No real payments. Brendigo Pay uses private JSON storage for its standalone platform and a WordPress/WooCommerce plugin. Visual pixel-perfect parity and production provider E2E testing are NOT certified."
+          fi
