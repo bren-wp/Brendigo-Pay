@@ -44,7 +44,7 @@ final class ApiClient {
         connection.setRequestMethod(method);
         connection.setRequestProperty("Accept", "application/json");
         connection.setRequestProperty("Cache-Control", "no-store");
-        connection.setRequestProperty("User-Agent", "BrendigoPayAndroid/0.8.4");
+        connection.setRequestProperty("User-Agent", "BrendigoPayAndroid/0.8.5");
         if (bearer != null && !bearer.isEmpty()) {
             connection.setRequestProperty("Authorization", "Bearer " + bearer);
         }
@@ -74,6 +74,8 @@ final class ApiClient {
                 String message = code == 401 ? "Prijava ili sesija nije valjana."
                         : code == 429 ? "Previše pokušaja. Pokušajte kasnije."
                         : code == 403 ? "Nemate dopuštenje za tu radnju."
+                        : code == 409 ? "E-mail adresa već je registrirana."
+                        : code == 422 ? "Provjerite unesene podatke."
                         : json.optString("error", "Zahtjev nije uspio.");
                 throw new HttpFailure(code, message);
             }

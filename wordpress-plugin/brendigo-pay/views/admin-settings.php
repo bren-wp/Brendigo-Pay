@@ -92,6 +92,22 @@ if (!is_array($linkItems)) { $linkItems = []; }
         <article class="bp-admin-panel bp-admin-provider"><span class="bp-provider-logo"><?php echo esc_html($provider[1]); ?></span><h3><?php echo esc_html($provider[0]); ?></h3><span class="bp-admin-warn">Status provjerite na platformi</span><p>Provjerite konfiguraciju testnog računa prije prihvata uplata.</p><?php if ($url !== ''): ?><a href="<?php echo esc_url($url . '/settings'); ?>" class="button bp-admin-outline" target="_blank" rel="noopener noreferrer">Upravljaj integracijom ↗</a><?php else: ?><span class="bp-admin-warn">Najprije spremite URL platforme.</span><?php endif; ?></article>
         <?php endforeach; ?>
     </div></section>
+    <?php if (class_exists('WooCommerce')): ?>
+    <section class="bp-admin-panel bp-admin-offline-methods" aria-labelledby="bp-admin-offline-heading">
+        <h2 id="bp-admin-offline-heading">Dodatne opcije u WooCommerceu</h2>
+        <p>Za hrvatske i SEPA bankovne uplate WooCommerce ima vlastiti način <strong>Bankovna uplata (BACS)</strong>,
+           a za naplatu prilikom dostave vlastitu opciju <strong>Pouzećem (COD)</strong>.
+           Te opcije nisu Brendigo Pay kartični adapteri i ne prijavljuju automatski uspješnu uplatu platformi.</p>
+        <p><strong>Sigurnosna napomena:</strong> narudžbe plaćene bankovnom uplatom ostaju na čekanju
+           dok trgovac ne potvrdi stvarni priljev na svojem računu.</p>
+        <a class="button bp-admin-outline"
+           href="<?php echo esc_url(admin_url('admin.php?page=wc-settings&tab=checkout')); ?>">
+           Otvori WooCommerce načine plaćanja
+        </a>
+        <p><a href="https://woocommerce.com/document/bacs/" target="_blank" rel="noopener noreferrer">
+           Službena WooCommerce dokumentacija za bankovne uplate</a></p>
+    </section>
+    <?php endif; ?>
     <section id="bp-merchant-links" class="bp-admin-panel bp-admin-link-list" aria-labelledby="bp-merchant-links-title">
     <div class="bp-admin-link-header"><div><h2 id="bp-merchant-links-title">Aktivne naplatne poveznice</h2><p>Odaberite poveznicu na Gutenberg bloku ili kopirajte kratki kod na bilo koju WordPress stranicu.</p></div>
     <?php if ($url !== ''): ?><a class="button bp-admin-button" href="<?php echo esc_url($url . '/dashboard?tab=links'); ?>" target="_blank" rel="noopener noreferrer">Upravljaj poveznicama ↗</a><?php endif; ?></div>

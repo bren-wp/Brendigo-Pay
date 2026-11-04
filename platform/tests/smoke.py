@@ -65,6 +65,22 @@ def main():
             else:
                 raise RuntimeError('Server did not start')
 
+            for legal_path, expected in [
+                ('/privacy', 'Politika privatnosti'),
+                ('/terms', 'Uvjeti korištenja'),
+                ('/cookies', 'Kolačići'),
+                ('/refund-policy', 'Otkazivanje i povrati'),
+                ('/contact', 'Kontakt i podrška'),
+                ('/about', 'O platformi'),
+                ('/security', 'Sigurnost platforme'),
+                ('/providers', 'Načini plaćanja'),
+            ]:
+                legal_status, legal_html, _ = req(legal_path)
+                assert legal_status == 200 and expected in legal_html
+                assert 'https://brendigo.com' in legal_html
+                assert 'Built with' in legal_html and 'nije banka' in legal_html
+            assert req('/no-such-legal-page')[0] == 404
+            print('PASS: all public legal pages, responsive brand footer and explicit payment disclaimer')
             status, body, _ = req('/register?plan=business')
             assert status == 200 and '49,90' in body and '19,90' in body, f"register GET: {status}, body={body[:420]!r}"
             csrf = re.search('name="csrf" value="([a-f0-9]+)"', body).group(1)
@@ -75,6 +91,54 @@ def main():
             })
             assert status == 200 and 'Moje web-stranice' in body and 'čeka provjeru uplate' in body
             print('PASS: new merchant selects paid tier but receives no free license')
+            # Android registration and web login must use the identical user/email/Argon2id store.
+            assert req('/api/v1/mobile/register', {
+                'name': 'Bad Plan', 'email': 'badplan@example.com',
+                'password': 'this-is-a-long-test-password', 'requested_tier': 'free',
+            })[0] == 422
+            registration_status, registration_body, _ = req('/api/v1/mobile/register', {
+                'name': 'Android Registered Merchant', 'email': 'android-user@example.com',
+                'password': 'android-registration-password-15',
+                'requested_tier': 'pro', 'website': base,
+            })
+            assert registration_status == 201, (registration_status, registration_body)
+            registration = json.loads(registration_body)
+            assert registration['token'].startswith('bp_mobile_')
+            assert registration['plan_status'] == 'awaiting_manual_payment_verification'
+            assert req('/api/v1/mobile/register', {
+                'name': 'Android Registered Merchant', 'email': 'android-user@example.com',
+                'password': 'android-registration-password-15',
+                'requested_tier': 'business',
+            })[0] == 409
+            android_overview = json.loads(req('/api/v1/mobile/overview', token=registration['token'])[1])
+            assert android_overview['merchant']['email'] == 'android-user@example.com'
+            assert android_overview['subscription']['status'] == 'inactive'
+            assert android_overview['subscription']['requested_tier'] == 'pro'
+            assert android_overview['subscription']['site_limit'] == 0
+            assert android_overview['sites'] == [] and android_overview['transactions'] == []
+            assert android_overview['integrations'] == {
+                'stripe': False, 'paypal': False, 'revolut': False,
+            }
+            assert req('/api/v1/mobile/links', {
+                'site_id': 'b' * 24, 'title': 'Should not work', 'amount': '12.00'
+            }, token=registration['token'])[0] == 422
+            android_web_client = urllib.request.build_opener(
+                urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
+            login_page_status, login_page, _ = req('/login', client=android_web_client)
+            assert login_page_status == 200
+            android_web_csrf = re.search('name="csrf" value="([a-f0-9]+)"', login_page).group(1)
+            mobile_to_web, site_page, _ = req('/login', {
+                'email': 'android-user@example.com',
+                'password': 'android-registration-password-15',
+                'csrf': android_web_csrf,
+            }, client=android_web_client)
+            assert mobile_to_web == 200 and 'Moje web-stranice' not in site_page
+            site_status_code, site_page, _ = req('/sites', client=android_web_client)
+            assert site_status_code == 200 and '0 / 0' in site_page
+            assert req('/admin', client=android_web_client)[0] == 403
+            assert req('/api/v1/me', token=registration['token'])[0] == 401
+            print('PASS: Android registration -> web login, same user and no free entitlements')
+
             csrf = re.search('name="csrf" value="([a-f0-9]+)"', body).group(1)
             assert req('/sites', {'origin': base, 'csrf': csrf})[0] == 200
             assert req('/sites')[1].find('0 / 0') != -1
@@ -90,7 +154,16 @@ def main():
                 config_text, count=1,
             )
             assert replacements == 1, 'missing operator configuration'
+            # Operator-provided legal identity is escaped even when config has markup.
+            config_text = config_text.replace(
+                "'legal_operator_name' => ''",
+                "'legal_operator_name' => '<script>alert(1)</script>'",
+            )
             config_file.write_text(config_text)
+            public_contact_status, public_contact, _ = req('/contact')
+            assert public_contact_status == 200
+            assert '&lt;script&gt;alert(1)&lt;/script&gt;' in public_contact
+            assert '<script>alert(1)</script>' not in public_contact
             status, admin_page, _ = req('/admin')
             assert status == 200 and 'Admin Panel' not in admin_page and 'Paketi i licence' in admin_page
             admin_csrf = re.search('name="csrf" value="([a-f0-9]+)"', admin_page).group(1)
@@ -142,7 +215,7 @@ def main():
             assert json.loads(snapshot)['last_seen_at'] is None
             payload = {
                 'site_url': base, 'installation_id': 'a' * 32,
-                'plugin_version': '0.8.4', 'wordpress_version': '6.9.1',
+                'plugin_version': '0.8.5', 'wordpress_version': '6.9.1',
                 'woocommerce_version': '10.3.0',
             }
             assert req('/api/v1/sites/sync', {**payload, 'installation_id': 'b' * 32}, token=token)[0] == 403
@@ -150,15 +223,15 @@ def main():
             assert req('/api/v1/sites/sync', {**payload, 'plugin_version': '<script>'}, token=token)[0] == 422
             assert req('/api/v1/sites/sync', payload, token=token)[0] == 200
             site_status = json.loads(req('/api/v1/sites/status', token=token)[1])
-            assert site_status['plugin_version'] == '0.8.4' and site_status['last_seen_at']
-            assert '0.8.4' in req('/admin')[1] and site_status['origin'] in req('/sites')[1]
+            assert site_status['plugin_version'] == '0.8.5' and site_status['last_seen_at']
+            assert '0.8.5' in req('/admin')[1] and site_status['origin'] in req('/sites')[1]
             print('PASS: authenticated, version-bounded WordPress heartbeat and synchronized admin/user views')
             mobile_status, mobile_body, _ = req('/api/v1/mobile/overview', token=mobile_token)
             assert mobile_status == 200
             mobile_data = json.loads(mobile_body)
             assert mobile_data['subscription']['sites_used'] == 1
             assert mobile_data['sites'][0]['id'] == site_id
-            assert mobile_data['sites'][0]['plugin_version'] == '0.8.4'
+            assert mobile_data['sites'][0]['plugin_version'] == '0.8.5'
             mobile_create_status, created, _ = req('/api/v1/mobile/links', {
                 'site_id': site_id, 'title': 'Created on Android',
                 'amount': '24.90', 'description': 'Synced from user panel',

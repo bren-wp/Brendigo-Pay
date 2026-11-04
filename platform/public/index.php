@@ -7,6 +7,8 @@ use BrendigoPay\StripeTest;
 use BrendigoPay\StripeConnectSandbox;
 use BrendigoPay\SandboxProviders;
 use BrendigoPay\MobileApi;
+use BrendigoPay\Accounts;
+use function BrendigoPay\legal_page;
 use function BrendigoPay\e;
 use function BrendigoPay\minor_format;
 use function BrendigoPay\money_to_minor;
@@ -26,6 +28,8 @@ require dirname(__DIR__) . '/src/SandboxProviders.php';
 require dirname(__DIR__) . '/src/StripeConnectSandbox.php';
 require dirname(__DIR__) . '/src/Ui.php';
 require dirname(__DIR__) . '/src/MobileApi.php';
+require dirname(__DIR__) . '/src/Accounts.php';
+require dirname(__DIR__) . '/src/LegalPages.php';
 
 $configFile = dirname(__DIR__) . '/config.php';
 if (!is_file($configFile)) {
@@ -36,7 +40,8 @@ $config = require $configFile;
 $store = new JsonStore($config['data_dir']);
 $plans = new \BrendigoPay\Plans($store);
 $licenses = new \BrendigoPay\SiteLicenses($store, $plans, (bool) $config['is_local']);
-$mobileApi = new MobileApi($store, $plans, (string) $config['base_url']);
+$accounts = new Accounts($store, $licenses);
+$mobileApi = new MobileApi($store, $plans, (string) $config['base_url'], $accounts);
 $base = $config['base_url'];
 $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
@@ -86,7 +91,7 @@ function render(string $title, string $content): never
 {
     global $path, $config;
     $user = current_user();
-    $marketing = in_array($path, ['/', '/pricing', '/plugin', '/docs', '/login', '/register'], true);
+    $marketing = in_array($path, ['/', '/pricing', '/plugin', '/docs', '/login', '/register', '/about', '/privacy', '/terms', '/cookies', '/refund-policy', '/contact', '/security', '/providers'], true);
     $merchant = $user !== null && (str_starts_with($path, '/dashboard') || $path === '/settings' || $path === '/sites' || $path === '/admin');
     $bodyClass = $merchant ? 'bp-body-merchant' : ($marketing ? 'bp-body-marketing' : 'bp-body-checkout');
     $nav = $user === null
@@ -121,7 +126,25 @@ function render(string $title, string $content): never
     } else {
         echo '<main class="container ' . ($marketing ? 'bp-marketing-main' : '') . '" id="main-content">' . $content . '</main>';
     }
-    echo '<footer class="container footer"><span>© ' . date('Y') . ' Brendigo Pay · <a href="https://brendigo.com" target="_blank" rel="noopener">Brendigo</a></span><nav aria-label="Poveznice podnožja"><a href="/">Naslovnica</a><a href="/pricing">Cijene</a><a href="/plugin">WordPress</a><a href="/docs">Upute</a><a href="https://brendigopay.com" target="_blank" rel="noopener">BrendigoPay.com</a></nav><span>v0.8.2 • SANDBOX • Bez stvarnih plaćanja</span></footer></body></html>';
+    echo '<footer class="bp-footer"><div class="container bp-footer-grid">'
+        . '<div class="bp-footer-brand">' . bp_brand() . '<p>Pametna plaćanja za moderan biznis. '
+        . 'Povežite vlastite pružatelje plaćanja, licencirane domene i testne transakcije na jednom mjestu.</p></div>'
+        . '<nav aria-label="Usluga"><h2>Platforma</h2><a href="/">Naslovnica</a><a href="/pricing">Paketi i cijene</a>'
+        . '<a href="/providers">Načini plaćanja</a><a href="/plugin">WordPress dodatak</a>'
+        . '<a href="/docs">Dokumentacija</a><a href="/login">Korisnički panel</a></nav>'
+        . '<nav aria-label="O nama"><h2>Informacije</h2><a href="/about">O Brendigo Payu</a>'
+        . '<a href="/contact">Kontakt i podrška</a><a href="/security">Sigurnost</a>'
+        . '<a href="https://brendigo.com" rel="noopener noreferrer">Brendigo.com</a></nav>'
+        . '<nav aria-label="Pravni dokumenti"><h2>Pravne stranice</h2>'
+        . '<a href="/privacy">Politika privatnosti</a><a href="/terms">Uvjeti korištenja</a>'
+        . '<a href="/cookies">Kolačići</a><a href="/refund-policy">Otkazivanje i povrati</a></nav>'
+        . '</div><div class="container bp-footer-disclaimer">Brendigo Pay je softverska platforma, '
+        . 'nije banka ni licencirana financijska ili platna institucija, ne drži sredstva kupaca. '
+        . 'Platne transakcije izvršavaju vanjski, zasebno ugovoreni pružatelji. '
+        . 'Trenutačno izdanje dostupno je samo za testna plaćanja.</div>'
+        . '<div class="container bp-footer-bottom"><span>© ' . date('Y') . ' Brendigo Pay · v0.8.5 (SANDBOX)</span>'
+        . '<span>Built with <a href="https://brendigo.com" rel="noopener noreferrer">Brendigo</a></span></div>'
+        . '</footer></body></html>';
     exit;
 }
 
@@ -758,6 +781,26 @@ if ($method === 'POST' && preg_match('#^/webhooks/stripe/([a-f0-9]{32})$#D', $pa
     exit('ok');
 }
 
+// Unified registration: the web and Android clients write to the same Accounts store.
+if ($path === '/api/v1/mobile/register' && $method === 'POST') {
+    try {
+        $registered = $mobileApi->register(json_request(), (string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown'));
+        if ($registered === null) {
+            fail_api(409, 'This email address is already registered');
+        }
+        // Resolve for auditing without adding identifiers or privileges to the API response.
+        $registeredUser = $mobileApi->authenticate('Bearer ' . $registered['token']);
+        if ($registeredUser !== null) {
+            audit_event($registeredUser[0]['id'], 'account_registered', ['via' => 'mobile']);
+        }
+        json_response($registered, 201);
+    } catch (InvalidArgumentException $e) {
+        fail_api(422, 'Check your name, email, password (12+ characters), paid plan and HTTPS website');
+    } catch (RuntimeException $e) {
+        fail_api(429, 'Too many registration attempts');
+    }
+}
+
 // Separate merchant-only Android access. Mobile bearer tokens cannot authenticate WP plugin routes.
 if ($path === '/api/v1/mobile/login' && $method === 'POST') {
     $input = json_request();
@@ -1086,6 +1129,13 @@ if ($method === 'POST' && preg_match('#^/p/([a-f0-9]{24})/checkout$#D', $path, $
     }
 }
 
+if ($method === 'GET') {
+    $legal = legal_page($path, $config);
+    if ($legal !== null) {
+        render($legal[0], $legal[1]);
+    }
+}
+
 if ($path === '/' && $method === 'GET') {
     render('Pametna naplata za WordPress i WooCommerce', bp_site_home());
 }
@@ -1120,30 +1170,17 @@ if (in_array($path, ['/login', '/register'], true) && $method === 'GET') {
 
 if ($path === '/register' && $method === 'POST') {
     check_csrf();
-    $name = trim((string) ($_POST['name'] ?? ''));
-    $email = strtolower(trim((string) ($_POST['email'] ?? '')));
-    $password = (string) ($_POST['password'] ?? '');
-    $requestedTier = (string) ($_POST['requested_tier'] ?? '');
-    $website = trim((string) ($_POST['website'] ?? ''));
-    if (!isset(\BrendigoPay\Plans::TIERS[$requestedTier]) || strlen($website) > 255
-        || ($website !== '' && $licenses->origin($website) === null)) {
-        render('Registracija', message('Odaberite jedan od tri plaćena paketa i valjanu HTTPS domenu.'));
+    try {
+        $id = $accounts->register($_POST, (string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown'));
+    } catch (InvalidArgumentException $e) {
+        http_response_code(422);
+        render('Registracija', message('Provjerite naziv, e-adresu, lozinku (12 znakova), plaćeni paket i HTTPS domenu.'));
+    } catch (RuntimeException $e) {
+        http_response_code(429);
+        render('Registracija', message('Previše pokušaja registracije. Pokušajte kasnije.'));
     }
-    if (strlen($name) < 2 || strlen($name) > 100 || !filter_var($email, FILTER_VALIDATE_EMAIL)
-        || strlen($email) > 254 || strlen($password) < 12 || strlen($password) > 256) {
-        render('Registracija', message('Provjerite naziv, e-adresu i lozinku (najmanje 12 znakova).'));
-    }
-    $id = $store->locked('registration', static function () use ($store, $name, $email, $password, $requestedTier, $website): ?string {
-        $hash = hash('sha256', $email);
-        if ($store->read('emails', $hash) !== null) {
-            return null;
-        }
-        $id = random_id();
-        $store->write('users', $id, ['id' => $id, 'name' => $name, 'email' => $email, 'password_hash' => password_hash($password, PASSWORD_ARGON2ID), 'requested_tier' => $requestedTier, 'requested_site' => $website, 'created_at' => gmdate('c')]);
-        $store->write('emails', $hash, ['user_id' => $id]);
-        return $id;
-    });
     if ($id === null) {
+        http_response_code(409);
         render('Registracija', message('E-adresa je već registrirana.'));
     }
     session_regenerate_id(true);
@@ -1490,7 +1527,7 @@ if ($path === '/settings' && $method === 'GET') {
     $once = $_SESSION['new_api_key'] ?? null;
     unset($_SESSION['new_api_key']);
     $keyBox = is_string($once) ? '<div class="message info"><strong>API ključ prikazan je samo jednom:</strong><pre>' . e($once) . '</pre>Odmah ga spremite u WordPress dodatak.</div>' : '';
-    render('Postavke', '<div class="page-heading"><span class="eyebrow">POSTAVKE</span><h1>Povezivanje i integracije</h1></div>' . message('Podržani su samo testni/sandbox načini rada za Stripe, PayPal i Revolut. Ne unosite produkcijske ključeve.', 'info') . '<section class="card stack"><h2>Stripe testna integracija</h2><p>Status: <strong>' . ($hasStripe ? 'Konfigurirana' : 'Nije konfigurirana') . '</strong></p><p>Stripe Dashboard → Developers → API keys: kopirajte tajni <code>sk_test_...</code> ključ. U Stripe Webhooks dodajte endpoint <code>' . e($base . '/webhooks/stripe/' . $user['id']) . '</code> i događaj <code>checkout.session.completed</code>.</p><form method="post" action="/settings/stripe">' . csrf() . '<label>Stripe tajni TEST ključ<input name="secret" type="password" required autocomplete="off" placeholder="sk_test_..."></label><label>Stripe Webhook signing secret<input name="webhook_secret" type="password" required autocomplete="off" placeholder="whsec_..."></label><button class="btn" type="submit">Spremi šifrirane testne ključeve</button></form></section>' . provider_form_sections($base, $user) . '<section class="card stack"><h2>Web-stranice i licence</h2><p>Svaki plaćeni paket ima ograničen broj domena (Start: 1, Business: 5, Pro: 25). Dodajte web-stranicu na panelu i aktivirajte licenciju u WordPressu.</p><p><a class="btn" href="/sites">Web-stranice i licence →</a></p>' . $keyBox . '<p>API pristup se generira samo tijekom aktivacije licencije iz WordPress dodatka.</p><h3>Registrirane domene</h3><ul>' . ($items ?: '<li>Nema registriranih domena.</li>') . '</ul></section>');
+    render('Postavke', '<div class="page-heading"><span class="eyebrow">POSTAVKE</span><h1>Povezivanje i integracije</h1></div>' . message('Podržani su samo testni/sandbox načini rada za Stripe, PayPal i Revolut. Ne unosite produkcijske ključeve.', 'info') . '<section class="card stack"><h2>Stripe testna integracija</h2><p>Status: <strong>' . ($hasStripe ? 'Konfigurirana' : 'Nije konfigurirana') . '</strong></p><p>Stripe Dashboard → Developers → API keys: kopirajte tajni <code>sk_test_...</code> ključ. U Stripe Webhooks dodajte endpoint <code>' . e($base . '/webhooks/stripe/' . $user['id']) . '</code> i događaj <code>checkout.session.completed</code>.</p><form method="post" action="/settings/stripe">' . csrf() . '<label>Stripe tajni TEST ključ<input name="secret" type="password" required autocomplete="off" placeholder="sk_test_..."></label><label>Stripe Webhook signing secret<input name="webhook_secret" type="password" required autocomplete="off" placeholder="whsec_..."></label><button class="btn" type="submit">Spremi šifrirane testne ključeve</button></form></section>' . provider_form_sections($base, $user) . '<section class="card stack"><h2>Domaći i međunarodni pružatelji</h2><p>Trenutačno su dostupne isključivo testne integracije Stripe, PayPal i Revolut. Monri WebPay i CorvusPay zahtijevaju zasebne testne račune i završenu verifikaciju pa još nisu ponuđeni kao aktivni platni načini.</p><p><a class="btn secondary" href="/providers">Pregled integracija i službenih uputa →</a></p></section>' . '<section class="card stack"><h2>Web-stranice i licence</h2><p>Svaki plaćeni paket ima ograničen broj domena (Start: 1, Business: 5, Pro: 25). Dodajte web-stranicu na panelu i aktivirajte licenciju u WordPressu.</p><p><a class="btn" href="/sites">Web-stranice i licence →</a></p>' . $keyBox . '<p>API pristup se generira samo tijekom aktivacije licencije iz WordPress dodatka.</p><h3>Registrirane domene</h3><ul>' . ($items ?: '<li>Nema registriranih domena.</li>') . '</ul></section>');
 }
 
 if ($method === 'POST' && preg_match('#^/settings/tokens/([a-f0-9]{64})/revoke$#D', $path, $m)) {

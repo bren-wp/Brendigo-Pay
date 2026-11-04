@@ -32,6 +32,11 @@ $config = [
     'is_local' => in_array($parsed['host'], ['127.0.0.1', 'localhost'], true),
     // Set only registered operator UUIDs here after verifying operator identity.
     'admin_user_ids' => [],
+    // Fill in verified business identity before publishing commercial legal pages.
+    'legal_operator_name' => '',
+    'legal_address' => '',
+    'legal_contact_email' => '',
+
 ];
 file_put_contents($file, "<?php\nreturn " . var_export($config, true) . ";\n", LOCK_EX);
 chmod($file, 0600);

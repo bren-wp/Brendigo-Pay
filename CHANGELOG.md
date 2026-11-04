@@ -1,3 +1,13 @@
+## 0.8.5 — 2026-11-04 (SANDBOX)
+
+- Jedna centralizirana registracija za web i Android preko \`Accounts::register\`, Argon2id pohrana, jedinstven e-mail indeks i rate-limit; prijava u oba smjera.
+- Nativan Android obrazac registracije s odabirom plaćenog paketa Start/Business/Pro bez automatske aktivacije ili pristupa drugim računima.
+- Android sada prikazuje statuse vlastitih Stripe/PayPal/Revolut sandbox integracija uz dosadašnje linkove, transakcije i licence.
+- Novi responzivni footer i javne stranice Privatnost, Uvjeti, Kolačići, Povrati, Kontakt, O nama, Sigurnost i Načini plaćanja, s Built with Brendigo.
+- Razrađen katalog domaćih/regionalnih pružatelja i službena dokumentacija. Monri i CorvusPay nisu aktivirani bez testnih računa, ovjere i E2E.
+- Upute za instalaciju weba, WP dodatka i Androida te ciljani sigurnosni/dead-code pregled; sve u sandboxu.
+- Android Gradle/AGP 9.x, API 36 i paket 0.8.5; CI priprema debug APK i nepotpisani release AAB.
+
 ## 0.8.4 — 2026-11-04 (SANDBOX)
 
 - Nova nativna Android aplikacija u /android: prijava, pregled stvarnih podataka trgovca, transakcije, platni linkovi, licence i račun.

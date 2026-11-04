@@ -4,7 +4,7 @@ from pathlib import Path
 import re
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION = '0.8.4'
+VERSION = '0.8.5'
 wp = ROOT / 'wordpress-plugin' / 'brendigo-pay'
 required = [
     'assets/public.css', 'assets/admin.css', 'assets/editor.css',
@@ -58,7 +58,16 @@ assert "canMakePayment: function () { return options.length > 0; }" in wc
 assert 'class="bp-admin-hero"' in (wp / 'views' / 'admin-settings.php').read_text(encoding='utf-8')
 assert '--bp-control-height' in admin
 assert '.bp-admin-sync-details' in admin and '.bp-admin-sync-panel' in admin
+wp_admin_view=(wp / 'views/admin-settings.php').read_text(encoding='utf-8')
+assert 'Bankovna uplata (BACS)' in wp_admin_view
+assert 'Pouzećem (COD)' in wp_admin_view
+assert 'wc-settings&tab=checkout' in wp_admin_view
 assert 'bp-merchant-main .table-wrap table' in (ROOT / 'platform/public/assets/app.css').read_text(encoding='utf-8')
 assert 'bp-admin-sync-heading' in (wp / 'views/admin-settings.php').read_text(encoding='utf-8')
 assert not re.search(r'name=["\']card_number["\']', block + wc + gateway)
-print('PASS: version, branding, 10 references, Gutenberg and checkout UI contracts (structural only)')
+legal = (ROOT / 'platform/src/LegalPages.php').read_text(encoding='utf-8')
+for path in ['/privacy', '/terms', '/cookies', '/refund-policy', '/contact', '/about', '/security', '/providers']:
+    assert f"'{path}'" in legal
+assert 'Built with' in (ROOT / 'platform/public/index.php').read_text()
+assert '.bp-footer-grid' in (ROOT / 'platform/public/assets/app.css').read_text()
+print('PASS: version, brand, 10 references, legal pages, WP and checkout UI contracts (structural only)')

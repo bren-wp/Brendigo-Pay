@@ -2,7 +2,7 @@
   <img src="platform/public/assets/app-icon-512.png" alt="Brendigo Pay originalna ikona" width="96" height="96">
   <h1>Brendigo Pay</h1>
   <p><strong>Pametna plaćanja za moderan biznis</strong></p>
-  <p>Jedna platforma za naplatne poveznice, QR kodove, WordPress i WooCommerce.</p>
+  <p>Jedna platforma za web naplatu, WordPress, WooCommerce i Android korisnički panel.</p>
   <p>
     <a href="https://brendigopay.com">BrendigoPay.com</a> ·
     <a href="https://brendigo.com">Brendigo</a> ·
@@ -11,29 +11,43 @@
   </p>
   <p>
     <img alt="GitHub Actions" src="https://github.com/bren-wp/Brendigo-Pay/actions/workflows/ci.yml/badge.svg">
-    <strong>v0.8.4 · SANDBOX · bez stvarnih uplata</strong>
+    <strong>v0.8.5 · SANDBOX · bez stvarnih uplata</strong>
   </p>
 </div>
 
-> **RAZVOJNO IZDANJE v0.8.4 — SANDBOX**. Brendigo Pay trenutno **ne podržava stvarne uplate**. Stripe TEST, PayPal Sandbox i Revolut Sandbox adapteri nisu potvrđeni u punim vanjskim end-to-end testovima. Ne unositi produkcijske tajne ključeve i ne postavljati kao aktivno sredstvo naplate. Izrada vizualnog sučelja prema referencama **ne znači potvrđenu pixel-by-pixel 1:1 podudarnost**.
+> **IZDANJE v0.8.5 — SANDBOX (TESTIRANJE)**. Brendigo Pay trenutno **ne podržava stvarne uplate**. Stripe TEST, PayPal Sandbox i Revolut Sandbox adapteri nisu potvrđeni u punim vanjskim end-to-end testovima. Ne unositi produkcijske tajne ključeve i ne postavljati kao aktivno sredstvo naplate. Izrada vizualnog sučelja prema referencama **ne znači potvrđenu pixel-by-pixel 1:1 podudarnost**.
 
-## Android aplikacija i zajednički korisnički račun (v0.8.4)
+## Android aplikacija i zajednički korisnički račun (v0.8.5)
 
 Nova nativna Android aplikacija nalazi se u [mapi android/](android/) i ima istu Brendigo Pay paletu, ikonu, naziv i četiri glavna pogleda: Pregled, Transakcije, Linkovi i Web-stranice. Koristi **iste podatke trgovca** kao web i WordPress dodatak. Aplikacija se prijavljuje zasebnim mobilnim tokenom; token se čuva u Android Keystore AES-GCM, samo za merchant API. Svaka domena/licencija i platni link automatski su vidljivi u zajedničkoj pohrani.
 
-U izdanju se isporučuju **instalacijski razvojni APK** i **nepotpisani release AAB**. AAB nije spreman za Google Play dok se ne potpiše izdavateljevim upload ključem, dovrše produkcijske integracije i E2E testovi. Nema izmišljenih Android snimki; [Android dokumentacija i upute](android/README.md).
+U izdanju se isporučuju **instalacijski razvojni APK** i **nepotpisani release AAB**. AAB nije spreman za Google Play dok se ne potpiše izdavateljevim upload ključem, dovrše produkcijske integracije i E2E testovi. Stvarni Android i WordPress screenshotovi još trebaju provjeru na pokrenutim aplikacijama; ne koristimo referentne rendere kao lažne dokaze. [Android dokumentacija i upute](android/README.md).
 
-## Sinkronizirani WordPress i web-paneli (v0.8.4)
+## Jedan račun na webu i Androidu
+
+**Registrirajte se gdje želite, prijavite se svugdje.** Android i web dijele istu registraciju, e-adresu i Argon2id autentikaciju. Android aplikacija sadrži zaseban responzivan obrazac za naziv, e-adresu, lozinku, HTTPS adresu trgovine i tri plaćena paketa. Novi račun može se odmah prijaviti na web ili Android korisnički panel, ali **ne dobiva pravo na naplatu** dok operater ne potvrdi uplatu za paket.
+
+Android korisnički panel čita s istog servera: statistike testne naplate, vlastite transakcije, domene/licence, status Stripe/PayPal/Revolut integracija te upravlja platnim linkovima. Administrator na webu vidi sve račune i ručno verificira pretplate; običan trgovac nema pristup njegovu panelu ni podacima druge trgovine.
+
+## Stranice, uvjeti i identitet
+
+Prošireni **responzivni footer** povezuje Cijene, Načine plaćanja, WordPress, Dokumentaciju, O nama, Podršku, Sigurnost, Politiku privatnosti, Uvjete korištenja, Kolačiće i Povrate. Na dnu je tražena oznaka **Built with [Brendigo](https://brendigo.com)** te jasna napomena da platforma nije banka/financijska institucija.
+
+Poslovni identitet, adresu i javni kontakt treba upisati u privatnu konfiguraciju prije komercijalnog lansiranja; stranice ne sadrže izmišljene pravne podatke.
+
+**Upute za postavljanje:** [Web, WordPress i Android](docs/DEPLOYMENT-0.8.5.md) · [Integracije prema službenoj dokumentaciji](docs/PROVIDER-MATRIX-0.8.5.md) · [Sigurnost i otvoreni rizici](docs/SECURITY-REVIEW-0.8.5.md).
+
+## Sinkronizirani WordPress i web-paneli (v0.8.5)
 
 Platforma prikazuje status pojedine instalacije, verziju dodatka i vrijeme zadnjeg sigurnog kontakta. WordPress po rasporedu (WP-Cron, svakih sat vremena) šalje poslužiteljski zahtjev potpisan vlastitim **domenski ograničenim API tokenom** te ID-jem instalacije. Platforma provjerava isteklu/suspendiranu pretplatu, vlasnika domene, licenciju i instalaciju.
 
 **WooCommerce Classic i Blocks** ne nude Brendigo Pay ako posljednja uspješna sinkronizacija nije potvrđena tijekom prethodna dva sata ili je platforma odbila zahtjev. Administrator može odabrati „Sinkroniziraj sada“ u WP postavkama; status uključuje Start/Business/Pro, iskorištene domene i datum isteka. Operator može suspendirati plaćeni paket iz `/admin` te tako odmah blokirati pristup API-ju.
 
-[Ciljani sigurnosni pregled Android i API izdanja 0.8.4](docs/SECURITY-REVIEW-0.8.4.md).
+[Ciljani sigurnosni pregled Android i API izdanja 0.8.5](docs/SECURITY-REVIEW-0.8.5.md).
 
 Ovo je još uvijek **SANDBOX**. Nakon deploya treba potvrditi produkcijske platne pružatelje, automatiziranu naplatu paketa, identitet trgovca, domensku vlasničku provjeru, WordPress/WooCommerce E2E te regulatornu usklađenost. Snimke u README-u odnose se na stvarni raniji UI, ali ne jamče vizualnu 1:1 identičnost svih referenci.
 
-## Tri plaćena paketa, licence po web-stranici (v0.8.4)
+## Tri plaćena paketa, licence po web-stranici (v0.8.5)
 
 | Paket | Predložena cijena / mj | Dopuštene domene |
 |---|---:|---:|
@@ -91,7 +105,7 @@ Prikazujemo **stvarne snimke lokalno izvršene web-platforme**, nastale automati
 
 ## Jedno mjesto za različite načine naplate
 
-| Modul | Što je dostupno u v0.8.4 |
+| Modul | Što je dostupno u v0.8.5 |
 |---|---|
 | 🖥️ Web | Registracija, prijava, korisnička nadzorna ploča, licence, izvještaji i plaćeni paketi |
 | 🔗 Naplatne poveznice | Kreiranje, aktivacija/deaktivacija, javni URL, iznos u EUR |
