@@ -1,4 +1,4 @@
-# Visual QA — Brendigo Pay v0.6.0
+# Visual QA — Brendigo Pay v0.8.0
 
 The user supplied ten reference screenshots on 2026-11-04. **These are visual targets, not source code and not proof of implementation.** The implemented UI uses actual HTML, CSS, SVG, PHP templates and WordPress components. No newly generated imagery or screenshot-background substitution.
 
@@ -57,3 +57,7 @@ Svih deset dostavljenih slika korišteno je kao smjernica za redizajn. Rezultat 
 | WooCommerce checkout | Classic i Blocks payment gateway, kartice pružatelja | Puni WooCommerce E2E, stvarni theme layout i HPOS test |
 
 Vizualni mockup nije izvor podataka ni dokaz transakcije. Reference sadrže ilustrativne financijske metrike i neke marketinške tvrdnje koje ne smijemo prikazivati kao stvarne.
+
+## Marketing README screenshot policy v0.8.0
+
+Snimke u `docs/screenshots/` stvarni su lokalno renderirani web-programski zasloni (HTML/CSS/JS u Chromiumu), a ne korisničke reference. U repozitoriju **nema stvarnih WordPress admin/Gutenberg/WooCommerce screenshotova** iz instaliranog WordPressa. Marketinški README smije koristiti WordPress.org banner/ikonu, ali ih mora jasno razlikovati od stvarnih screenshots. Ove snimke izraditi u testnoj WordPress instalaciji s identificiranom temom i WooCommerce verzijom prije prikazivanja kao stvarnih.

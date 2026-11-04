@@ -1,8 +1,8 @@
-# Brendigo Pay — sigurnost v0.3.0 (SANDBOX)
+# Brendigo Pay — sigurnost (v0.8.0 SANDBOX)
 
-## Implementirano i lokalno provjereno
+## Implementirano i pokriveno lokalnim testovima
 
-- PHP sesije `HttpOnly`, `SameSite=Lax`, `Secure` na HTTPS; Argon2id za lozinke, CSRF tokeni i ograničavanje pokušaja prijave.
+- PHP sesije `HttpOnly`, `SameSite=Lax`, `Secure` na HTTPS; Argon2id za lozinke, CSRF tokeni i dva odvojena limita prijave (IP + IP/e-adresa).
 - JSON per-record atomic `rename`, `flock`, 0700 direktoriji i 0600 datoteke; bez SQL-a u web-platformi.
 - Hashirani API ključevi vezani uz origin, opozivanje; Stripe/PayPal/Revolut sandbox podaci šifrirani libsodium secretbox algoritmom s ključem iz konfiguracije.
 - Stripe HMAC webhook s vremenskom tolerancijom; Revolut HMAC webhook s vremenskom tolerancijom, te dohvat originalne narudžbe; PayPal server-side capture i postback provjera potpisa.
@@ -23,3 +23,7 @@
 - JSON audit nije nepromjenjiva financijska knjiga; backup kopija **ne sadrži** `config.php`/`app_key`, koji se mora sigurno čuvati odvojeno.
 
 **Ne puštati u javnu produkcijsku naplatu prije dovršetka navedenih obveza.**
+
+## Nalazi iz prolaza v0.8.0
+
+Pogledajte [SECURITY-AUDIT-0.8.0.md](SECURITY-AUDIT-0.8.0.md) i [DEAD-CODE-AUDIT-0.8.0.md](DEAD-CODE-AUDIT-0.8.0.md). Pregled izvornog koda i automatizirane provjere ne zamjenjuju neovisni penetration test ni regulatornu provjeru platne usluge.

@@ -12,4 +12,5 @@ python3 platform/tests/backup_restore.py
 php tests/woocommerce-gateway.php
 python3 -m py_compile scripts/visual_audit_wp.py
 python3 tests/ui-contract.py
+python3 tests/security-static.py
 echo 'PASS: All local checks completed'
