@@ -66,7 +66,7 @@ def main():
                 raise RuntimeError('Server did not start')
 
             status, body, _ = req('/register?plan=business')
-            assert status == 200 and '49,90' in body and '19,90' in body
+            assert status == 200 and '49,90' in body and '19,90' in body, f"register GET: {status}, body={body[:420]!r}"
             csrf = re.search('name="csrf" value="([a-f0-9]+)"', body).group(1)
             status, body, _ = req('/register', {
                 'name': 'Smoke Merchant', 'email': 'smoke@example.com',
