@@ -862,9 +862,15 @@ if ($path === '/api/v1/sites/sync' && $method === 'POST') {
         return $site;
     });
     if ($status === null) { fail_api(403, 'Installation credential revoked'); }
+    $plan = $plans->activeOrFail($token['user_id']);
     json_response([
         'site_id' => $token['site_id'],
+        'origin' => $token['origin'],
         'status' => 'active',
+        'plan' => $plan['tier'],
+        'expires_at' => $plan['expires_at'],
+        'website_limit' => $plans->siteLimit($token['user_id']),
+        'websites_used' => $plans->siteCount($token['user_id']),
         'last_seen_at' => $status['last_seen_at'],
         'mode' => 'test',
     ]);
