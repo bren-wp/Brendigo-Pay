@@ -18,6 +18,8 @@ use function BrendigoPay\verify_stripe_signature;
 require dirname(__DIR__) . '/src/JsonStore.php';
 require dirname(__DIR__) . '/src/JsonSessionHandler.php';
 require dirname(__DIR__) . '/src/Support.php';
+require dirname(__DIR__) . '/src/Plans.php';
+require dirname(__DIR__) . '/src/SiteLicenses.php';
 require dirname(__DIR__) . '/src/StripeTest.php';
 require dirname(__DIR__) . '/src/SandboxProviders.php';
 require dirname(__DIR__) . '/src/StripeConnectSandbox.php';
@@ -30,6 +32,8 @@ if (!is_file($configFile)) {
 }
 $config = require $configFile;
 $store = new JsonStore($config['data_dir']);
+$plans = new \BrendigoPay\Plans($store);
+$licenses = new \BrendigoPay\SiteLicenses($store, $plans, (bool) $config['is_local']);
 $base = $config['base_url'];
 $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
@@ -77,10 +81,10 @@ function check_csrf(): void
 
 function render(string $title, string $content): never
 {
-    global $path;
+    global $path, $config;
     $user = current_user();
     $marketing = in_array($path, ['/', '/pricing', '/plugin', '/docs', '/login', '/register'], true);
-    $merchant = $user !== null && (str_starts_with($path, '/dashboard') || $path === '/settings');
+    $merchant = $user !== null && (str_starts_with($path, '/dashboard') || $path === '/settings' || $path === '/sites' || $path === '/admin');
     $bodyClass = $merchant ? 'bp-body-merchant' : ($marketing ? 'bp-body-marketing' : 'bp-body-checkout');
     $nav = $user === null
         ? '<a href="/#mogucnosti">Mogućnosti</a><a href="/pricing">Cijene</a><a href="/plugin">Plugin</a><a href="/docs">Dokumentacija</a><a href="/login">Prijava</a><a class="btn" href="/register">Započni →</a>'
@@ -95,8 +99,12 @@ function render(string $title, string $content): never
             ['Platni linkovi', '/dashboard?tab=links', '↗', ($_GET['tab'] ?? '') === 'links'],
             ['Transakcije', '/dashboard?tab=transactions', '⇄', ($_GET['tab'] ?? '') === 'transactions'],
             ['Integracije', '/dashboard?tab=integrations', '◇', ($_GET['tab'] ?? '') === 'integrations'],
+            ['Web-stranice', '/sites', '▣', $path === '/sites'],
             ['Postavke', '/settings', '⚙', $path === '/settings'],
         ];
+        if (in_array($user['id'], (array) ($config['admin_user_ids'] ?? []), true)) {
+            $tabs[] = ['Admin', '/admin', '♢', $path === '/admin'];
+        }
         $sideLinks = '';
         foreach ($tabs as [$label, $url, $icon, $active]) {
             $sideLinks .= '<a href="' . e($url) . '" class="' . ($active ? 'active' : '') . '"><span aria-hidden="true">' . e($icon) . '</span>' . e($label) . '</a>';
@@ -207,6 +215,19 @@ function authenticate_api(): array
     $token = $store->read('tokens', hash('sha256', $m[1]));
     if ($token === null || !empty($token['revoked'])) {
         fail_api(401, 'Invalid API credential');
+    }
+    global $plans, $store;
+    if ($plans->current((string) ($token['user_id'] ?? '')) === null) {
+        fail_api(403, 'Paid plan inactive or expired');
+    }
+    if (empty($token['site_id'])) {
+        fail_api(403, 'Legacy API token must be replaced with a site license');
+    }
+    $site = $store->read('sites', (string) $token['site_id']);
+    if ($site === null || ($site['status'] ?? '') !== 'active'
+        || ($site['user_id'] ?? '') !== $token['user_id']
+        || ($site['origin'] ?? '') !== ($token['origin'] ?? '')) {
+        fail_api(403, 'Website license inactive');
     }
     return $token;
 }
@@ -739,6 +760,32 @@ if ($path === '/api/v1/health' && $method === 'GET') {
     json_response(['service' => 'Brendigo Pay', 'state' => 'starter-test']);
 }
 
+// Origin-bound license exchange: WordPress sends a one-time key and persistent installation ID.
+if ($path === '/api/v1/license/activate' && $method === 'POST') {
+    $input = json_request();
+    $ip = hash('sha256', (string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown'));
+    $result = $store->locked('license_rate_' . $ip, static function () use ($store, $ip): bool {
+        $rate = $store->read('rates', $ip) ?? ['start' => time(), 'count' => 0];
+        if (time() - (int) $rate['start'] > 900) { $rate = ['start' => time(), 'count' => 0]; }
+        if ((int) $rate['count'] >= 30) { return false; }
+        ++$rate['count'];
+        $store->write('rates', $ip, $rate);
+        return true;
+    });
+    if (!$result) { fail_api(429, 'Too many activation attempts'); }
+    try {
+        $activation = $licenses->activate(
+            (string) ($input['license_key'] ?? ''),
+            (string) ($input['site_url'] ?? ''),
+            (string) ($input['installation_id'] ?? '')
+        );
+        $site = $store->read('sites', $activation['site_id']);
+        audit_event($site['user_id'], 'site_license_activated', ['site_id' => $site['id']]);
+        json_response($activation);
+    } catch (RuntimeException $e) {
+        fail_api(403, 'License activation failed. Check the domain, package and key.');
+    }
+}
 if ($path === '/api/v1/me' && $method === 'GET') {
     $token = authenticate_api();
     $user = $store->read('users', $token['user_id']);
@@ -748,6 +795,9 @@ if ($path === '/api/v1/me' && $method === 'GET') {
     json_response([
         'merchant_name' => $user['name'],
         'origin' => $token['origin'],
+        'site_id' => $token['site_id'],
+        'plan' => $plans->current($token['user_id'])['tier'],
+        'website_limit' => $plans->siteLimit($token['user_id']),
         'mode' => 'test',
         'stripe_configured' => test_settings($user['id']) !== null,
         'providers' => configured_providers($user['id']),
@@ -760,7 +810,8 @@ if (preg_match('#^/api/v1/links/([a-f0-9]{24})$#D', $path, $m) && $method === 'G
         fail_api(404, 'Not found');
     }
     $token = authenticate_api();
-    if (($link['user_id'] ?? '') !== $token['user_id']) {
+    if (($link['user_id'] ?? '') !== $token['user_id'] ||
+        ($link['site_id'] ?? '') !== $token['site_id']) {
         fail_api(404, 'Not found');
     }
     json_response(['id' => $link['id'], 'title' => $link['title'], 'description' => (string)($link['description'] ?? ''), 'amount_minor' => $link['amount_minor'], 'currency' => 'EUR', 'url' => $base . '/p/' . $link['id']]);
@@ -770,7 +821,9 @@ if (preg_match('#^/api/v1/links/([a-f0-9]{24})$#D', $path, $m) && $method === 'G
 if ($path === '/api/v1/links' && $method === 'GET') {
     $token = authenticate_api();
     $links = array_values(array_filter($store->all('links'), static function (array $link) use ($token): bool {
-        return ($link['user_id'] ?? '') === $token['user_id'] && ($link['active'] ?? true) === true;
+        return ($link['user_id'] ?? '') === $token['user_id']
+            && ($link['site_id'] ?? '') === $token['site_id']
+            && ($link['active'] ?? true) === true;
     }));
     usort($links, static fn(array $a, array $b): int => strcmp((string) ($b['created_at'] ?? ''), (string) ($a['created_at'] ?? '')));
     $items = [];
@@ -796,7 +849,7 @@ if ($path === '/api/v1/links' && $method === 'POST') {
     if (strlen($title) < 2 || strlen($title) > 160 || strlen($description) > 500 || $amount === null) {
         fail_api(422, 'Invalid title or EUR amount');
     }
-    $link = ['id' => random_id(12), 'user_id' => $token['user_id'], 'title' => $title, 'description' => $description, 'amount_minor' => $amount, 'currency' => 'EUR', 'active' => true, 'created_at' => gmdate('c')];
+    $link = ['id' => random_id(12), 'user_id' => $token['user_id'], 'site_id' => $token['site_id'], 'title' => $title, 'description' => $description, 'amount_minor' => $amount, 'currency' => 'EUR', 'active' => true, 'created_at' => gmdate('c')];
     $store->write('links', $link['id'], $link);
     audit_event($token['user_id'], 'payment_link_created', ['link_id' => $link['id'], 'via' => 'api']);
     json_response(['id' => $link['id'], 'url' => $base . '/p/' . $link['id']], 201);
@@ -821,6 +874,8 @@ if ($path === '/api/v1/checkout' && $method === 'POST') {
     }
     try {
         $txn = start_checkout($token['user_id'], $amount, $title, $reference, $success, $cancel, $token['origin'], $provider);
+        $txn['site_id'] = $token['site_id'];
+        $store->write('transactions', $txn['id'], $txn);
         json_response(['transaction_id' => $txn['id'], 'status' => $txn['status'], 'checkout_url' => $txn['checkout_url'], 'provider' => $provider], 201);
     } catch (Throwable $e) {
         error_log('Brendigo Pay sandbox checkout error (' . $provider . '): ' . get_class($e));
@@ -831,7 +886,8 @@ if ($path === '/api/v1/checkout' && $method === 'POST') {
 if ($method === 'GET' && preg_match('#^/api/v1/payments/([a-f0-9]{32,64})$#D', $path, $m)) {
     $token = authenticate_api();
     $txn = $store->read('transactions', $m[1]);
-    if ($txn === null || $txn['user_id'] !== $token['user_id'] || !str_starts_with($txn['reference'], 'wp_')) {
+    if ($txn === null || $txn['user_id'] !== $token['user_id'] ||
+        ($txn['site_id'] ?? '') !== $token['site_id'] || !str_starts_with($txn['reference'], 'wp_')) {
         fail_api(404, 'Not found');
     }
     json_response(['id' => $txn['id'], 'status' => $txn['status'], 'amount_minor' => $txn['amount_minor'], 'currency' => $txn['currency'], 'reference' => $txn['reference'], 'provider' => $txn['provider'] ?? 'stripe']);
@@ -840,7 +896,9 @@ if ($method === 'GET' && preg_match('#^/api/v1/payments/([a-f0-9]{32,64})$#D', $
 // Public links: display only configured sandbox payment providers.
 if ($method === 'GET' && preg_match('#^/p/([a-f0-9]{24})$#D', $path, $m)) {
     $link = $store->read('links', $m[1]);
-    if ($link === null || ($link['active'] ?? true) !== true) {
+    if ($link === null || ($link['active'] ?? true) !== true
+        || $plans->current((string) ($link['user_id'] ?? '')) === null
+        || (!empty($link['site_id']) && (($store->read('sites', $link['site_id'])['status'] ?? '') !== 'active'))) {
         http_response_code(404);
         render('Nije pronađeno', message('Naplatna poveznica nije pronađena ili je isključena.'));
     }
@@ -854,7 +912,9 @@ if ($method === 'GET' && preg_match('#^/p/([a-f0-9]{24})$#D', $path, $m)) {
 if ($method === 'POST' && preg_match('#^/p/([a-f0-9]{24})/checkout$#D', $path, $m)) {
     check_csrf();
     $link = $store->read('links', $m[1]);
-    if ($link === null || ($link['active'] ?? true) !== true) {
+    if ($link === null || ($link['active'] ?? true) !== true
+        || $plans->current((string) ($link['user_id'] ?? '')) === null
+        || (!empty($link['site_id']) && (($store->read('sites', $link['site_id'])['status'] ?? '') !== 'active'))) {
         http_response_code(404);
         exit;
     }
@@ -899,6 +959,15 @@ if ($path === '/docs' && $method === 'GET') {
 if (in_array($path, ['/login', '/register'], true) && $method === 'GET') {
     $register = $path === '/register';
     $fields = $register ? '<label>Naziv tvrtke ili trgovca<input name="name" required maxlength="100" autocomplete="organization"></label>' : '';
+    if ($register) {
+        $chosen = (string) ($_GET['plan'] ?? 'business');
+        $chosen = isset(\BrendigoPay\Plans::TIERS[$chosen]) ? $chosen : 'business';
+        $fields .= '<label>Paket (svi su plaćeni; prijava nije uplata)<select name="requested_tier" required>'
+            . '<option value="start"' . ($chosen === 'start' ? ' selected' : '') . '>Start — 19,90 € / mj — 1 web-stranica</option>'
+            . '<option value="business"' . ($chosen === 'business' ? ' selected' : '') . '>Business — 49,90 € / mj — 5 web-stranica</option>'
+            . '<option value="pro"' . ($chosen === 'pro' ? ' selected' : '') . '>Pro — 99,90 € / mj — 25 web-stranica</option>'
+            . '</select></label><label>Web-stranica (neobvezno)<input name="website" type="url" maxlength="255" placeholder="https://moja-trgovina.hr"></label>';
+    }
     $fields .= '<label>E-adresa<input type="email" name="email" required maxlength="254" autocomplete="email"></label><label>Lozinka<input type="password" name="password" minlength="12" required autocomplete="' . ($register ? 'new-password' : 'current-password') . '"></label>';
     render($register ? 'Registracija' : 'Prijava', '<section class="auth card"><span class="eyebrow">BRENDIGO PAY</span><h1>' . ($register ? 'Izradi račun' : 'Dobro došli') . '</h1><form method="post">' . csrf() . $fields . '<button class="btn" type="submit">' . ($register ? 'Registriraj se' : 'Prijavi se') . '</button></form><p class="muted">' . ($register ? 'Već imate račun? <a href="/login">Prijava</a>' : 'Novi korisnik? <a href="/register">Registracija</a>') . '</p></section>');
 }
@@ -908,17 +977,23 @@ if ($path === '/register' && $method === 'POST') {
     $name = trim((string) ($_POST['name'] ?? ''));
     $email = strtolower(trim((string) ($_POST['email'] ?? '')));
     $password = (string) ($_POST['password'] ?? '');
+    $requestedTier = (string) ($_POST['requested_tier'] ?? '');
+    $website = trim((string) ($_POST['website'] ?? ''));
+    if (!isset(\BrendigoPay\Plans::TIERS[$requestedTier]) || strlen($website) > 255
+        || ($website !== '' && $licenses->origin($website) === null)) {
+        render('Registracija', message('Odaberite jedan od tri plaćena paketa i valjanu HTTPS domenu.'));
+    }
     if (strlen($name) < 2 || strlen($name) > 100 || !filter_var($email, FILTER_VALIDATE_EMAIL)
         || strlen($email) > 254 || strlen($password) < 12 || strlen($password) > 256) {
         render('Registracija', message('Provjerite naziv, e-adresu i lozinku (najmanje 12 znakova).'));
     }
-    $id = $store->locked('registration', static function () use ($store, $name, $email, $password): ?string {
+    $id = $store->locked('registration', static function () use ($store, $name, $email, $password, $requestedTier, $website): ?string {
         $hash = hash('sha256', $email);
         if ($store->read('emails', $hash) !== null) {
             return null;
         }
         $id = random_id();
-        $store->write('users', $id, ['id' => $id, 'name' => $name, 'email' => $email, 'password_hash' => password_hash($password, PASSWORD_ARGON2ID), 'created_at' => gmdate('c')]);
+        $store->write('users', $id, ['id' => $id, 'name' => $name, 'email' => $email, 'password_hash' => password_hash($password, PASSWORD_ARGON2ID), 'requested_tier' => $requestedTier, 'requested_site' => $website, 'created_at' => gmdate('c')]);
         $store->write('emails', $hash, ['user_id' => $id]);
         return $id;
     });
@@ -928,7 +1003,7 @@ if ($path === '/register' && $method === 'POST') {
     session_regenerate_id(true);
     $_SESSION['user_id'] = $id;
     audit_event($id, 'account_registered');
-    redirect('/dashboard');
+    redirect('/sites');
 }
 
 if ($path === '/login' && $method === 'POST') {
@@ -1011,13 +1086,28 @@ if ($method === 'GET' && preg_match('#^/dashboard/qr/([a-f0-9]{24})$#D', $path, 
 if ($path === '/dashboard/links' && $method === 'POST') {
     $user = login_required();
     check_csrf();
+    if ($plans->current($user['id']) === null) {
+        http_response_code(403);
+        render('Paket nije aktivan', message('Prije korištenja potrebno je aktivirati plaćeni paket. Pogledajte Web-stranice.'));
+    }
     $title = trim((string) ($_POST['title'] ?? ''));
     $description = trim((string) ($_POST['description'] ?? ''));
     $amount = money_to_minor((string) ($_POST['amount'] ?? ''));
     if (strlen($title) < 2 || strlen($title) > 160 || strlen($description) > 500 || $amount === null) {
         render('Pogreška', message('Opis mora imati 2–160 znakova, a iznos mora biti valjan i veći od nule.'));
     }
-    $link = ['id' => random_id(12), 'user_id' => $user['id'], 'title' => $title, 'description' => $description, 'amount_minor' => $amount, 'currency' => 'EUR', 'active' => true, 'created_at' => gmdate('c')];
+    $siteIds = array_values(array_map(
+        static fn (array $site): string => $site['id'],
+        array_filter($store->all('sites'), static fn (array $site): bool =>
+            ($site['user_id'] ?? '') === $user['id'] && ($site['status'] ?? '') === 'active')
+    ));
+    $selectedSite = (string) ($_POST['site_id'] ?? '');
+    if ($selectedSite === '' && count($siteIds) === 1) { $selectedSite = $siteIds[0]; }
+    if (!in_array($selectedSite, $siteIds, true)) {
+        http_response_code(422);
+        render('Nedostaje web-stranica', message('Najprije povežite WordPress domenu pa odaberite kojoj stranici pripada poveznica.'));
+    }
+    $link = ['id' => random_id(12), 'user_id' => $user['id'], 'site_id' => $selectedSite, 'title' => $title, 'description' => $description, 'amount_minor' => $amount, 'currency' => 'EUR', 'active' => true, 'created_at' => gmdate('c')];
     $store->write('links', $link['id'], $link);
     audit_event($user['id'], 'payment_link_created', ['link_id' => $link['id'], 'via' => 'dashboard']);
     redirect('/dashboard');
@@ -1078,6 +1168,139 @@ if ($path === '/dashboard/audit' && $method === 'GET') {
     render('Aktivnosti', '<div class="page-heading"><h1>Aktivnosti računa</h1><p><a href="/dashboard">Natrag na nadzornu ploču</a></p></div><section class="card"><div class="table-wrap"><table><thead><tr><th>Vrijeme (UTC)</th><th>Radnja</th><th>Detalji</th></tr></thead><tbody>' . ($rows ?: '<tr><td colspan="3">Nema aktivnosti.</td></tr>') . '</tbody></table></div></section>');
 }
 
+
+/** A paid subscription is provisioned only after manual operator verification. */
+if ($path === '/sites' && $method === 'GET') {
+    $user = login_required();
+    $activePlan = $plans->current($user['id']);
+    $requested = $user['requested_tier'] ?? 'business';
+    $tier = $activePlan['tier'] ?? null;
+    $limit = $tier !== null ? $plans->siteLimit($user['id']) : 0;
+    $sites = array_values(array_filter($store->all('sites'), static fn (array $s): bool =>
+        ($s['user_id'] ?? '') === $user['id'] && ($s['status'] ?? '') !== 'deleted'));
+    $rows = '';
+    foreach ($sites as $site) {
+        $rows .= '<tr><td><strong>' . e($site['origin']) . '</strong></td><td>' .
+            ($site['status'] === 'active' ? '<span class="pill on">Povezano (TEST)</span>' : '<span class="pill off">Čeka aktivaciju</span>') .
+            '</td><td>' . e((string) ($site['activated_at'] ?? '—')) . '</td><td><form class="inline-form" method="post" action="/sites/' . e($site['id']) . '/rotate">' .
+            csrf() . '<button type="submit" class="btn secondary small">Obnovi licenciju</button></form><form class="inline-form" method="post" action="/sites/' . e($site['id']) . '/remove">' .
+            csrf() . '<button type="submit" class="btn secondary small">Ukloni</button></form></td></tr>';
+    }
+    $messageText = $_SESSION['site_notice'] ?? null;
+    unset($_SESSION['site_notice']);
+    $once = $_SESSION['new_license'] ?? null;
+    unset($_SESSION['new_license']);
+    $secretBox = is_array($once) && isset($once['license'], $once['origin'])
+        ? '<div class="message info bp-license-once" role="status"><b>Nova licencija za ' . e($once['origin']) .
+        ' — prikazuje se samo jednom:</b><pre>' . e($once['license']) . '</pre><p>Kopirajte ključ u WordPress → Brendigo Pay → Aktivacija licencije.</p></div>' : '';
+    $planLabel = $tier !== null ? \BrendigoPay\Plans::TIERS[$tier]['label'] : 'Nije aktiviran';
+    $intro = '<div class="page-heading"><span class="eyebrow">WEB-STRANICE • LICENCIJE • PAID PLANS</span><h1>Moje web-stranice</h1><p>Za svaku instalaciju potreban je aktivan plaćeni paket i licencija vezana uz domenu. Testna naplata; bez live transakcija.</p></div>'
+        . '<div class="bp-license-summary"><article class="bp-surface"><small>Aktivni paket</small><strong>' . e($planLabel) . '</strong><span>' .
+            ($activePlan ? 'Vrijedi do ' . e($activePlan['expires_at']) : 'Zatraženi paket: ' . e(\BrendigoPay\Plans::TIERS[$requested]['label'] ?? 'Business') . ' — čeka provjeru uplate') .
+        '</span></article><article class="bp-surface"><small>Iskorištene domene</small><strong>' . count($sites) . ' / ' . $limit . '</strong><span>Start: 1 • Business: 5 • Pro: 25</span></article></div>';
+    $form = $activePlan
+        ? '<section class="bp-surface bp-site-registration"><div><h2>Registriraj novu web-stranicu</h2><p>Unesite HTTPS domenu na kojoj je instaliran WordPress dodatak. Domena se može registrirati samo jedanput.</p></div><form method="post" action="/sites" class="bp-site-form">' . csrf() .
+        '<label>URL WordPress stranice<input type="url" name="origin" required maxlength="255" placeholder="https://moja-trgovina.hr" autocomplete="url"></label>' .
+        '<button type="submit" class="btn" ' . (count($sites) >= $limit ? 'disabled' : '') . '>Kreiraj licenciju</button></form></section>'
+        : '<section class="bp-surface"><h2>Aktivacija paketa je na čekanju</h2><p>Registracija računa ne pokreće pretplatu niti daje besplatne licence. Administrator mora provjeriti stvarnu uplatu i potvrditi jedan od tri paketa prije povezivanja WordPressa.</p><a href="/pricing" class="btn secondary">Pogledaj pakete</a></section>';
+    render('Web-stranice i licence', $intro . ($messageText ? message($messageText) : '') . $secretBox . $form .
+        '<section class="bp-surface bp-data-card"><div class="bp-section-top"><h2>Registrirane domene</h2><small>' . count($sites) . ' web-stranica</small></div><div class="table-wrap"><table><thead><tr><th>Domena</th><th>Status</th><th>Aktivacija (UTC)</th><th>Upravljanje</th></tr></thead><tbody>' .
+        ($rows ?: '<tr><td colspan="4">Još nema registriranih stranica.</td></tr>') . '</tbody></table></div></section>');
+}
+
+if ($path === '/sites' && $method === 'POST') {
+    $user = login_required();
+    check_csrf();
+    try {
+        $created = $licenses->issue($user['id'], (string) ($_POST['origin'] ?? ''));
+        $_SESSION['new_license'] = ['license' => $created['license'], 'origin' => $created['site']['origin']];
+        audit_event($user['id'], 'site_registered', ['site_id' => $created['site']['id']]);
+    } catch (RuntimeException $e) {
+        $_SESSION['site_notice'] = 'Nije moguće dodati domenu: paket je neaktivan, limit je iskorišten ili domena već postoji.';
+    }
+    redirect('/sites');
+}
+if ($method === 'POST' && preg_match('#^/sites/([a-f0-9]{24})/(rotate|remove)$#D', $path, $match)) {
+    $user = login_required();
+    check_csrf();
+    try {
+        if ($match[2] === 'rotate') {
+            $updated = $licenses->rotate($match[1], $user['id']);
+            $_SESSION['new_license'] = ['license' => $updated['license'], 'origin' => $updated['site']['origin']];
+        } else {
+            $licenses->delete($match[1], $user['id']);
+        }
+        audit_event($user['id'], 'site_' . $match[2], ['site_id' => $match[1]]);
+    } catch (RuntimeException $e) {
+        $_SESSION['site_notice'] = 'Nije moguće izvršiti traženu radnju za ovu domenu.';
+    }
+    redirect('/sites');
+}
+if ($path === '/admin' && $method === 'GET') {
+    $operator = login_required();
+    if (!in_array($operator['id'], (array) ($config['admin_user_ids'] ?? []), true)) {
+        http_response_code(403);
+        render('Pristup odbijen', message('Administratorski pristup nije dozvoljen.'));
+    }
+    $rows = '';
+    foreach ($store->all('users') as $merchant) {
+        $entitlement = $plans->current($merchant['id']);
+        $requested = $merchant['requested_tier'] ?? 'business';
+        $rows .= '<tr><td><b>' . e($merchant['name']) . '</b><small> ' . e($merchant['email']) . '</small><br><code>' . e($merchant['id']) . '</code></td>' .
+            '<td>' . e((string) $requested) . '</td><td>' . ($entitlement ? e($entitlement['tier']) . ' do ' . e($entitlement['expires_at']) : 'Neaktivan') .
+            '</td><td>' . $plans->siteCount($merchant['id']) . '</td>' .
+            '<td><form method="post" action="/admin/plans" class="bp-admin-grant">' . csrf() .
+            '<input type="hidden" name="merchant_id" value="' . e($merchant['id']) . '">' .
+            '<select name="tier" aria-label="Paket za trgovca"><option value="start">Start (1)</option><option value="business">Business (5)</option><option value="pro">Pro (25)</option></select>' .
+            '<input type="date" name="expires" required min="' . gmdate('Y-m-d', time() + 86400) . '" aria-label="Datum isteka">' .
+            '<label><input type="checkbox" name="payment_verified" value="1" required> Potvrđena uplata</label>' .
+            '<button class="btn secondary small" type="submit">Aktiviraj plaćeni plan</button></form></td></tr>';
+    }
+    $sites = $store->all('sites');
+    $siteRows = '';
+    foreach ($sites as $site) {
+        if (($site['status'] ?? '') === 'deleted') { continue; }
+        $siteRows .= '<tr><td>' . e($site['origin']) . '</td><td><code>' . e($site['user_id']) . '</code></td><td>' .
+            e((string) ($site['status'] ?? 'pending')) . '</td></tr>';
+    }
+    $flash = $_SESSION['admin_notice'] ?? null;
+    unset($_SESSION['admin_notice']);
+    render('Administrator', '<div class="page-heading"><span class="eyebrow">BRENDIGO PAY • ADMIN PANEL</span><h1>Paketi i licence</h1><p>Administratorske ovlasti zadaju se u privatnoj konfiguraciji. Samo potvrđena uplata omogućuje aktivaciju paketa.</p></div>' .
+        ($flash ? message($flash) : '') .
+        '<section class="bp-surface bp-data-card"><h2>Korisnici i pretplate</h2><div class="table-wrap"><table><thead><tr><th>Korisnik</th><th>Zahtjev</th><th>Aktivni paket</th><th>Domene</th><th>Upravljačka radnja</th></tr></thead><tbody>' .
+        ($rows ?: '<tr><td colspan="5">Nema korisnika.</td></tr>') . '</tbody></table></div></section>' .
+        '<section class="bp-surface bp-data-card"><h2>Instalacije dodatka</h2><div class="table-wrap"><table><thead><tr><th>Domena</th><th>Trgovac</th><th>Status</th></tr></thead><tbody>' .
+        ($siteRows ?: '<tr><td colspan="3">Nema instalacija.</td></tr>') . '</tbody></table></div></section>');
+}
+if ($path === '/admin/plans' && $method === 'POST') {
+    $operator = login_required();
+    if (!in_array($operator['id'], (array) ($config['admin_user_ids'] ?? []), true)) {
+        http_response_code(403);
+        render('Pristup odbijen', message('Administratorska radnja nije dozvoljena.'));
+    }
+    check_csrf();
+    if (($_POST['payment_verified'] ?? '') !== '1') {
+        http_response_code(422);
+        render('Pogreška', message('Najprije nezavisno provjerite naplatu.'));
+    }
+    $merchantId = (string) ($_POST['merchant_id'] ?? '');
+    $tier = (string) ($_POST['tier'] ?? '');
+    $expiry = (string) ($_POST['expires'] ?? '');
+    try {
+        if (!preg_match('/^[a-f0-9]{32}$/D', $merchantId)) {
+            throw new RuntimeException('Invalid merchant');
+        }
+        $plans->grant($merchantId, $tier, $expiry . ' 23:59:59 UTC', $operator['id']);
+        audit_event($operator['id'], 'manual_paid_plan_granted', [
+            'merchant_id' => $merchantId, 'tier' => $tier, 'expires' => $expiry,
+        ]);
+        $_SESSION['admin_notice'] = 'Plaćeni paket aktiviran nakon administratorske potvrde.';
+    } catch (RuntimeException $e) {
+        $_SESSION['admin_notice'] = 'Aktivacija nije uspjela. Provjerite korisnika, datum i maksimalan broj domena.';
+    }
+    redirect('/admin');
+}
+
 if ($path === '/settings' && $method === 'GET') {
     $user = login_required();
     $hasStripe = $store->read('stripe', $user['id']) !== null;
@@ -1094,7 +1317,7 @@ if ($path === '/settings' && $method === 'GET') {
     $once = $_SESSION['new_api_key'] ?? null;
     unset($_SESSION['new_api_key']);
     $keyBox = is_string($once) ? '<div class="message info"><strong>API ključ prikazan je samo jednom:</strong><pre>' . e($once) . '</pre>Odmah ga spremite u WordPress dodatak.</div>' : '';
-    render('Postavke', '<div class="page-heading"><span class="eyebrow">POSTAVKE</span><h1>Povezivanje i integracije</h1></div>' . message('Podržani su samo testni/sandbox načini rada za Stripe, PayPal i Revolut. Ne unosite produkcijske ključeve.', 'info') . '<section class="card stack"><h2>Stripe testna integracija</h2><p>Status: <strong>' . ($hasStripe ? 'Konfigurirana' : 'Nije konfigurirana') . '</strong></p><p>Stripe Dashboard → Developers → API keys: kopirajte tajni <code>sk_test_...</code> ključ. U Stripe Webhooks dodajte endpoint <code>' . e($base . '/webhooks/stripe/' . $user['id']) . '</code> i događaj <code>checkout.session.completed</code>.</p><form method="post" action="/settings/stripe">' . csrf() . '<label>Stripe tajni TEST ključ<input name="secret" type="password" required autocomplete="off" placeholder="sk_test_..."></label><label>Stripe Webhook signing secret<input name="webhook_secret" type="password" required autocomplete="off" placeholder="whsec_..."></label><button class="btn" type="submit">Spremi šifrirane testne ključeve</button></form></section>' . provider_form_sections($base, $user) . '<section class="card stack"><h2>WordPress API ključ</h2><p>Upišite punu HTTPS adresu WordPress stranice. API ključ vezan je uz tu domenu i omogućuje isključivo testna plaćanja.</p>' . $keyBox . '<form method="post" action="/settings/token">' . csrf() . '<label>Adresa WordPress stranice<input name="origin" type="url" required placeholder="https://moja-trgovina.hr"></label><button class="btn" type="submit">Generiraj API ključ</button></form><h3>Registrirane domene</h3><ul>' . ($items ?: '<li>Nema registriranih domena.</li>') . '</ul></section>');
+    render('Postavke', '<div class="page-heading"><span class="eyebrow">POSTAVKE</span><h1>Povezivanje i integracije</h1></div>' . message('Podržani su samo testni/sandbox načini rada za Stripe, PayPal i Revolut. Ne unosite produkcijske ključeve.', 'info') . '<section class="card stack"><h2>Stripe testna integracija</h2><p>Status: <strong>' . ($hasStripe ? 'Konfigurirana' : 'Nije konfigurirana') . '</strong></p><p>Stripe Dashboard → Developers → API keys: kopirajte tajni <code>sk_test_...</code> ključ. U Stripe Webhooks dodajte endpoint <code>' . e($base . '/webhooks/stripe/' . $user['id']) . '</code> i događaj <code>checkout.session.completed</code>.</p><form method="post" action="/settings/stripe">' . csrf() . '<label>Stripe tajni TEST ključ<input name="secret" type="password" required autocomplete="off" placeholder="sk_test_..."></label><label>Stripe Webhook signing secret<input name="webhook_secret" type="password" required autocomplete="off" placeholder="whsec_..."></label><button class="btn" type="submit">Spremi šifrirane testne ključeve</button></form></section>' . provider_form_sections($base, $user) . '<section class="card stack"><h2>Web-stranice i licence</h2><p>Svaki plaćeni paket ima ograničen broj domena (Start: 1, Business: 5, Pro: 25). Dodajte web-stranicu na panelu i aktivirajte licenciju u WordPressu.</p><p><a class="btn" href="/sites">Web-stranice i licence →</a></p>' . $keyBox . '<p>API pristup se generira samo tijekom aktivacije licencije iz WordPress dodatka.</p><h3>Registrirane domene</h3><ul>' . ($items ?: '<li>Nema registriranih domena.</li>') . '</ul></section>');
 }
 
 if ($method === 'POST' && preg_match('#^/settings/tokens/([a-f0-9]{64})/revoke$#D', $path, $m)) {
@@ -1179,11 +1402,8 @@ if ($path === '/settings/token' && $method === 'POST') {
     if ($origin === null) {
         render('Pogreška', message('Unesite valjanu HTTPS domenu (HTTP dopušten samo za localhost).'));
     }
-    $plaintext = 'bp_test_' . random_id(32);
-    $store->write('tokens', hash('sha256', $plaintext), ['user_id' => $user['id'], 'origin' => $origin, 'created_at' => gmdate('c'), 'revoked' => false]);
-    $_SESSION['new_api_key'] = $plaintext;
-    audit_event($user['id'], 'api_key_created', ['origin' => $origin]);
-    redirect('/settings');
+    http_response_code(410);
+    render('Zastarjeli način aktivacije', message('Ručno stvaranje API tokena zamijenjeno je licencijom: otvorite Web-stranice.'));
 }
 
 http_response_code(404);
