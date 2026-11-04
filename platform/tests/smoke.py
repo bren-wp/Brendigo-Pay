@@ -167,6 +167,14 @@ def main():
             mobile_link_id = json.loads(created)['id']
             assert req('/p/' + mobile_link_id)[0] == 200
             assert mobile_link_id in req('/api/v1/links', token=token)[1]
+            switch_status, switched, _ = req('/api/v1/mobile/links/' + mobile_link_id + '/toggle',
+                {}, token=mobile_token)
+            assert switch_status == 200 and json.loads(switched)['active'] is False
+            assert req('/p/' + mobile_link_id)[0] == 404
+            switch_status, switched, _ = req('/api/v1/mobile/links/' + mobile_link_id + '/toggle',
+                {}, token=mobile_token)
+            assert switch_status == 200 and json.loads(switched)['active'] is True
+            assert req('/p/' + mobile_link_id)[0] == 200
             assert req('/api/v1/mobile/links', {
                 'site_id': 'f' * 24, 'title': 'Illegal link', 'amount': '99.00',
             }, token=mobile_token)[0] == 422
@@ -222,6 +230,8 @@ def main():
             assert req('/api/v1/mobile/links', {
                 'site_id': site_id, 'title': 'Cross-owner attempt', 'amount': '50.00',
             }, token=attacker_mobile_token)[0] == 422
+            assert req('/api/v1/mobile/links/' + mobile_link_id + '/toggle',
+                {}, token=attacker_mobile_token)[0] == 404
             assert req('/api/v1/mobile/logout', {}, token=attacker_mobile_token)[0] == 200
             assert req('/api/v1/mobile/overview', token=attacker_mobile_token)[0] == 401
             print('PASS: merchant isolation and immediate Android token logout revocation')

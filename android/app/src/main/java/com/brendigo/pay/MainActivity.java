@@ -3,6 +3,9 @@ package com.brendigo.pay;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
@@ -13,17 +16,12 @@ import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.InputType;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowInsets;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -39,7 +37,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
@@ -51,13 +48,12 @@ import java.util.concurrent.Executors;
  * Never collects payment card numbers or enables production charges.
  */
 public final class MainActivity extends Activity {
-    private static final int NAVY = Color.rgb(15, 26, 74);
-    private static final int BLUE = Color.rgb(26, 65, 225);
-    private static final int LIGHT_BLUE = Color.rgb(237, 242, 255);
-    private static final int TEAL = Color.rgb(6, 198, 182);
+    private static final int NAVY = Color.rgb(15, 23, 42);
+    private static final int SIDEBAR = Color.rgb(16, 30, 87);
+    private static final int BLUE = Color.rgb(49, 91, 250);
     private static final int BG = Color.rgb(243, 246, 251);
-    private static final int MUTED = Color.rgb(97, 113, 142);
-    private static final int STROKE = Color.rgb(218, 228, 246);
+    private static final int MUTED = Color.rgb(100, 116, 139);
+    private static final int STROKE = Color.rgb(220, 228, 244);
     private static final int GREEN = Color.rgb(24, 153, 69);
     private static final String[] TABS = {"Pregled", "Transakcije", "Linkovi", "Web-stranice"};
     private final ExecutorService worker = Executors.newSingleThreadExecutor();
@@ -72,7 +68,7 @@ public final class MainActivity extends Activity {
         super.onCreate(saved);
         storage = new SecureStore(this);
         getWindow().setStatusBarColor(Color.rgb(22, 39, 131));
-        getWindow().setNavigationBarColor(NAVY);
+        getWindow().setNavigationBarColor(SIDEBAR);
         if (storage.token() == null) showLogin("");
         else refresh();
     }
@@ -355,7 +351,7 @@ public final class MainActivity extends Activity {
     private void bottomNav() {
         LinearLayout nav = horizontal();
         nav.setPadding(dp(5), dp(4), dp(5), dp(5));
-        nav.setBackgroundColor(NAVY);
+        nav.setBackgroundColor(SIDEBAR);
         for (String tab : TABS) {
             boolean active = tab.equals(selectedTab);
             TextView item = label(tab, widthDp() < 360 ? 10 : 11,
@@ -534,10 +530,41 @@ public final class MainActivity extends Activity {
             margin(open, 0, 14, 0, 0);
             box.addView(open);
             open.setOnClickListener(v -> openUrl(link.optString("url", "")));
+            LinearLayout actions = horizontal();
+            TextView copy = button("Kopiraj link", false);
+            TextView toggle = button(link.optBoolean("active", false) ? "Isključi" : "Uključi", false);
+            LinearLayout.LayoutParams actionParams = new LinearLayout.LayoutParams(0, dp(48), 1);
+            actionParams.setMargins(0, dp(9), dp(5), 0);
+            actions.addView(copy, actionParams);
+            LinearLayout.LayoutParams toggleParams = new LinearLayout.LayoutParams(0, dp(48), 1);
+            toggleParams.setMargins(dp(5), dp(9), 0, 0);
+            actions.addView(toggle, toggleParams);
+            box.addView(actions);
+            copy.setOnClickListener(v -> {
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                if (clipboard != null) {
+                    clipboard.setPrimaryClip(ClipData.newPlainText("Brendigo Pay link", link.optString("url", "")));
+                    showError("Platni link kopiran.");
+                }
+            });
+            toggle.setOnClickListener(v -> toggleLink(link.optString("id", "")));
             margin(box, 4, 0, 4, 12);
             content.addView(box);
         }
     }
+    private void toggleLink(String id) {
+        if (!id.matches("[a-f0-9]{24}")) return;
+        worker.execute(() -> {
+            try {
+                ApiClient.request(storage.origin(), storage.token(), "POST",
+                        "/api/v1/mobile/links/" + id + "/toggle", new JSONObject());
+                runOnUiThread(this::refresh);
+            } catch (Exception e) {
+                runOnUiThread(() -> showError(e.getMessage()));
+            }
+        });
+    }
+
     private boolean hasActiveSite() {
         JSONArray sites = arr(snapshot, "sites");
         for (int i = 0; i < sites.length(); i++) {

@@ -784,6 +784,19 @@ if (str_starts_with($path, '/api/v1/mobile/')) {
         $mobileApi->logout($mobileTokenHash);
         json_response(['ok' => true]);
     }
+    if ($method === 'POST' &&
+        preg_match('#^/api/v1/mobile/links/([a-f0-9]{24})/toggle$#D', $path, $match)) {
+        try {
+            $enabled = $mobileApi->toggleLink($mobileMerchant, $match[1]);
+            if ($enabled === null) { fail_api(404, 'Link not found'); }
+            audit_event($mobileMerchant['id'], $enabled ? 'payment_link_enabled' : 'payment_link_disabled', [
+                'link_id' => $match[1], 'via' => 'mobile',
+            ]);
+            json_response(['id' => $match[1], 'active' => $enabled]);
+        } catch (RuntimeException $e) {
+            fail_api(403, 'Paid plan is inactive');
+        }
+    }
     if ($path === '/api/v1/mobile/links' && $method === 'POST') {
         try {
             $created = $mobileApi->createLink($mobileMerchant, json_request());

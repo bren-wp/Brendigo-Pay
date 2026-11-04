@@ -162,6 +162,22 @@ final class MobileApi
         ];
     }
 
+    /** Toggle only merchant-owned links with an active paid plan and a record lock. */
+    public function toggleLink(array $merchant, string $linkId): ?bool
+    {
+        $this->plans->activeOrFail((string) $merchant['id']);
+        return $this->store->locked('link_' . $linkId, function () use ($merchant, $linkId): ?bool {
+            $link = $this->store->read('links', $linkId);
+            if ($link === null || ($link['user_id'] ?? '') !== $merchant['id']) {
+                return null;
+            }
+            $link['active'] = !(($link['active'] ?? true) === true);
+            $link['updated_at'] = gmdate('c');
+            $this->store->write('links', $linkId, $link);
+            return $link['active'];
+        });
+    }
+
     /** Mobile link creation follows website rules: active paid plan and activated merchant-owned site. */
     public function createLink(array $merchant, array $data): array
     {
