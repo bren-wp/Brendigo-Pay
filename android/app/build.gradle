@@ -1,0 +1,32 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.brendigo.pay'
+    compileSdk 36
+
+    defaultConfig {
+        applicationId 'com.brendigo.pay'
+        minSdk 24
+        targetSdk 36
+        versionCode 84
+        versionName '0.8.4'
+        resConfigs 'hr', 'en'
+    }
+    buildTypes {
+        debug { applicationIdSuffix '.debug' }
+        release {
+            minifyEnabled false
+            shrinkResources false
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    lint {
+        abortOnError true
+        checkReleaseBuilds true
+    }
+}
