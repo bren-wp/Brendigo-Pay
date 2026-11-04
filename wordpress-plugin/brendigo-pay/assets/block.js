@@ -50,10 +50,12 @@
                 el(PanelBody, { title: 'Izgled gumba', initialOpen: true },
                     el(SelectControl, { label: 'Stil gumba', value: a.style, onChange: set('style'), options: [
                         { label: 'Primarni', value: 'primary' }, { label: 'Outline', value: 'outline' }, { label: 'Ghost', value: 'ghost' }
-                    ] })
+                    ] }),
+                    el(ToggleControl, { label: 'Prikaži ikonu kartice', checked: a.show_icon !== false, onChange: set('show_icon') })
                 ),
                 el(PanelBody, { title: 'QR prikaz', initialOpen: true },
-                    el(ToggleControl, { label: 'Prikaži QR kod', checked: qrOnly || !!a.show_qr, disabled: qrOnly, onChange: set('show_qr') })
+                    el(ToggleControl, { label: 'Prikaži QR kod', checked: qrOnly || !!a.show_qr, disabled: qrOnly, onChange: set('show_qr') }),
+                    el(TextControl, { label: 'Tekst uz QR kod', value: a.qr_caption || '', onChange: set('qr_caption'), help: 'Prikazuje se uz stvarni QR kod na objavljenoj stranici.' })
                 ),
                 el(PanelBody, { title: 'Sigurnost', initialOpen: false },
                     el('p', {}, 'Iznos i status određuje poslužitelj. Dodatak ne prikuplja podatke kartica.')
@@ -70,9 +72,9 @@
                         el('h3', {}, link ? link.title : (a.title || 'Plaćanje za uslugu')),
                         link ? el('strong', { className: 'bp-editor-amount' }, money(link.amount_minor)) : null,
                         el('p', {}, link ? link.description : 'Odaberite platni link kako biste vidjeli stvarni iznos.'),
-                        isValid ? el('div', { className: 'bp-editor-button' }, a.label || 'Plati putem Brendigo Paya', ' →') :
+                        isValid && !!link ? el('div', { className: 'bp-editor-button' }, a.show_icon !== false ? '▣  ' : '', a.label || 'Plati putem Brendigo Paya', ' →') :
                             el('div', { className: 'bp-editor-missing' }, 'Najprije odaberite platni link.'),
-                        (qrOnly || a.show_qr) ? el('div', { className: 'bp-editor-qr-placeholder' }, '▦', el('small', {}, 'QR kod prikazuje se na objavljenoj stranici.')) : null,
+                        (qrOnly || a.show_qr) ? el('div', { className: 'bp-editor-qr-placeholder' }, '▦', el('small', {}, a.qr_caption || 'QR kod prikazuje se na objavljenoj stranici.')) : null,
                         el('small', {}, isValid ? 'Poveznica: ' + a.id : 'Samo testna plaćanja')
                     )
                 )
@@ -92,7 +94,9 @@
                 label: { type: 'string', default: 'Plati putem Brendigo Paya' },
                 title: { type: 'string', default: 'Plaćanje za uslugu' },
                 style: { type: 'string', default: 'primary' },
-                show_qr: { type: 'boolean', default: false }
+                show_qr: { type: 'boolean', default: false },
+                show_icon: { type: 'boolean', default: true },
+                qr_caption: { type: 'string', default: 'Skenirajte za testno plaćanje' }
             },
             edit: PaymentEditor, save: function () { return null; }
         });

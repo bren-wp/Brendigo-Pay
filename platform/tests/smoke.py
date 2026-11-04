@@ -25,7 +25,7 @@ def find_port():
 
 
 def main():
-    with tempfile.TemporaryDirectory(prefix='bp-v03-smoke-') as td:
+    with tempfile.TemporaryDirectory(prefix='bp-v08-smoke-') as td:
         project = Path(td) / 'platform'
         shutil.copytree(SOURCE, project, ignore=shutil.ignore_patterns('config.php', '*.json', '*.lock'))
         port = find_port()
@@ -180,6 +180,25 @@ def main():
             assert req('/webhooks/paypal/' + user_id, data=b'{}', method='POST')[0] == 400
             print('PASS: sandbox provider setup, payment choice and unsigned webhook rejection')
             print('PASS: account audit and CSV export')
+            # One client/IP rotating email addresses must still be throttled globally.
+            limited = urllib.request.build_opener(
+                urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
+            status, login_page, _ = req('/login', client=limited)
+            login_csrf = re.search('name="csrf" value="([a-f0-9]+)"', login_page).group(1)
+            for attempt in range(30):
+                status, login_page, _ = req('/login', {
+                    'email': f'unknown-{attempt}@example.test',
+                    'password': 'wrong-password-123456789',
+                    'csrf': login_csrf,
+                }, client=limited)
+                assert status == 200 and 'Neuspješna prijava' in login_page
+            status, login_page, _ = req('/login', {
+                'email': 'smoke@example.com',
+                'password': 'this-is-a-long-test-password',
+                'csrf': login_csrf,
+            }, client=limited)
+            assert status == 200 and 'Neuspješna prijava' in login_page
+            print('PASS: IP-wide login throttle rejects email rotation')
             print('All HTTP smoke tests passed.')
         finally:
             server.terminate()

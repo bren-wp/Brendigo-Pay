@@ -101,7 +101,7 @@ function render(string $title, string $content): never
         foreach ($tabs as [$label, $url, $icon, $active]) {
             $sideLinks .= '<a href="' . e($url) . '" class="' . ($active ? 'active' : '') . '"><span aria-hidden="true">' . e($icon) . '</span>' . e($label) . '</a>';
         }
-        $sidebar = '<aside class="bp-merchant-sidebar" aria-label="Izbornik trgovca">' . bp_brand(true) . '<nav class="bp-sidebar-menu">' . $sideLinks . '</nav><div class="bp-sidebar-bottom"><b>Brendigo Pay Sandbox</b><p>Testna plaćanja i povezivanje vlastitih računa.</p></div></aside>';
+        $sidebar = '<aside class="bp-merchant-sidebar" aria-label="Izbornik trgovca">' . bp_brand() . '<nav class="bp-sidebar-menu">' . $sideLinks . '</nav><div class="bp-sidebar-bottom"><b>Brendigo Pay Sandbox</b><p>Testna plaćanja i povezivanje vlastitih računa.</p></div></aside>';
     }
     echo '<!doctype html><html lang="hr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>' . e($title) . ' | Brendigo Pay</title><meta name="theme-color" content="#1e2bb8"><link rel="icon" type="image/svg+xml" href="/assets/favicon.svg"><link rel="apple-touch-icon" href="/assets/apple-touch-icon.png"><meta name="application-name" content="Brendigo Pay"><link rel="stylesheet" href="/assets/app.css"><script src="/assets/app.js" defer></script></head><body class="' . $bodyClass . '"><a class="bp-skip-link" href="#main-content">Preskoči na sadržaj</a>';
     echo '<header class="top"><div class="container top-inner"><div class="bp-header-left"><a href="/" aria-label="Brendigo Pay početna">' . bp_brand() . '</a><span class="bp-tagline">PAMETNA PLAĆANJA<br>ZA MODERAN BIZNIS</span></div><button class="bp-mobile-toggle" data-toggle-menu aria-expanded="false" aria-controls="bp-mobile-navigation" aria-label="Otvori izbornik">☰</button><nav id="bp-mobile-navigation" aria-label="Glavna navigacija">' . $nav . '</nav></div></header>';
@@ -110,7 +110,7 @@ function render(string $title, string $content): never
     } else {
         echo '<main class="container ' . ($marketing ? 'bp-marketing-main' : '') . '" id="main-content">' . $content . '</main>';
     }
-    echo '<footer class="container footer"><span>© ' . date('Y') . ' Brendigo Pay · <a href="https://brendigo.com" target="_blank" rel="noopener">Brendigo</a></span><nav aria-label="Poveznice podnožja"><a href="/">Naslovnica</a><a href="/pricing">Cijene</a><a href="/plugin">WordPress</a><a href="/docs">Upute</a><a href="https://brendigopay.com" target="_blank" rel="noopener">BrendigoPay.com</a></nav><span>v0.6.0 • SANDBOX • Bez stvarnih plaćanja</span></footer></body></html>';
+    echo '<footer class="container footer"><span>© ' . date('Y') . ' Brendigo Pay · <a href="https://brendigo.com" target="_blank" rel="noopener">Brendigo</a></span><nav aria-label="Poveznice podnožja"><a href="/">Naslovnica</a><a href="/pricing">Cijene</a><a href="/plugin">WordPress</a><a href="/docs">Upute</a><a href="https://brendigopay.com" target="_blank" rel="noopener">BrendigoPay.com</a></nav><span>v0.8.0 • SANDBOX • Bez stvarnih plaćanja</span></footer></body></html>';
     exit;
 }
 
@@ -464,7 +464,7 @@ if ($path === '/webhooks/stripe-connect' && $method === 'POST') {
         http_response_code(404);
         exit;
     }
-    $body = file_get_contents('php://input') ?: '';
+    $body = file_get_contents('php://input', false, null, 0, 1000001) ?: '';
     if (strlen($body) > 1000000 || !verify_stripe_signature($body, (string) ($_SERVER['HTTP_STRIPE_SIGNATURE'] ?? ''), StripeConnectSandbox::webhookSecret())) {
         http_response_code(400);
         exit('Invalid Connect signature');
@@ -572,7 +572,7 @@ if ($method === 'POST' && preg_match('#^/webhooks/revolut/([a-f0-9]{32})$#D', $p
         http_response_code(404);
         exit;
     }
-    $payload = file_get_contents('php://input') ?: '';
+    $payload = file_get_contents('php://input', false, null, 0, 1000001) ?: '';
     if (strlen($payload) > 1000000 || !SandboxProviders::verifyRevolut($payload, (string) ($_SERVER['HTTP_REVOLUT_REQUEST_TIMESTAMP'] ?? ''), (string) ($_SERVER['HTTP_REVOLUT_SIGNATURE'] ?? ''), $settings['webhook_secret'])) {
         http_response_code(400);
         exit('Invalid Revolut signature');
@@ -626,7 +626,7 @@ if ($method === 'POST' && preg_match('#^/webhooks/paypal/([a-f0-9]{32})$#D', $pa
         http_response_code(404);
         exit;
     }
-    $body = file_get_contents('php://input') ?: '';
+    $body = file_get_contents('php://input', false, null, 0, 1000001) ?: '';
     $event = strlen($body) <= 1000000 ? json_decode($body, true) : null;
     if (!is_array($event) || empty($event['id'])) {
         http_response_code(400);
@@ -688,7 +688,7 @@ if ($method === 'POST' && preg_match('#^/webhooks/stripe/([a-f0-9]{32})$#D', $pa
         http_response_code(404);
         exit;
     }
-    $payload = file_get_contents('php://input') ?: '';
+    $payload = file_get_contents('php://input', false, null, 0, 1000001) ?: '';
     if (strlen($payload) > 1000000 || !verify_stripe_signature($payload, (string) ($_SERVER['HTTP_STRIPE_SIGNATURE'] ?? ''), $settings['webhook_secret'])) {
         http_response_code(400);
         exit('Invalid signature');
@@ -936,24 +936,41 @@ if ($path === '/login' && $method === 'POST') {
     $email = strtolower(trim((string) ($_POST['email'] ?? '')));
     $ip = (string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown');
     $rateId = hash('sha256', $ip . ':' . $email);
-    $ok = $store->locked('auth_' . $rateId, static function () use ($store, $email, $rateId): ?string {
-        $record = $store->read('rates', $rateId) ?? ['count' => 0, 'start' => time()];
-        if (time() - $record['start'] > 900) {
-            $record = ['count' => 0, 'start' => time()];
+    // Two independent limits: 8 attempts per account/IP and 30 per IP/15 min.
+    // Prevent rotating email addresses to bypass the original per-account limiter.
+    $ipRateId = hash('sha256', 'ip:' . $ip);
+    $ok = $store->locked('auth_ip_' . $ipRateId, static function () use ($store, $email, $rateId, $ipRateId): ?string {
+        $ipRecord = $store->read('rates', $ipRateId) ?? ['count' => 0, 'start' => time()];
+        if (time() - (int) ($ipRecord['start'] ?? 0) > 900) {
+            $ipRecord = ['count' => 0, 'start' => time()];
         }
-        if ($record['count'] >= 8) {
+        if ((int) $ipRecord['count'] >= 30) {
             return null;
         }
-        $index = $store->read('emails', hash('sha256', $email));
-        $user = $index !== null ? $store->read('users', $index['user_id']) : null;
-        $valid = $user !== null && password_verify((string) ($_POST['password'] ?? ''), $user['password_hash']);
-        if (!$valid) {
-            $record['count']++;
-            $store->write('rates', $rateId, $record);
-            return null;
-        }
-        $store->write('rates', $rateId, ['count' => 0, 'start' => time()]);
-        return $user['id'];
+        $authenticated = $store->locked('auth_' . $rateId, static function () use ($store, $email, $rateId): ?string {
+            $record = $store->read('rates', $rateId) ?? ['count' => 0, 'start' => time()];
+            if (time() - (int) ($record['start'] ?? 0) > 900) {
+                $record = ['count' => 0, 'start' => time()];
+            }
+            if ((int) $record['count'] >= 8) {
+                return null;
+            }
+            $index = $store->read('emails', hash('sha256', $email));
+            $user = $index !== null ? $store->read('users', $index['user_id']) : null;
+            $valid = $user !== null && password_verify((string) ($_POST['password'] ?? ''), $user['password_hash']);
+            if (!$valid) {
+                $record['count']++;
+                $store->write('rates', $rateId, $record);
+                return null;
+            }
+            $store->write('rates', $rateId, ['count' => 0, 'start' => time()]);
+            return $user['id'];
+        });
+        $store->write('rates', $ipRateId, [
+            'count' => $authenticated === null ? (int) $ipRecord['count'] + 1 : 0,
+            'start' => $authenticated === null ? (int) $ipRecord['start'] : time(),
+        ]);
+        return $authenticated;
     });
     if ($ok === null) {
         render('Prijava', message('Neuspješna prijava ili privremeno ograničenje pokušaja.'));
@@ -975,26 +992,7 @@ if ($path === '/dashboard' && $method === 'GET') {
     $user = login_required();
     $links = array_values(array_filter($store->all('links'), static fn (array $item) => $item['user_id'] === $user['id']));
     usort($links, static fn (array $a, array $b) => strcmp($b['created_at'], $a['created_at']));
-    $rows = '';
-    foreach ($links as $link) {
-        $url = $base . '/p/' . $link['id'];
-        $enabled = ($link['active'] ?? true) === true;
-        $controls = '<form method="post" action="/dashboard/links/' . e($link['id']) . '/toggle" class="inline-form">' . csrf() . '<button class="btn secondary small" type="submit">' . ($enabled ? 'Isključi' : 'Uključi') . '</button></form>';
-        $rows .= '<tr><td>' . e($link['title']) . '</td><td>' . minor_format($link['amount_minor']) . '</td><td>' . ($enabled ? '<span class="pill on">Aktivna</span>' : '<span class="pill off">Isključena</span>') . '</td><td><a href="' . e($url) . '" target="_blank" rel="noopener">Otvori</a> · <a href="/dashboard/qr/' . e($link['id']) . '">QR kod</a><br><small>' . e($url) . '</small></td><td>' . $controls . '</td></tr>';
-    }
-    if ($rows === '') {
-        $rows = '<tr><td colspan="5">Još nemate naplatnih poveznica.</td></tr>';
-    }
     $transactions = array_values(array_filter($store->all('transactions'), static fn (array $item) => $item['user_id'] === $user['id']));
-    $paid = count(array_filter($transactions, static fn (array $t) => $t['status'] === 'paid'));
-    usort($transactions, static fn (array $a, array $b) => strcmp($b['created_at'], $a['created_at']));
-    $transactionRows = '';
-    foreach (array_slice($transactions, 0, 30) as $transaction) {
-        $transactionRows .= '<tr><td>' . e($transaction['created_at']) . '</td><td>' . e($transaction['description']) . '</td><td>' . minor_format((int) $transaction['amount_minor']) . '</td><td><span class="status">' . e($transaction['status']) . '</span></td></tr>';
-    }
-    if ($transactionRows === '') {
-        $transactionRows = '<tr><td colspan="4">Još nema testnih transakcija.</td></tr>';
-    }
     render('Nadzorna ploča', bp_merchant_ui($user, $links, $transactions, $base, (string) ($_GET['tab'] ?? 'overview')));
 }
 

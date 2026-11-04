@@ -3,7 +3,7 @@
  * Plugin Name: Brendigo Pay
  * Plugin URI: https://brendigopay.com
  * Description: Sandbox integracija Brendigo Pay naplatnih poveznica za WordPress i WooCommerce (Stripe, PayPal, Revolut).
- * Version: 0.7.2
+ * Version: 0.8.0
  * Requires at least: 6.4
  * Requires PHP: 8.1
  * Author: Brendigo
@@ -20,7 +20,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('BP_PAY_VERSION', '0.7.2');
+define('BP_PAY_VERSION', '0.8.0');
 define('BP_PAY_FILE', __FILE__);
 
 define('BP_PAY_PATH', plugin_dir_path(__FILE__));
@@ -44,7 +44,7 @@ function bp_pay_shortcode(array $atts = []): string
 {
     $atts = shortcode_atts([
         'id' => '', 'label' => __('Plati putem Brendigo Paya', 'brendigo-pay'),
-        'style' => 'primary', 'show_qr' => 'no', 'layout' => 'button',
+        'style' => 'primary', 'show_qr' => 'no', 'show_icon' => 'yes', 'qr_caption' => 'Skenirajte za testno plaćanje', 'layout' => 'button',
     ], $atts, 'brendigo_pay');
     $id = sanitize_text_field((string) $atts['id']);
     if (!preg_match('/^[a-f0-9]{24}$/D', $id)) {
@@ -64,6 +64,9 @@ function bp_pay_shortcode(array $atts = []): string
     $minor = (int) ($info['amount_minor'] ?? 0);
     $price = number_format($minor / 100, 2, ',', '.') . ' €';
     $qr = $atts['show_qr'] === 'yes';
+    $icon = $atts['show_icon'] === 'yes';
+    $qrCaption = sanitize_text_field((string) $atts['qr_caption']);
+    $qrCaption = function_exists('mb_substr') ? mb_substr($qrCaption, 0, 90) : substr($qrCaption, 0, 90);
     $layout = in_array($atts['layout'], ['button', 'card'], true) ? $atts['layout'] : 'button';
     wp_enqueue_style('bp-pay-public');
     if ($qr) { wp_enqueue_script('bp-pay-local-qr'); }
@@ -72,9 +75,9 @@ function bp_pay_shortcode(array $atts = []): string
         $html .= '<div class="bp-pay-widget-head"><img src="' . esc_url(plugins_url('assets/brand-mark.svg', BP_PAY_FILE)) . '" alt="" width="31" height="31"><span>Brendigo <b>Pay</b></span></div>';
         $html .= '<div class="bp-pay-widget-body"><h3>' . esc_html($title) . '</h3><p class="bp-pay-amount">' . esc_html($price) . '</p>';
     }
-    $html .= '<a class="bp-pay-button bp-pay-' . esc_attr($style) . '" href="' . esc_url($url) . '" rel="nofollow noopener">' . esc_html($label) . ' <span aria-hidden="true">→</span></a>';
+    $html .= '<a class="bp-pay-button bp-pay-' . esc_attr($style) . '" href="' . esc_url($url) . '" rel="nofollow noopener">' . ($icon ? '<span class="bp-pay-button-icon" aria-hidden="true">▣</span>' : '') . esc_html($label) . ' <span aria-hidden="true">→</span></a>';
     if ($qr) {
-        $html .= '<div class="bp-pay-qr-wrap"><div class="bp-pay-qr" data-qr="' . esc_attr($url) . '"></div><small>' . esc_html__('Skenirajte za testno plaćanje', 'brendigo-pay') . '</small></div>';
+        $html .= '<div class="bp-pay-qr-wrap"><div class="bp-pay-qr" data-qr="' . esc_attr($url) . '"></div><small>' . esc_html($qrCaption) . '</small></div>';
     }
     if ($layout === 'card') { $html .= '</div>'; }
     return $html . '</div>';
@@ -123,6 +126,8 @@ add_action('init', static function (): void {
         'title' => ['type' => 'string', 'default' => 'Plaćanje za uslugu'],
         'style' => ['type' => 'string', 'default' => 'primary'],
         'show_qr' => ['type' => 'boolean', 'default' => false],
+        'show_icon' => ['type' => 'boolean', 'default' => true],
+        'qr_caption' => ['type' => 'string', 'default' => 'Skenirajte za testno plaćanje'],
     ];
     foreach (['payment-button' => 'button', 'payment-link' => 'button', 'qr-code' => 'card', 'payment-card' => 'card'] as $slug => $layout) {
         register_block_type('brendigo-pay/' . $slug, [
@@ -131,6 +136,7 @@ add_action('init', static function (): void {
             'editor_script' => 'bp-pay-block',
             'render_callback' => static function (array $attributes) use ($slug, $layout): string {
                 $attributes['layout'] = $layout;
+                $attributes['show_icon'] = !empty($attributes['show_icon']) ? 'yes' : 'no';
                 if ($slug === 'qr-code') { $attributes['show_qr'] = 'yes'; }
                 else { $attributes['show_qr'] = !empty($attributes['show_qr']) ? 'yes' : 'no'; }
                 return bp_pay_shortcode($attributes);

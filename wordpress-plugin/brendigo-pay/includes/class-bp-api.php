@@ -23,6 +23,7 @@ final class BP_Pay_API
             'method' => $method,
             'timeout' => 25,
             'redirection' => 0,
+            'limit_response_size' => 131072,
             'reject_unsafe_urls' => true,
             'headers' => [
                 'Authorization' => 'Bearer ' . $key,

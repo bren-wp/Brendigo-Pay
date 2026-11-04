@@ -170,3 +170,12 @@
 .bp-admin-wrap .bp-admin-connection h2{letter-spacing:-.025em;}
 @media(max-width:960px){.bp-admin-wrap .bp-admin-hero{height:auto;min-height:134px;}.bp-admin-wrap .bp-admin-tabs{overflow-x:auto;}}
 @media(max-width:782px){.bp-admin-wrap{width:calc(100% - 10px);}.bp-admin-wrap .bp-admin-panel{padding:17px;}.bp-admin-wrap .bp-admin-hero{padding:17px;}.bp-admin-wrap .bp-admin-tabs .bp-admin-tab{flex:0 0 auto;}}
+
+/* v0.8.0 — keep plugin settings inside WordPress content column and align cards. */
+.bp-admin-wrap .bp-admin-status-grid,.bp-admin-wrap .bp-admin-keys-grid{align-items:stretch;}
+.bp-admin-wrap .bp-admin-provider-grid{grid-template-columns:repeat(3,minmax(0,1fr));}
+.bp-admin-wrap .bp-admin-provider-grid .bp-admin-panel{display:flex;flex-direction:column;gap:10px;}
+.bp-admin-wrap .bp-admin-provider-grid .bp-admin-panel .button{margin-top:auto;}
+.bp-admin-wrap .bp-admin-hero{background-size:cover;}
+.bp-admin-wrap .bp-admin-input:focus-visible{outline:2px solid #315bfa;outline-offset:2px;}
+@media(max-width:1050px){.bp-admin-wrap .bp-admin-provider-grid{grid-template-columns:1fr;}}

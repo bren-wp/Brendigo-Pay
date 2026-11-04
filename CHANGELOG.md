@@ -1,3 +1,14 @@
+# Povijest izdanja
+
+## 0.8.0 — 2026-11-04 (SANDBOX)
+- Gutenberg blokovi: kontrola ikone naplatnog gumba i teksta uz QR, uz autoritativan iznos s JSON platforme.
+- Nova zaštita prijave: ukupno ograničenje neuspješnih pokušaja po IP adresi uz postojeći limiter IP/e-pošta.
+- Smanjena maksimalna veličina odgovora WordPress REST klijenta i izbjegnuta neiskorištena izgradnja HTML tablica na dashboardu.
+- Usklađeni dodatni CSS razmaci, fokus i prikaz komponenti prema WordPress/Gutenberg/WooCommerce referencama.
+- Marketinški README sa stvarnim lokalnim snimkama weba i izvornim WordPress grafičkim resursima; transparentno označena odsutnost stvarnih WP snimaka.
+- Dokumentirani sigurnosni i dead-code nalazi, statički CI audit i realni regresijski test zaštite prijave.
+- Nije potvrđena 1:1 podudarnost ni spremnost za produkcijska plaćanja.
+
 ## 0.7.2 — 2026-11-04 (SANDBOX)
 - WordPress/Gutenberg/WooCommerce pixel-parity pass, responsive provider rows, labeled provider monograms and amount display locked to the platform.
 - No live payments or claim of pixel-perfect verification in the target WordPress theme.
