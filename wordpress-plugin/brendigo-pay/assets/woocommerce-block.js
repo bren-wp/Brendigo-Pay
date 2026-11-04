@@ -33,8 +33,11 @@
                         el('input', { type: 'radio', name: 'bp_blocks_provider', value: item.id,
                             checked: provider === item.id,
                             onChange: function () { setProvider(item.id); } }),
+                        el('span', { className: 'bp-wc-provider-monogram bp-wc-provider-monogram-' + item.id, 'aria-hidden': true }, item.id === 'stripe' ? 'S' : item.id === 'paypal' ? 'P' : 'R'),
                         el('span', { className: 'bp-wc-provider-content' },
-                            el('b', {}, item.label), el('small', {}, 'Dovršite testno plaćanje na stranici pružatelja'))
+                            el('b', {}, item.label),
+                            el('small', {}, item.id === 'stripe' ? 'Kartično plaćanje putem Stripe TEST okruženja' : item.id === 'paypal' ? 'PayPal Sandbox testni račun' : 'Revolut Merchant Sandbox')),
+                        el('span', { className: 'bp-wc-provider-end', 'aria-hidden': true }, '›')
                     );
                 })
             ),
@@ -46,7 +49,7 @@
         label: el('span', {}, label),
         content: el(PaymentContent),
         edit: el('span', {}, 'Brendigo Pay — Stripe, PayPal i Revolut testni načini'),
-        canMakePayment: function () { return true; },
+        canMakePayment: function () { return options.length > 0; },
         ariaLabel: label,
         paymentMethodId: 'brendigo_pay',
         supports: { features: settings.supports || ['products'] }

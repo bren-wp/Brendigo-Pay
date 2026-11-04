@@ -44,7 +44,8 @@
                     load === 'loading' ? el('p', {}, 'Učitavanje platnih poveznica…') : null,
                     load === 'error' ? el(Notice, { status: 'warning', isDismissible: false }, 'Nije moguće učitati poveznice. Povežite dodatak s platformom.') : null,
                     el(TextControl, { label: 'ID platnog linka', value: a.id, onChange: set('id'), help: 'Možete ručno unijeti ID od 24 heksadecimalna znaka.' }),
-                    el(TextControl, { label: 'Tekst gumba', value: a.label, onChange: set('label') })
+                    el(TextControl, { label: 'Tekst gumba', value: a.label, onChange: set('label') }),
+                    link ? el('div', { className: 'bp-editor-verified-amount', role: 'status' }, 'Iznos s platforme: ' + money(link.amount_minor) + ' · EUR (zaključano)') : null
                 ),
                 el(PanelBody, { title: 'Izgled gumba', initialOpen: true },
                     el(SelectControl, { label: 'Stil gumba', value: a.style, onChange: set('style'), options: [
@@ -65,7 +66,7 @@
                         el('div', { className: 'bp-editor-preview-device' }, '▥', el('span', {}, 'Brendigo Pay'))
                     ),
                     el('div', { className: 'bp-editor-preview-body' },
-                        el('span', { className: 'bp-editor-provider-label' }, '◈ Brendigo Pay'),
+                        el('span', { className: 'bp-editor-provider-label' }, '◈ Brendigo Pay · SANDBOX'),
                         el('h3', {}, link ? link.title : (a.title || 'Plaćanje za uslugu')),
                         link ? el('strong', { className: 'bp-editor-amount' }, money(link.amount_minor)) : null,
                         el('p', {}, link ? link.description : 'Odaberite platni link kako biste vidjeli stvarni iznos.'),

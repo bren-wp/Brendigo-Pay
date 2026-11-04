@@ -1,3 +1,7 @@
+## 0.7.2 — 2026-11-04 (SANDBOX)
+- WordPress/Gutenberg/WooCommerce pixel-parity pass, responsive provider rows, labeled provider monograms and amount display locked to the platform.
+- No live payments or claim of pixel-perfect verification in the target WordPress theme.
+
 ## 0.7.1 — WordPress visual parity iteration
 - Responsive visual refinements for WordPress plugin admin, form controls and provider cards.
 - Accessible active menu tabs with URL hash and `aria-current`.

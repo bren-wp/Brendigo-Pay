@@ -63,3 +63,42 @@
 .bp-pay-widget-head img{width:35px;height:35px;}
 .bp-pay-widget-card .bp-pay-button{min-height:49px;}
 @media(max-width:540px){.bp-wc-title .bp-wc-sandbox-message{margin-left:0;}.bp-wc-steps{gap:6px;}.bp-wc-steps span{font-size:.7rem;}}
+
+/* v0.7.2 — WordPress/WooCommerce provider cards: reference 01, accessible and theme-scoped. */
+.bp-pay-widget, .brendigo-pay-block, .woocommerce #payment .payment_method_brendigo_pay {
+  --bp-parity-indigo:#1e2bb8; --bp-parity-blue:#3b5bff; --bp-parity-teal:#06c6b6; --bp-parity-surface:#f8fbff; --bp-parity-ink:#0f172a;
+}
+.woocommerce #payment .payment_method_brendigo_pay .payment_box,
+.wc-block-components-payment-methods__content .brendigo-pay-block{
+  background:linear-gradient(150deg,#fff 0%,#f7faff 100%);
+  border:1px solid #9ab1ff;border-radius:16px;padding:20px;
+}
+.bp-wc-provider-list,.bp-block-provider-list{display:grid;gap:8px;}
+.bp-wc-provider{
+  min-height:62px;padding:11px 14px;gap:12px;
+  color:var(--bp-parity-ink,#0f172a);
+  border-radius:10px;background:#fff;
+  transition:background-color .15s ease,border-color .15s ease,box-shadow .15s ease;
+}
+.bp-wc-provider:hover{border-color:#8ba2f8;background:#f9fbff;}
+.bp-wc-provider:has(input[type=radio]:checked){
+  background:linear-gradient(90deg,#eef2ff 0%,#fafcff 100%);
+  border:1px solid #365bfa;box-shadow:inset 0 0 0 1px #365bfa;
+}
+.bp-wc-provider:focus-within{outline:3px solid #06c6b6;outline-offset:2px;}
+.bp-wc-provider-monogram{
+  display:grid;place-items:center;flex:0 0 34px;
+  width:34px;height:34px;border-radius:9px;color:#fff;
+  font-size:18px;font-weight:850;line-height:1;background:linear-gradient(140deg,#5b71ff,#1b33c7);
+}
+.bp-wc-provider-monogram-paypal{background:linear-gradient(140deg,#16a7d8,#003c91);}
+.bp-wc-provider-monogram-revolut{background:#141821;}
+.bp-wc-provider-content{display:grid;gap:3px;flex:1;min-width:0;}
+.bp-wc-provider-content b{font-weight:800;font-size:.96rem;line-height:1.28;}
+.bp-wc-provider-content small{font-size:.78rem;line-height:1.4;color:#55647f;}
+.bp-wc-provider-end{font-size:24px;color:#a0b0d1;line-height:1;}
+.bp-wc-provider:has(input:checked) .bp-wc-provider-end{color:#315bfa;}
+.bp-wc-title{gap:11px;}
+.bp-wc-steps{margin-top:17px;}
+@media(max-width:600px){.bp-wc-provider{padding:10px;gap:9px;}.bp-wc-provider-monogram{width:30px;height:30px;flex-basis:30px;font-size:15px;}.bp-wc-provider-end{display:none;}}
+@media(prefers-reduced-motion:reduce){.bp-wc-provider{transition:none;}}

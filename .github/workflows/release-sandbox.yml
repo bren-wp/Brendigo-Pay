@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/release-sandbox.yml'
+      - 'scripts/package_release.py'
 permissions:
   contents: write
 jobs:

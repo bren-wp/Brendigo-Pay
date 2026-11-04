@@ -27,3 +27,17 @@
 .bp-editor-qr-placeholder small{font-size:.7rem;margin:0;color:#5b6c85;}
 .bp-editor-preview-body .bp-editor-button{font-size:.96rem;line-height:1.4;box-shadow:0 6px 17px #1a3dcb30;}
 .bp-editor-shell{box-shadow:0 9px 28px #162e8116;border-color:#d8e4fa;}
+
+/* v0.7.2 — Gutenberg reference 02: stronger hierarchy, accurate service card proportions. */
+.bp-editor-shell{border-radius:19px;border-color:#cbdafa;max-width:100%;background:#fff;overflow:hidden;}
+.bp-editor-heading{font-size:11px;line-height:1.5;letter-spacing:.13em;padding:13px 20px;background:linear-gradient(108deg,#e9f2ff,#dcfbf7);color:#1931a0;}
+.bp-editor-preview{grid-template-columns:minmax(145px,.85fr) minmax(0,1.15fr);gap:24px;padding:18px;}
+.bp-editor-preview-art{min-height:260px;overflow:hidden;border-radius:16px;background:radial-gradient(ellipse at 15% 15%,#b5f9f8 0%,transparent 47%),linear-gradient(145deg,#eff9ff,#b5d8ff 59%,#4e7bea);}
+.bp-editor-preview-device{max-width:240px;max-height:200px;}
+.bp-editor-preview-body h3{color:#101942;font-size:clamp(1.25rem,2.3vw,1.55rem);line-height:1.18;margin:10px 0;letter-spacing:-.035em;}
+.bp-editor-amount{font-size:clamp(1.65rem,3vw,2.2rem);letter-spacing:-.035em;color:#1325a4;}
+.bp-editor-preview-body p{line-height:1.55;margin:10px 0 16px;}
+.bp-editor-preview-body .bp-editor-button{border-radius:10px;min-height:49px;display:flex;align-items:center;justify-content:center;}
+.bp-editor-verified-amount{padding:12px 14px;border:1px solid #b9e8d2;border-radius:10px;background:#eafaf3;color:#155b3b;font-weight:700;line-height:1.45;}
+.bp-editor-provider-label{color:#173dce;font-size:.89rem;}
+@media(max-width:810px){.bp-editor-preview{grid-template-columns:1fr;gap:14px;}.bp-editor-preview-art{min-height:130px;}.bp-editor-preview-device{height:110px;}}

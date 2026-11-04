@@ -54,7 +54,8 @@ final class BP_Pay_Gateway extends WC_Payment_Gateway
         echo '<div class="bp-wc-provider-list" role="radiogroup" aria-label="' . esc_attr__('Pružatelj plaćanja', 'brendigo-pay') . '">';
         foreach ($options as $id => $provider) {
             echo '<label class="bp-wc-provider"><input type="radio" name="bp_provider" value="' . esc_attr($id) . '" ' . checked($selected, $id, false) . '>';
-            echo '<span><b>' . esc_html($provider[0]) . '</b><small>' . esc_html($provider[1]) . '</small></span></label>';
+            echo '<span class="bp-wc-provider-monogram bp-wc-provider-monogram-' . esc_attr($id) . '" aria-hidden="true">' . esc_html(strtoupper($id[0])) . '</span>'; 
+            echo '<span class="bp-wc-provider-content"><b>' . esc_html($provider[0]) . '</b><small>' . esc_html($provider[1]) . '</small></span><span class="bp-wc-provider-end" aria-hidden="true">›</span></label>';
         }
         echo '</div><p class="bp-wc-sandbox-message">' . esc_html__('TESTNO IZDANJE — bez stvarnog terećenja.', 'brendigo-pay') . '</p>';
     }
