@@ -43,3 +43,7 @@ Metrika prikazuje prosječnu apsolutnu RGB razliku i postotak različitih piksel
 - `02-gutenberg.jpeg`: poboljšan odnos ilustracijskog i sadržajnog stupca; iznos na platformi prikazuje se kao zaključana vrijednost. Izmjena iznosa unutar bloka nije dopuštena.
 - `03-wp-admin.jpeg`: ujednačene visine polja, razmaci kartica, tabovi, fokus stanja i responzivni razmaci. Izgled WordPress chrome-a ostaje pod kontrolom administratorove teme.
 - Vizualna točnost 1:1 još nije potvrđena u stvarnoj WordPress i WooCommerce instalaciji.
+
+## Fokusirani 1:1 checklist za WordPress
+
+Vidi [WORDPRESS-PIXEL-CHECKLIST.md](WORDPRESS-PIXEL-CHECKLIST.md) za detaljan element-po-element plan, ROI koordinate i provjere za WooCommerce checkout, Gutenberg editor i WordPress administraciju. Pokretanje lokalnih mjerenja: `python3 scripts/visual_audit_wp.py SCREEN /path/to/screenshot.png`.
