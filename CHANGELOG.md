@@ -1,5 +1,15 @@
 # Povijest izdanja
 
+## 0.8.1 — 2026-11-04 (SANDBOX) — kritični WordPress/WooCommerce hotfix
+
+- Uklonjena nekompatibilna `private array $settings` deklaracija iz `BP_Pay_Blocks`: WooCommerce `AbstractPaymentMethodType` već ima naslijeđeno `protected $settings`, čije preklapanje uzrokuje PHP fatal prilikom `woocommerce_blocks_loaded`.
+- Dodana zaštita za oštećene/nepostojeće spremljene WooCommerce postavke (`get_option` se svodi na prazno polje ako nema valjanog zapisa).
+- Shortcode callback normalizira ne-array argumente umjesto TypeError.
+- Dodat PHP runtime test za kompatibilnost nasljeđivanja i registraciju WooCommerce Blocks (s WordPress/WooCommerce testnim stubovima). Ova provjera nije zamjena za instalacijski E2E test u stvarnom WordPressu.
+- Nova verzija dodatka, marketinškog README-a, kontrolnih datoteka i release ZIP-ova.
+- Stvarna naplata i vanjska produkcijska certifikacija i dalje su isključene.
+
+
 ## 0.8.0 — 2026-11-04 (SANDBOX)
 - Gutenberg blokovi: kontrola ikone naplatnog gumba i teksta uz QR, uz autoritativan iznos s JSON platforme.
 - Nova zaštita prijave: ukupno ograničenje neuspješnih pokušaja po IP adresi uz postojeći limiter IP/e-pošta.

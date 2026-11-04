@@ -110,7 +110,7 @@ function render(string $title, string $content): never
     } else {
         echo '<main class="container ' . ($marketing ? 'bp-marketing-main' : '') . '" id="main-content">' . $content . '</main>';
     }
-    echo '<footer class="container footer"><span>© ' . date('Y') . ' Brendigo Pay · <a href="https://brendigo.com" target="_blank" rel="noopener">Brendigo</a></span><nav aria-label="Poveznice podnožja"><a href="/">Naslovnica</a><a href="/pricing">Cijene</a><a href="/plugin">WordPress</a><a href="/docs">Upute</a><a href="https://brendigopay.com" target="_blank" rel="noopener">BrendigoPay.com</a></nav><span>v0.8.0 • SANDBOX • Bez stvarnih plaćanja</span></footer></body></html>';
+    echo '<footer class="container footer"><span>© ' . date('Y') . ' Brendigo Pay · <a href="https://brendigo.com" target="_blank" rel="noopener">Brendigo</a></span><nav aria-label="Poveznice podnožja"><a href="/">Naslovnica</a><a href="/pricing">Cijene</a><a href="/plugin">WordPress</a><a href="/docs">Upute</a><a href="https://brendigopay.com" target="_blank" rel="noopener">BrendigoPay.com</a></nav><span>v0.8.1 • SANDBOX • Bez stvarnih plaćanja</span></footer></body></html>';
     exit;
 }
 

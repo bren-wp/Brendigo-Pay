@@ -33,6 +33,6 @@ for path in [ROOT / 'platform/public/index.php', ROOT / 'platform/src/Ui.php', *
     assert not re.search(r'(?<![A-Za-z_])(?:eval|shell_exec|passthru|system)\s*\(', text), f'Unsafe function in {path}'
 assert "name=\"card_number\"" not in wp
 assert "name=\"cvc\"" not in wp
-assert "Version: 0.8.0" in wp
+assert "Version: 0.8.1" in wp
 assert "Contributors: brendigo" in (wpbase / 'readme.txt').read_text(encoding='utf-8')
 print('PASS: static security guardrails; external audit and E2E required')
