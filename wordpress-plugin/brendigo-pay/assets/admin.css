@@ -198,3 +198,9 @@
 @media(max-width:1100px){.bp-admin-sync-details{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:782px){.bp-admin-sync-panel{padding:16px}.bp-admin-sync-summary{flex-direction:column}.bp-admin-sync-details{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:480px){.bp-admin-sync-details{grid-template-columns:1fr}.bp-admin-sync-panel form .button{width:100%;min-height:44px}}
+
+/* 0.8.6 help links: keep controls legible on narrow WordPress admin viewports. */
+.bp-admin-guide-links{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin:14px 0 8px}
+.bp-admin-guide-links a{max-width:100%;white-space:normal;line-height:1.4;text-align:center}
+@media(max-width:600px){.bp-admin-guide-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.bp-admin-guide-links a{width:100%}}
+@media(max-width:360px){.bp-admin-guide-links{grid-template-columns:1fr}}

@@ -58,7 +58,7 @@ namespace {
         echo "PASS: {$label}\n";
     }
 
-    verify(defined('BP_PAY_VERSION') && BP_PAY_VERSION === '0.8.5', 'plugin loads and version matches');
+    verify(defined('BP_PAY_VERSION') && BP_PAY_VERSION === '0.8.6', 'plugin loads and version matches');
     verify(isset($GLOBALS['wp_test_actions']['plugins_loaded']), 'WooCommerce classic hook registered');
     verify(isset($GLOBALS['wp_test_actions']['woocommerce_blocks_loaded']), 'WooCommerce Blocks hook registered');
 
@@ -87,7 +87,7 @@ namespace {
         'Blocks settings loaded correctly');
     verify(count($data['providers']) === 3 && $data['supports'] === ['products'], 'provider data exposed to Checkout Blocks');
     verify($method->get_payment_method_script_handles() === ['bp-pay-woocommerce-block'] &&
-        $GLOBALS['wp_test_registered_scripts']['bp-pay-woocommerce-block'][2] === '0.8.5',
+        $GLOBALS['wp_test_registered_scripts']['bp-pay-woocommerce-block'][2] === '0.8.6',
         'Blocks frontend script registered locally at current version');
 
     // Corrupted WP option rows sometimes return false/non-array data.

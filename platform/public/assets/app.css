@@ -550,3 +550,53 @@ html {overflow-x:clip;}
 @media(max-width:850px){.bp-footer-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:28px 22px}}
 @media(max-width:520px){.bp-footer-grid{grid-template-columns:1fr 1fr}.bp-footer-brand{grid-column:1/-1}.bp-footer{padding-top:28px}.bp-legal-page{margin:22px auto 38px}.bp-legal-identity div{grid-template-columns:1fr;gap:4px}}
 @media(max-width:350px){.bp-footer-grid{grid-template-columns:1fr}.bp-footer-brand{grid-column:auto}}
+
+
+/* 0.8.6: public product and knowledge-centre routes, fully responsive. */
+.bp-guide-layout{display:grid;grid-template-columns:minmax(215px,260px) minmax(0,1fr);align-items:start;gap:clamp(18px,3vw,36px);padding:30px 0 58px}
+.bp-guide-sidebar{position:sticky;top:20px;min-width:0;border:1px solid #dfe8fb;border-radius:19px;background:#fff;padding:17px 12px;box-shadow:0 10px 28px rgba(24,55,136,.04)}
+.bp-guide-sidebar-title{font-size:1.02rem;font-weight:850;color:#0e1950;padding:7px 12px 16px;border-bottom:1px solid #e6ecfb;margin-bottom:10px}
+.bp-guide-nav,.bp-guide-cross{display:flex;flex-direction:column;gap:3px}
+.bp-guide-nav a,.bp-guide-cross a{display:block;min-height:40px;padding:10px 12px;border-radius:10px;color:#38486f;font-size:.83rem;font-weight:600;overflow-wrap:anywhere;line-height:1.45}
+.bp-guide-nav a:hover,.bp-guide-cross a:hover{background:#eff5ff;color:#1645dd}
+.bp-guide-nav a.active,.bp-guide-nav a[aria-current="page"]{background:linear-gradient(120deg,#396fff,#1e35d2);color:#fff;box-shadow:0 5px 10px #1d48be25}
+.bp-guide-nav a.bp-guide-nav-home{font-weight:800}
+.bp-guide-cross{border-top:1px solid #e6ecfb;margin-top:13px;padding-top:13px}
+.bp-guide-content{min-width:0}
+.bp-guide-breadcrumb{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:2px 0 17px;font-size:.8rem;color:#617192}
+.bp-guide-breadcrumb a{color:#3158ce;font-weight:650}
+.bp-guide-breadcrumb [aria-current]{color:#3e4e73}
+.bp-guide-hero{padding:26px 29px 30px;position:relative;overflow:hidden;border-radius:20px;background:radial-gradient(ellipse at 94% 0,#aeedfcab,transparent 45%),linear-gradient(120deg,#fff,#eaf2ff);border:1px solid #dce8fc}
+.bp-guide-hero::before{content:"";position:absolute;width:200px;height:200px;right:-95px;top:-97px;border-radius:50%;background:linear-gradient(145deg,#0ce0c77a,#2e63ee80);pointer-events:none}
+.bp-guide-hero h1{font-size:clamp(2rem,3.6vw,3.3rem);margin:14px 0 11px;max-width:740px;color:#111a46;letter-spacing:-.04em}
+.bp-guide-hero p{font-size:1rem;line-height:1.7;max-width:720px;color:#344466;margin-bottom:0}
+.bp-guide-hero-actions{display:flex;gap:11px;flex-wrap:wrap;margin-top:22px}
+.bp-guide-test-note{background:#eef5ff;border:1px solid #bdd0ff;color:#304575;border-radius:13px;padding:14px 18px;line-height:1.65;margin:17px 0 20px;font-size:.82rem}
+.bp-guide-test-note strong{color:#1743aa}
+.bp-guide-card-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+.bp-guide-card{display:flex;flex-direction:column;gap:7px;min-width:0;border:1px solid #dce5f8;border-radius:16px;background:#fff;padding:22px;color:#132351;box-shadow:0 8px 24px rgba(28,61,129,.045);transition:transform .18s ease,border-color .18s ease}
+.bp-guide-card:hover{border-color:#6e97ff;color:#113ac5;transform:translateY(-2px)}
+.bp-guide-card-icon{width:43px;height:43px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(145deg,#edf4ff,#d9e6ff);color:#1b46dc;font-size:1.45rem;margin-bottom:5px}
+.bp-guide-card strong{font-size:1.08rem;letter-spacing:-.025em}
+.bp-guide-card p{flex:1;line-height:1.65;font-size:.85rem;margin:0;color:#62718f}
+.bp-guide-more{color:#184bdf;font-size:.84rem;font-weight:780;margin-top:12px}
+.bp-guide-screenshot{margin:22px 0 0;border:1px solid #dce6fa;border-radius:17px;overflow:hidden;background:#fff}
+.bp-guide-screenshot img{display:block;width:100%;height:auto;object-fit:contain}
+.bp-guide-screenshot figcaption{font-size:.76rem;line-height:1.6;color:#536588;padding:12px 15px;background:#f6f9ff}
+.bp-guide-sections{display:grid;gap:16px}
+.bp-guide-section{padding:24px clamp(18px,3vw,30px);background:#fff;border-radius:17px;border:1px solid #dee7f6;box-shadow:0 8px 24px #183a7509;scroll-margin-top:90px}
+.bp-guide-section-heading{display:flex;align-items:center;gap:13px;margin-bottom:13px}
+.bp-guide-section-heading>span{display:grid;place-items:center;width:37px;height:37px;flex-shrink:0;border-radius:11px;background:#eaf0ff;color:#1c48dc;font-weight:850}
+.bp-guide-section h2{font-size:clamp(1.02rem,1.6vw,1.3rem);margin:0;color:#111d53}
+.bp-guide-section ul{list-style:none;padding:0;margin:0;display:grid;gap:12px}
+.bp-guide-section li{color:#435374;line-height:1.67;font-size:.89rem;padding-left:27px;position:relative}
+.bp-guide-section li::before{content:"✓";position:absolute;left:0;top:0;border-radius:50%;background:#e2f9eb;color:#11a459;font-weight:850;width:20px;height:20px;display:grid;place-items:center;font-size:.75rem}
+.bp-guide-resources,.bp-guide-end{margin-top:17px;border:1px solid #dbe7fc;border-radius:16px;background:#fff;padding:20px 24px}
+.bp-guide-resources h2,.bp-guide-end strong{color:#0f1f55;font-size:1.13rem;font-weight:800}
+.bp-guide-resources ul{display:grid;gap:9px;padding-left:24px}
+.bp-guide-end p{margin:7px 0 15px;font-size:.86rem}
+.bp-guide-end .btn{margin:0 9px 9px 0}
+@media(max-width:1160px){.bp-body-marketing .top-inner{gap:12px}.bp-body-marketing .top nav{gap:12px}.bp-body-marketing .top nav a:not(.btn){font-size:.82rem}.bp-body-marketing .bp-tagline{display:none}}
+@media(max-width:900px){.bp-guide-layout{grid-template-columns:1fr;padding-top:19px}.bp-guide-sidebar{position:static}.bp-guide-nav{display:flex;flex-direction:row;flex-wrap:nowrap;overflow-x:auto;padding-bottom:5px;scrollbar-width:thin}.bp-guide-nav a{white-space:nowrap;flex-shrink:0}.bp-guide-sidebar-title{margin-bottom:9px;padding-bottom:8px}.bp-guide-cross{display:none}}
+@media(max-width:560px){.bp-guide-card-grid{grid-template-columns:1fr}.bp-guide-layout{gap:16px}.bp-guide-hero{padding:20px 18px 24px}.bp-guide-hero-actions .btn{width:100%}.bp-guide-section{padding:20px 16px}.bp-guide-end .btn{width:100%;margin:0 0 8px}.bp-guide-breadcrumb{font-size:.74rem;gap:7px}}
+@media(prefers-reduced-motion:reduce){.bp-guide-card{transition:none}.bp-guide-card:hover{transform:none}}

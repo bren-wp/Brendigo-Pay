@@ -81,6 +81,31 @@ def main():
                 assert 'Built with' in legal_html and 'nije banka' in legal_html
             assert req('/no-such-legal-page')[0] == 404
             print('PASS: all public legal pages, responsive brand footer and explicit payment disclaimer')
+            guide_routes = {
+                '/features': ['payment-links', 'qr-codes', 'woocommerce', 'wordpress',
+                              'analytics', 'android', 'licensing'],
+                '/integrations': ['stripe', 'paypal', 'revolut', 'wordpress',
+                                  'woocommerce', 'bank-transfer', 'monri', 'corvuspay'],
+                '/docs': ['quickstart', 'account', 'plans', 'sites', 'wordpress',
+                          'woocommerce', 'payment-links', 'qr', 'android', 'providers',
+                          'stripe', 'paypal', 'revolut', 'transactions', 'webhooks',
+                          'security', 'troubleshooting', 'faq', 'release-checklist'],
+            }
+            guide_count = 0
+            for root, subpages in guide_routes.items():
+                for page in [root, *(root + '/' + slug for slug in subpages)]:
+                    route_status, guide_html, _ = req(page)
+                    assert route_status == 200, (page, route_status)
+                    assert 'bp-guide-layout' in guide_html and '<h1>' in guide_html, page
+                    assert 'Built with' in guide_html and 'brendigo.com' in guide_html
+                    assert 'storage/data' not in guide_html and 'JSON pohrana' not in guide_html
+                    assert 'Politika privatnosti' in guide_html
+                    guide_count += 1
+            assert guide_count == 37, guide_count
+            assert req('/docs/nepostojeca')[0] == 404
+            assert req('/integrations/not-supported')[0] == 404
+            assert (project / 'public/assets/screenshots/user-dashboard-desktop.png').is_file()
+            print(f'PASS: {guide_count} customer-facing guide URLs and no internal storage disclosures')
             status, body, _ = req('/register?plan=business')
             assert status == 200 and '49,90' in body and '19,90' in body, f"register GET: {status}, body={body[:420]!r}"
             csrf = re.search('name="csrf" value="([a-f0-9]+)"', body).group(1)
@@ -215,7 +240,7 @@ def main():
             assert json.loads(snapshot)['last_seen_at'] is None
             payload = {
                 'site_url': base, 'installation_id': 'a' * 32,
-                'plugin_version': '0.8.5', 'wordpress_version': '6.9.1',
+                'plugin_version': '0.8.6', 'wordpress_version': '6.9.1',
                 'woocommerce_version': '10.3.0',
             }
             assert req('/api/v1/sites/sync', {**payload, 'installation_id': 'b' * 32}, token=token)[0] == 403
@@ -223,15 +248,15 @@ def main():
             assert req('/api/v1/sites/sync', {**payload, 'plugin_version': '<script>'}, token=token)[0] == 422
             assert req('/api/v1/sites/sync', payload, token=token)[0] == 200
             site_status = json.loads(req('/api/v1/sites/status', token=token)[1])
-            assert site_status['plugin_version'] == '0.8.5' and site_status['last_seen_at']
-            assert '0.8.5' in req('/admin')[1] and site_status['origin'] in req('/sites')[1]
+            assert site_status['plugin_version'] == '0.8.6' and site_status['last_seen_at']
+            assert '0.8.6' in req('/admin')[1] and site_status['origin'] in req('/sites')[1]
             print('PASS: authenticated, version-bounded WordPress heartbeat and synchronized admin/user views')
             mobile_status, mobile_body, _ = req('/api/v1/mobile/overview', token=mobile_token)
             assert mobile_status == 200
             mobile_data = json.loads(mobile_body)
             assert mobile_data['subscription']['sites_used'] == 1
             assert mobile_data['sites'][0]['id'] == site_id
-            assert mobile_data['sites'][0]['plugin_version'] == '0.8.5'
+            assert mobile_data['sites'][0]['plugin_version'] == '0.8.6'
             mobile_create_status, created, _ = req('/api/v1/mobile/links', {
                 'site_id': site_id, 'title': 'Created on Android',
                 'amount': '24.90', 'description': 'Synced from user panel',

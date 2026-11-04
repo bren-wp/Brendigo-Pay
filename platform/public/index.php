@@ -9,6 +9,7 @@ use BrendigoPay\SandboxProviders;
 use BrendigoPay\MobileApi;
 use BrendigoPay\Accounts;
 use function BrendigoPay\legal_page;
+use function BrendigoPay\bp_guide_page;
 use function BrendigoPay\e;
 use function BrendigoPay\minor_format;
 use function BrendigoPay\money_to_minor;
@@ -30,6 +31,7 @@ require dirname(__DIR__) . '/src/Ui.php';
 require dirname(__DIR__) . '/src/MobileApi.php';
 require dirname(__DIR__) . '/src/Accounts.php';
 require dirname(__DIR__) . '/src/LegalPages.php';
+require dirname(__DIR__) . '/src/PublicGuides.php';
 
 $configFile = dirname(__DIR__) . '/config.php';
 if (!is_file($configFile)) {
@@ -91,11 +93,12 @@ function render(string $title, string $content): never
 {
     global $path, $config;
     $user = current_user();
-    $marketing = in_array($path, ['/', '/pricing', '/plugin', '/docs', '/login', '/register', '/about', '/privacy', '/terms', '/cookies', '/refund-policy', '/contact', '/security', '/providers'], true);
+    $marketing = in_array($path, ['/', '/pricing', '/plugin', '/docs', '/login', '/register', '/about', '/privacy', '/terms', '/cookies', '/refund-policy', '/contact', '/security', '/providers'], true)
+        || preg_match('#^/(features|integrations|docs)(?:/|$)#', $path) === 1;
     $merchant = $user !== null && (str_starts_with($path, '/dashboard') || $path === '/settings' || $path === '/sites' || $path === '/admin');
     $bodyClass = $merchant ? 'bp-body-merchant' : ($marketing ? 'bp-body-marketing' : 'bp-body-checkout');
     $nav = $user === null
-        ? '<a href="/#mogucnosti">Mogućnosti</a><a href="/pricing">Cijene</a><a href="/plugin">Plugin</a><a href="/docs">Dokumentacija</a><a href="/login">Prijava</a><a class="btn" href="/register">Započni →</a>'
+        ? '<a href="/features">Mogućnosti</a><a href="/integrations">Integracije</a><a href="/pricing">Cijene</a><a href="/plugin">Plugin</a><a href="/docs">Dokumentacija</a><a href="/login">Prijava</a><a class="btn" href="/register">Započni →</a>'
         : '<a href="/dashboard">Pregled</a><a href="/settings">Postavke</a><form method="post" action="/logout">' . csrf() . '<button class="nav-button" type="submit">Odjava</button></form>';
     if (str_starts_with($path, '/p/')) {
         $nav = '<span class="bp-checkout-nav-label">♢ Sigurna testna naplata</span><a href="/docs">Pomoć</a>';
@@ -131,9 +134,9 @@ function render(string $title, string $content): never
         . 'Povežite vlastite pružatelje plaćanja, licencirane domene i testne transakcije na jednom mjestu.</p></div>'
         . '<nav aria-label="Usluga"><h2>Platforma</h2><a href="/">Naslovnica</a><a href="/pricing">Paketi i cijene</a>'
         . '<a href="/providers">Načini plaćanja</a><a href="/plugin">WordPress dodatak</a>'
-        . '<a href="/docs">Dokumentacija</a><a href="/login">Korisnički panel</a></nav>'
+        . '<a href="/features">Mogućnosti</a><a href="/integrations">Integracije</a><a href="/docs">Dokumentacija</a><a href="/docs/quickstart">Brzi početak</a><a href="/login">Korisnički panel</a></nav>'
         . '<nav aria-label="O nama"><h2>Informacije</h2><a href="/about">O Brendigo Payu</a>'
-        . '<a href="/contact">Kontakt i podrška</a><a href="/security">Sigurnost</a>'
+        . '<a href="/contact">Kontakt i podrška</a><a href="/docs/faq">Česta pitanja</a><a href="/docs/troubleshooting">Rješavanje problema</a><a href="/security">Sigurnost</a>'
         . '<a href="https://brendigo.com" rel="noopener noreferrer">Brendigo.com</a></nav>'
         . '<nav aria-label="Pravni dokumenti"><h2>Pravne stranice</h2>'
         . '<a href="/privacy">Politika privatnosti</a><a href="/terms">Uvjeti korištenja</a>'
@@ -142,7 +145,7 @@ function render(string $title, string $content): never
         . 'nije banka ni licencirana financijska ili platna institucija, ne drži sredstva kupaca. '
         . 'Platne transakcije izvršavaju vanjski, zasebno ugovoreni pružatelji. '
         . 'Trenutačno izdanje dostupno je samo za testna plaćanja.</div>'
-        . '<div class="container bp-footer-bottom"><span>© ' . date('Y') . ' Brendigo Pay · v0.8.5 (SANDBOX)</span>'
+        . '<div class="container bp-footer-bottom"><span>© ' . date('Y') . ' Brendigo Pay · v0.8.6 (SANDBOX)</span>'
         . '<span>Built with <a href="https://brendigo.com" rel="noopener noreferrer">Brendigo</a></span></div>'
         . '</footer></body></html>';
     exit;
@@ -1148,8 +1151,11 @@ if ($path === '/plugin' && $method === 'GET') {
     render('WordPress i WooCommerce dodatak', bp_site_plugin());
 }
 
-if ($path === '/docs' && $method === 'GET') {
-    render('Dokumentacija', bp_site_docs());
+if ($method === 'GET') {
+    $guide = bp_guide_page($path);
+    if ($guide !== null) {
+        render($guide[0], $guide[1]);
+    }
 }
 
 if (in_array($path, ['/login', '/register'], true) && $method === 'GET') {

@@ -1,3 +1,13 @@
+## 0.8.6 — 2026-11-04 (SANDBOX)
+
+- 34 zasebnih korisničkih vodiča i podstranice Mogućnosti, Integracije i Dokumentacija; ukupno 37 novih URL-ova uključujući tri indeksa.
+- Responzivan navigacijski prikaz s detaljnim koracima za registraciju, licence, WordPress, WooCommerce, Android, QR kodove, platne linkove, potvrde i rješavanje poteškoća.
+- Transparentno razdvojeni Stripe/PayPal/Revolut sandbox načini od planiranih Monri/CorvusPay integracija i ručnih WooCommerce BACS/COD metoda.
+- U dokumentaciji je stvarna fotografija lokalno pokrenutog web korisničkog panela; nije tvrdnja o potpunoj 1:1 vizualnoj podudarnosti.
+- Android korisnički panel i WordPress administrator imaju izravne poveznice na odgovarajuće vodiče i podršku.
+- Ispravljen nedostatak adb alata u Android emulator screenshot CI radnom toku, s dodatnom provjerom da je otvoren stvarni ekran registracije.
+- Osvježeni marketing README, WordPress opis, web/Android testovi i upute za postavljanje. Sanbox bez stvarnog terećenja.
+
 ## 0.8.5 — 2026-11-04 (SANDBOX)
 
 - Jedna centralizirana registracija za web i Android preko \`Accounts::register\`, Argon2id pohrana, jedinstven e-mail indeks i rate-limit; prijava u oba smjera.

@@ -38,9 +38,9 @@ jobs:
       - name: Package Brendigo Pay SANDBOX
         run: |
           python3 scripts/package_release.py --output dist
-          cp android/app/build/outputs/apk/debug/app-debug.apk dist/Brendigo-Pay-Android-0.8.5-debug.apk
-          cp android/app/build/outputs/bundle/release/app-release.aab dist/Brendigo-Pay-Android-0.8.5-unsigned.aab
-          (cd dist && sha256sum Brendigo-Pay-Android-0.8.5-debug.apk Brendigo-Pay-Android-0.8.5-unsigned.aab >> SHA256SUMS.txt)
+          cp android/app/build/outputs/apk/debug/app-debug.apk dist/Brendigo-Pay-Android-0.8.6-debug.apk
+          cp android/app/build/outputs/bundle/release/app-release.aab dist/Brendigo-Pay-Android-0.8.6-unsigned.aab
+          (cd dist && sha256sum Brendigo-Pay-Android-0.8.6-debug.apk Brendigo-Pay-Android-0.8.6-unsigned.aab >> SHA256SUMS.txt)
       - name: Publish or update sandbox prerelease
         env:
           GH_TOKEN: ${{ github.token }}
