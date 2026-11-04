@@ -36,3 +36,10 @@ Usporedba **odbija** snimke različite veličine (ne rasteže snimke jer bi rezu
 Metrika prikazuje prosječnu apsolutnu RGB razliku i postotak različitih piksela; ne potvrđuje automatski kvalitetu niti upotrebljivost. Poredak slojeva, margine, visine, statusi i ponašanje kontrola obvezno se ručno provjeravaju.
 
 **WordPress v0.7.1:** aktivni tabovi sada slijede URL hash, `aria-current` i fokus; unaprijeđeni su responzivni razmaci i kontrole. To nije konačna 1:1 verifikacija.
+
+## v0.7.2 — komponentne izmjene
+
+- `01-woocommerce-checkout.jpeg`: jednaki obrubi, raspored, ikonice i opisi Stripe/PayPal/Revolut pružatelja u Classic i Blocks izboru. Matična WooCommerce tema i dalje upravlja podacima kupca, dostavom i košaricom; ne stvarati lažna polja kartica.
+- `02-gutenberg.jpeg`: poboljšan odnos ilustracijskog i sadržajnog stupca; iznos na platformi prikazuje se kao zaključana vrijednost. Izmjena iznosa unutar bloka nije dopuštena.
+- `03-wp-admin.jpeg`: ujednačene visine polja, razmaci kartica, tabovi, fokus stanja i responzivni razmaci. Izgled WordPress chrome-a ostaje pod kontrolom administratorove teme.
+- Vizualna točnost 1:1 još nije potvrđena u stvarnoj WordPress i WooCommerce instalaciji.

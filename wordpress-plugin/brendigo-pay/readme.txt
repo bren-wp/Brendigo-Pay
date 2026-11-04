@@ -3,7 +3,7 @@ Contributors: brendigo
 Tags: payments, woocommerce, payment links, qr code, checkout
 Requires at least: 6.4
 Requires PHP: 8.1
-Stable tag: 0.7.1
+Stable tag: 0.7.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -30,6 +30,11 @@ Test API token is encrypted with WordPress salt-derived AES-256-GCM, or use BREN
 The platform uses test/sandbox hosted checkout and verifies provider payment status before Woo order completion.
 
 == Changelog ==
+= 0.7.2 =
+* Refined Gutenberg service card, provider selection and admin dimensions against user-supplied references.
+* Added labeled provider monograms in classic and Blocks checkout, with improved keyboard focus and mobile behavior.
+* SANDBOX only; visual parity and live checkout are not certified.
+
 = 0.7.1 =
 * Refined WordPress admin layout and focus styles, hash-linked accessible navigation.
 

@@ -3,7 +3,7 @@
  * Plugin Name: Brendigo Pay
  * Plugin URI: https://brendigopay.com
  * Description: Sandbox integracija Brendigo Pay naplatnih poveznica za WordPress i WooCommerce (Stripe, PayPal, Revolut).
- * Version: 0.7.1
+ * Version: 0.7.2
  * Requires at least: 6.4
  * Requires PHP: 8.1
  * Author: Brendigo
@@ -20,7 +20,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('BP_PAY_VERSION', '0.7.1');
+define('BP_PAY_VERSION', '0.7.2');
 define('BP_PAY_FILE', __FILE__);
 
 define('BP_PAY_PATH', plugin_dir_path(__FILE__));
