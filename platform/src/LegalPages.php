@@ -50,8 +50,8 @@ function legal_page(string $path, array $config): ?array
             . '<h2>Vanjski pružatelji</h2><p>Trgovac zasebno povezuje račune Stripe, PayPal '
             . 'ili Revolut u testnom načinu rada. Njihova pravila privatnosti primjenjuju se '
             . 'na korisnike njihovih usluga. Brendigo Pay ne pohranjuje podatke platnih kartica.</p>'
-            . '<h2>Sigurnost</h2><p>Lozinke se čuvaju kao Argon2id sažeci, mobilni tokeni '
-            . 'kao sažeci na poslužitelju, a Android lokalno šifrira token Android Keystoreom. '
+            . '<h2>Sigurnost</h2><p>Pristup računima zaštićen je tehničkim i organizacijskim mjerama. '
+            . 'Prijenos između uređaja i platforme zahtijeva sigurnu HTTPS vezu. '
             . 'Ni jedna mjera ne može jamčiti apsolutnu sigurnost.</p>'],
         '/terms' => ['Uvjeti korištenja',
             '<h2>Opseg usluge</h2><p>Brendigo Pay je softversko rješenje za povezivanje trgovaca '
