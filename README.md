@@ -1,203 +1,130 @@
 <div align="center">
-  <img src="platform/public/assets/app-icon-512.png" alt="Brendigo Pay originalna ikona" width="96" height="96">
-  <h1>Brendigo Pay</h1>
-  <p><strong>Pametna plaćanja za moderan biznis</strong></p>
-  <p>Jedna platforma za web naplatu, WordPress, WooCommerce i Android korisnički panel.</p>
-  <p>
-    <a href="https://brendigopay.com">BrendigoPay.com</a> ·
-    <a href="https://brendigo.com">Brendigo</a> ·
-    <a href="https://github.com/bren-wp/Brendigo-Pay/releases">Izdanja</a> ·
-    <a href="docs/API.md">API dokumentacija</a>
-  </p>
-  <p>
-    <img alt="GitHub Actions" src="https://github.com/bren-wp/Brendigo-Pay/actions/workflows/ci.yml/badge.svg">
-    <strong>v0.8.5 · SANDBOX · bez stvarnih uplata</strong>
-  </p>
+
+<img src="platform/public/assets/app-icon-512.png" width="110" height="110" alt="Brendigo Pay ikona">
+
+# Brendigo Pay
+
+**Pametna plaćanja za moderan biznis**
+
+Web-platforma, korisnički panel, WordPress, WooCommerce i Android — jedan račun i jedan pregled naplate.
+
+[Web-platforma](https://brendigopay.com) · [Dokumentacija](https://brendigopay.com/docs) · [Cijene](https://brendigopay.com/pricing) · [Autor Brendigo](https://brendigo.com)
+
+[![CI](https://github.com/bren-wp/Brendigo-Pay/actions/workflows/ci.yml/badge.svg)](https://github.com/bren-wp/Brendigo-Pay/actions/workflows/ci.yml)
+
+**Brendigo Pay v0.8.6 — testno izdanje (SANDBOX)**
+
 </div>
 
-> **IZDANJE v0.8.5 — SANDBOX (TESTIRANJE)**. Brendigo Pay trenutno **ne podržava stvarne uplate**. Stripe TEST, PayPal Sandbox i Revolut Sandbox adapteri nisu potvrđeni u punim vanjskim end-to-end testovima. Ne unositi produkcijske tajne ključeve i ne postavljati kao aktivno sredstvo naplate. Izrada vizualnog sučelja prema referencama **ne znači potvrđenu pixel-by-pixel 1:1 podudarnost**.
+> **Status proizvoda:** korisnički panel, licence, WordPress, Android i odabrane integracijske putanje služe za testiranje. **Stvarna online naplata još nije dostupna.** Službeni produkcijski merchant računi, neovisni sigurnosni testovi i završna regulatorna provjera nisu potvrđeni. Ne unosite produkcijske platne ključeve.
 
-## Android aplikacija i zajednički korisnički račun (v0.8.5)
+## Jednostavnije poslovanje, jedan povezani sustav
 
-Nova nativna Android aplikacija nalazi se u [mapi android/](android/) i ima istu Brendigo Pay paletu, ikonu, naziv i četiri glavna pogleda: Pregled, Transakcije, Linkovi i Web-stranice. Koristi **iste podatke trgovca** kao web i WordPress dodatak. Aplikacija se prijavljuje zasebnim mobilnim tokenom; token se čuva u Android Keystore AES-GCM, samo za merchant API. Svaka domena/licencija i platni link automatski su vidljivi u zajedničkoj pohrani.
+- **Jedan račun** — registracija preko weba ili Androida, prijava istom e-adresom i lozinkom u oba smjera.
+- **Korisnički panel** — vlastite testne transakcije, naplatni linkovi, povezani pružatelji i licence na jednom mjestu.
+- **WordPress bez trgovine** — Gutenberg blokovi, naplatne kartice, poveznice, gumbi i QR kodovi.
+- **WooCommerce blagajna** — zasebna testna metoda s podrškom za Classic Checkout i Checkout Blocks.
+- **Domenski ograničene licence** — Start, Business i Pro, bez besplatnog paketa.
+- **Android aplikacija** — pregled naplate, transakcija i domena, kreiranje i uključivanje platnih linkova te upute za integraciju.
+- **Administratorski panel** — pregled računa, potvrđivanje plaćenih planova, status instalacija i nadzor licenci.
+- **Odvojeni korisnički podaci** — svaki trgovac vidi samo vlastite transakcije i povezane web-stranice.
 
-U izdanju se isporučuju **instalacijski razvojni APK** i **nepotpisani release AAB**. AAB nije spreman za Google Play dok se ne potpiše izdavateljevim upload ključem, dovrše produkcijske integracije i E2E testovi. Stvarni Android i WordPress screenshotovi još trebaju provjeru na pokrenutim aplikacijama; ne koristimo referentne rendere kao lažne dokaze. [Android dokumentacija i upute](android/README.md).
+### Pogledajte stvarnu web-platformu
 
-## Jedan račun na webu i Androidu
+Sljedeće fotografije zaslona nastale su pokretanjem lokalnog web sučelja i njegovim snimanjem. **Nisu dizajnerske reference** ni dokaz da je javni servis spreman za produkcijska plaćanja.
 
-**Registrirajte se gdje želite, prijavite se svugdje.** Android i web dijele istu registraciju, e-adresu i Argon2id autentikaciju. Android aplikacija sadrži zaseban responzivan obrazac za naziv, e-adresu, lozinku, HTTPS adresu trgovine i tri plaćena paketa. Novi račun može se odmah prijaviti na web ili Android korisnički panel, ali **ne dobiva pravo na naplatu** dok operater ne potvrdi uplatu za paket.
-
-Android korisnički panel čita s istog servera: statistike testne naplate, vlastite transakcije, domene/licence, status Stripe/PayPal/Revolut integracija te upravlja platnim linkovima. Administrator na webu vidi sve račune i ručno verificira pretplate; običan trgovac nema pristup njegovu panelu ni podacima druge trgovine.
-
-## Stranice, uvjeti i identitet
-
-Prošireni **responzivni footer** povezuje Cijene, Načine plaćanja, WordPress, Dokumentaciju, O nama, Podršku, Sigurnost, Politiku privatnosti, Uvjete korištenja, Kolačiće i Povrate. Na dnu je tražena oznaka **Built with [Brendigo](https://brendigo.com)** te jasna napomena da platforma nije banka/financijska institucija.
-
-Poslovni identitet, adresu i javni kontakt treba upisati u privatnu konfiguraciju prije komercijalnog lansiranja; stranice ne sadrže izmišljene pravne podatke.
-
-**Upute za postavljanje:** [Web, WordPress i Android](docs/DEPLOYMENT-0.8.5.md) · [Integracije prema službenoj dokumentaciji](docs/PROVIDER-MATRIX-0.8.5.md) · [Sigurnost i otvoreni rizici](docs/SECURITY-REVIEW-0.8.5.md).
-
-## Sinkronizirani WordPress i web-paneli (v0.8.5)
-
-Platforma prikazuje status pojedine instalacije, verziju dodatka i vrijeme zadnjeg sigurnog kontakta. WordPress po rasporedu (WP-Cron, svakih sat vremena) šalje poslužiteljski zahtjev potpisan vlastitim **domenski ograničenim API tokenom** te ID-jem instalacije. Platforma provjerava isteklu/suspendiranu pretplatu, vlasnika domene, licenciju i instalaciju.
-
-**WooCommerce Classic i Blocks** ne nude Brendigo Pay ako posljednja uspješna sinkronizacija nije potvrđena tijekom prethodna dva sata ili je platforma odbila zahtjev. Administrator može odabrati „Sinkroniziraj sada“ u WP postavkama; status uključuje Start/Business/Pro, iskorištene domene i datum isteka. Operator može suspendirati plaćeni paket iz `/admin` te tako odmah blokirati pristup API-ju.
-
-[Ciljani sigurnosni pregled Android i API izdanja 0.8.5](docs/SECURITY-REVIEW-0.8.5.md).
-
-Ovo je još uvijek **SANDBOX**. Nakon deploya treba potvrditi produkcijske platne pružatelje, automatiziranu naplatu paketa, identitet trgovca, domensku vlasničku provjeru, WordPress/WooCommerce E2E te regulatornu usklađenost. Snimke u README-u odnose se na stvarni raniji UI, ali ne jamče vizualnu 1:1 identičnost svih referenci.
-
-## Tri plaćena paketa, licence po web-stranici (v0.8.5)
-
-| Paket | Predložena cijena / mj | Dopuštene domene |
-|---|---:|---:|
-| **Start** | 19,90 € | 1 |
-| **Business** | 49,90 € | 5 |
-| **Pro** | 99,90 € | 25 |
-
-**Nema besplatnog paketa.** Registracija samo stvara račun i odabire paket, ne potvrđuje uplatu. Budući da produkcijska naplata pretplate nije integrirana, **operator ručno potvrđuje postojeću uplatu i aktivira paket**. Novi korisnici bez aktivirane licence ne mogu koristiti platformu kao naplatni servis. Izdavanje 1/5/25 licenci se provjerava pod zaključavanjem JSON pohrane na serveru.
-
-**Povezivanje:**
-1. Trgovac registrira račun i bira Start, Business ili Pro.
-2. Administrator nakon neovisno verificirane uplate aktivira paket i datum isteka u `/admin`.
-3. Trgovac u `/sites` unosi HTTPS domenu WordPressa, npr. `https://trgovina.hr`, pa dobiva **jednokratni licencni ključ**.
-4. U WordPressu otvara **Brendigo Pay → Postavke**, sprema URL platforme i unosi licencni ključ.
-5. Dodatak šalje licenciju i ID instalacije platformi; nakon provjere vraća se zaseban **`bp_test_` API token**, ograničen na tu domenu i instalaciju.
-6. Korisnički panel prikazuje iskorištene licence i omogućuje rotaciju ili uklanjanje domene. Rotacija opoziva prethodni API ključ.
-
-**Sigurnosna ograničenja:** licencije su u JSON pohrani samo kao SHA-256 sažeci. Za odobravanje paketa obavezna je konfiguracija `admin_user_ids` u privatnoj `platform/config.php`. Aktivacija još ne provodi neovisnu DNS/HTTP potvrdu vlasništva domene, pa ne treba uključivati produkcijske uplate prije njezine implementacije. WordPress standardno koristi vlastitu bazu za opcije dodatka; web-platforma koristi samo `storage/data` JSON.
-
-[Detaljna dokumentacija o paketima i licenci](docs/PAID-PLANS-LICENSES.md).
-
-## Hitni ispravak WooCommerce fatal error (v0.8.2)
-
-Ispravljen je konflikt naslijeđenog svojstva `$settings` između `BP_Pay_Blocks` i službene WooCommerce `AbstractPaymentMethodType` klase. U ranijoj verziji mogao je izazvati **kritičnu PHP grešku** kada WordPress pokrene integraciju Checkout Blocks. Novu verziju možete instalirati preko postojeće iz odjeljka **Dodaci → Dodaj novi → Prenesi dodatak** ili zamijeniti mapu dodatka; **ne brišite pohranjene postavke i nemojte mijenjati postojeće API ključeve**. Dodatne upute za oporavak: [docs/WORDPRESS-CRITICAL-ERROR-0.8.2.md](docs/WORDPRESS-CRITICAL-ERROR-0.8.2.md).
-
-## Doživite Brendigo Pay
-
-Prikazujemo **stvarne snimke lokalno izvršene web-platforme**, nastale automatiziranim renderiranjem njezina HTML/CSS/JS sučelja. Ovo **nisu** generirane dizajnerske reference, ali **nisu** ni potvrda rada javnog produkcijskog servisa.
-
-| Web naslovnica — desktop | Korisnička nadzorna ploča — desktop |
-|:--:|:--:|
-| [![Stvarna lokalna naslovnica](docs/screenshots/web-home-desktop.png)](docs/screenshots/web-home-desktop.png) | [![Stvarni lokalni korisnički panel](docs/screenshots/user-dashboard-desktop.png)](docs/screenshots/user-dashboard-desktop.png) |
-| Naplatna poveznica — desktop | Novi platni link — desktop |
-| [![Stvarna lokalna naplatna stranica](docs/screenshots/sandbox-checkout-desktop.png)](docs/screenshots/sandbox-checkout-desktop.png) | [![Stvarni lokalni obrazac naplatne poveznice](docs/screenshots/new-payment-link-desktop.png)](docs/screenshots/new-payment-link-desktop.png) |
+| Naslovnica | Korisnička nadzorna ploča |
+|:---:|:---:|
+| [![Naslovnica web sučelja](docs/screenshots/web-home-desktop.png)](docs/screenshots/web-home-desktop.png) | [![Korisnički panel](docs/screenshots/user-dashboard-desktop.png)](docs/screenshots/user-dashboard-desktop.png) |
+| **Naplatna stranica — testno** | **Novi platni link** |
+| [![Testni checkout](docs/screenshots/sandbox-checkout-desktop.png)](docs/screenshots/sandbox-checkout-desktop.png) | [![Novi platni link](docs/screenshots/new-payment-link-desktop.png)](docs/screenshots/new-payment-link-desktop.png) |
 
 <details>
-<summary><strong>Mobilne snimke web sučelja (nisu screenshotovi nativne Android aplikacije)</strong></summary>
+<summary><strong>Stvarni prikazi web sučelja na mobilnoj širini</strong></summary>
 
-| Naslovnica | Nadzorna ploča | Naplata | Novi link |
-|:--:|:--:|:--:|:--:|
-| [![Mobilna naslovnica](docs/screenshots/web-home-mobile.png)](docs/screenshots/web-home-mobile.png) | [![Mobilna nadzorna ploča](docs/screenshots/user-dashboard-mobile.png)](docs/screenshots/user-dashboard-mobile.png) | [![Mobilni checkout](docs/screenshots/sandbox-checkout-mobile.png)](docs/screenshots/sandbox-checkout-mobile.png) | [![Mobilni novi platni link](docs/screenshots/new-payment-link-mobile.png)](docs/screenshots/new-payment-link-mobile.png) |
+| Naslovnica | Pregled | Naplata | Novi link |
+|:---:|:---:|:---:|:---:|
+| [![Mobilna naslovnica](docs/screenshots/web-home-mobile.png)](docs/screenshots/web-home-mobile.png) | [![Mobilni panel](docs/screenshots/user-dashboard-mobile.png)](docs/screenshots/user-dashboard-mobile.png) | [![Mobilna testna naplata](docs/screenshots/sandbox-checkout-mobile.png)](docs/screenshots/sandbox-checkout-mobile.png) | [![Mobilni link](docs/screenshots/new-payment-link-mobile.png)](docs/screenshots/new-payment-link-mobile.png) |
+
+Ovo su prikazi **web sučelja** na mobilnoj širini, a ne screenshotovi nativne Android aplikacije.
 
 </details>
 
-### WordPress i WooCommerce — zaseban vizualni identitet
+## WordPress i WooCommerce
 
 <div align="center">
-  <img src="wordpress-org-assets/banner-1544x500.png" alt="Službeni grafički banner Brendigo Pay dodatka" width="100%">
-  <p><img src="wordpress-org-assets/icon-256x256.png" alt="Brendigo Pay WordPress ikona" width="90"></p>
+<img src="wordpress-org-assets/banner-1544x500.png" alt="Brendigo Pay WordPress vizualni identitet" width="100%">
+<p><img src="wordpress-org-assets/icon-256x256.png" alt="Brendigo Pay ikona dodatka" width="80"></p>
 </div>
 
-**Brendigo Pay for WordPress** radi na običnim WordPress stranicama pomoću shortcoda i četiriju Gutenberg blokova, a uz WooCommerce nudi zaseban sandbox gateway za klasični Checkout i Checkout Block. Obrada i potvrda plaćanja odvijaju se preko poslužiteljskog API-ja i platnih pružatelja.
+Brendigo Pay dodatak povezuje vašu WordPress instalaciju s vlastitim korisničkim računom i licencom dodijeljenom točnoj HTTPS domeni. Omogućuje naplatne gumbe i kartice te QR prikaz postojećih linkova. Uz WooCommerce povezuje zasebnu testnu blagajnu, a stari način bankovne uplate (BACS) i pouzeće ostaju zasebne WooCommerce opcije.
 
-> **Stvarne snimke WP administracije, Gutenberga i WooCommerce checkouta još nisu snimljene u kompletnoj WordPress/WooCommerce instalaciji.** Grafike iz `design/references/` ostaju **ciljni mockupovi**, a ne stvarne snimke dodatka. Ne zamjenjujemo ih lažno prikazanim screenshotovima. [Protokol snimanja i provjere 1:1](docs/WORDPRESS-PIXEL-CHECKLIST.md).
+**Vodiči:** [WordPress korak po korak](https://brendigopay.com/docs/wordpress) · [WooCommerce](https://brendigopay.com/docs/woocommerce) · [Licence](https://brendigopay.com/docs/sites) · [Rješavanje poteškoća](https://brendigopay.com/docs/troubleshooting).
 
-## Jedno mjesto za različite načine naplate
+*Priloženi WordPress banner i ikona jesu originalni brendirani resursi, ne screenshotovi aktivne WP administracije. Za fotografije dodatka potreban je zaseban stvarni WordPress/WooCommerce testni okoliš. Ne prikazujemo referentne mockupove kao stvarne snimke.*
 
-| Modul | Što je dostupno u v0.8.5 |
-|---|---|
-| 🖥️ Web | Registracija, prijava, korisnička nadzorna ploča, licence, izvještaji i plaćeni paketi |
-| 🔗 Naplatne poveznice | Kreiranje, aktivacija/deaktivacija, javni URL, iznos u EUR |
-| ▦ QR kod | Lokalno generiran QR za HTTPS naplatnu poveznicu |
-| ⓦ WordPress | Gutenberg blokovi, kratki kod, kartice i naplatni gumbi |
-| 📱 Android | Prijava, pregled testnih prihoda, transakcije, linkovi, licence, kreiranje i upravljanje linkovima; izvorno u `/android` |
-| 🛒 WooCommerce | Klasični Checkout i Checkout Block; HPOS kroz WooCommerce CRUD |
-| ◇ Pružatelji | Stripe TEST, PayPal Sandbox, Revolut Sandbox — zahtijevaju integracijsko testiranje |
-| 🗃️ Pohrana | Privatne pojedinačne JSON datoteke u `platform/storage/data/` |
-| 🛡️ Sigurnost | CSRF, HTTPS pravila, hashirani ključevi, libsodium, JWT se ne koristi, potpisani webhookovi |
-| 📋 Pregled koda | Sigurnosni nalazi i dead-code revizija dokumentirani, a otvoreni rizici navedeni |
+## Android — korisnički panel u pokretu
 
-### Kako je Brendigo Pay organiziran
+Aplikacija u [mapi /android](android/) prikazuje isti korisnički račun kao web: Pregled, Transakcije, Platne linkove i Web-stranice. Podržava registraciju, prijavu, sinkronizirani status integracija, aktivaciju/deaktivaciju vlastitih linkova i otvaranje uputa unutar aplikacije.
 
-```text
-WordPress stranica / WooCommerce trgovina
-               │
-      Brendigo Pay dodatak
-               │  HTTPS REST API + testni ključ
-               ▼
-     Brendigo Pay web-platforma
-      ├── trgovci / linkovi
-      ├── transakcije / JSON
-      ├── sandbox adapteri
-      └── potpisani webhookovi
-               │
-        Stripe / PayPal / Revolut
-        (isključivo TEST/SANDBOX)
-```
+Za testno izdanje na raspolaganju su **instalacijski debug APK** i **nepotpisani release AAB**. AAB se ne može objaviti na Google Playu bez ispravnog izdavateljeva potpisivanja i provjera. Android koristi minSDK 24 i targetSDK 36.
 
-**Bez zasebnog SQL-a za platformu:** `platform/storage/data/` čuva svakog korisnika, link i transakciju kao JSON zapis izvan javnog document roota. **WordPress i WooCommerce i dalje koriste vlastitu standardnu SQL bazu.** Instalacija na istu domenu ne znači dijeljenje administratorskih lozinki.
+Stvarne Android snimke generiraju se odvojenim emulator testiranjem; u README se uključuju tek nakon potvrde uspješnog snimanja aplikacije.
 
-## Brz početak
+## Tri paketa, bez besplatnog plana
 
-### 1. Samostalna platforma
+| Paket | Mjesečno | Broj registriranih web-stranica |
+|:---|---:|---:|
+| **Start** | **19,90 €** | 1 |
+| **Business** | **49,90 €** | 5 |
+| **Pro** | **99,90 €** | 25 |
 
-Preduvjeti: PHP 8.2+, proširenja `curl`, `sodium`, `openssl`, `json`, i `mbstring`; konfiguriran HTTPS i web root na `platform/public` za javne instalacije.
+Odabir paketa u webu ili Androidu ne predstavlja naplatu. **Aktivaciju obavlja ovlašteni operater nakon neovisne potvrde uplate.** Kada je paket aktivan, korisnik može registrirati svoje domene i dobiti pripadajuće licence.
 
-```bash
-cd platform
-php bin/setup.php http://127.0.0.1:8080
-php -S 127.0.0.1:8080 router.php
-```
+## Načini plaćanja i status
 
-Lokalni HTTP dopušten je samo za `localhost`/`127.0.0.1`. Za javni server koristi HTTPS i zaseban web root. Datoteke `config.php` i `storage/data/` ne smiju biti javno dostupne.
+| Sustav | Trenutačna podrška |
+|:---|:---|
+| **Stripe** | TEST integracijska putanja |
+| **PayPal** | Sandbox integracijska putanja |
+| **Revolut** | Merchant Sandbox integracijska putanja |
+| **WooCommerce BACS** | Ugrađena WooCommerce bankovna uplata, **ručna provjera priljeva** |
+| **WooCommerce COD** | Ugrađeno plaćanje pouzećem |
+| **Monri WebPay** | U planu; nije aktivan platni adapter |
+| **CorvusPay** | U planu; nije aktivan platni adapter |
 
-### 2. WordPress dodatak
+Samo povratak kupca na stranicu za potvrdu nije dokaz stvarne naplate. Konačni status zahtijeva pouzdanu potvrdu platnog pružatelja.
 
-1. Preuzmi `brendigo-pay-wordpress-0.8.2.zip` s [GitHub izdanja](https://github.com/bren-wp/Brendigo-Pay/releases).
-2. U WordPressu otvori **Dodaci → Dodaj novi → Prenesi dodatak**.
-3. U **Brendigo Pay → Postavke** unesi HTTPS adresu platforme i vlastiti `bp_test_...` ključ.
-4. Provjeri vezu. Na platformi konfiguriraj podržane sandbox pružatelje.
-5. U Gutenberg editoru odaberi stvarni naplatni link ili upotrijebi kratki kod:
+[Pregled integracija](https://brendigopay.com/integrations) · [Stripe](https://brendigopay.com/integrations/stripe) · [PayPal](https://brendigopay.com/integrations/paypal) · [Revolut](https://brendigopay.com/integrations/revolut).
 
-```text
-[brendigo_pay id="24_HEKSADECIMALNA_ZNAKA" layout="card" show_qr="yes"]
-```
+## Instalacija i prvi koraci
 
-Za WooCommerce dodatak uključi **WooCommerce → Postavke → Plaćanja → Brendigo Pay (SANDBOX)**. Vrijednost narudžbe, PDV i dostavu izračunava WooCommerce — ne referentna slika.
+1. Preuzmite najnovije izdanje iz [GitHub Releases](https://github.com/bren-wp/Brendigo-Pay/releases).
+2. Postavite web-platformu na vlastiti HTTPS hosting prema [uputama za postavljanje](docs/DEPLOYMENT-0.8.5.md). Poslovni identitet i administratorski pristup trebaju biti sigurno konfigurirani prije javnog pristupa.
+3. Registrirajte se na webu ili Androidu, odaberite plaćeni plan i pričekajte njegovu aktivaciju.
+4. Na webu otvorite **Web-stranice**, dodajte HTTPS domenu i preuzmite odgovarajuću licencu.
+5. Prenesite ZIP dodatka kroz **WordPress → Dodaci → Dodaj novi → Prenesi dodatak**.
+6. U postavkama Brendigo Paya unesite HTTPS adresu platforme, aktivirajte licencu i pokrenite sinkronizaciju.
+7. Konfigurirajte vlastiti testni račun pružatelja i napravite testnu transakciju.
 
-## Približavanje 1:1 dizajnu
+Opširni korisnički vodiči objavljeni su i na web-platformi: [Brzi početak](https://brendigopay.com/docs/quickstart), [WordPress](https://brendigopay.com/docs/wordpress), [WooCommerce](https://brendigopay.com/docs/woocommerce), [Android](https://brendigopay.com/docs/android), [Platni linkovi](https://brendigopay.com/docs/payment-links), [QR kodovi](https://brendigopay.com/docs/qr), [Česta pitanja](https://brendigopay.com/docs/faq).
 
-Svih 10 referenci nalaze se u `design/references/`. One su **dizajnerski ciljevi** za web, dashboard, Gutenberg, WooCommerce i WordPress admin — nisu snimke produkcijske aplikacije.
+## Kvaliteta, izgled i sigurnost
 
-- [Pixel parity specifikacija](docs/PIXEL-PARITY.md)
-- [WooCommerce + Gutenberg + WordPress provjera po elementima](docs/WORDPRESS-PIXEL-CHECKLIST.md)
-- [Vizualno testiranje i ograničenja](docs/VISUAL-QA.md)
-- [Mjerenje razlika na pravim screenshotovima](scripts/visual_audit_wp.py)
+Dizajn se razvija prema deset priloženih referenci za web-platformu, korisnički panel, administraciju i WordPress. Prema njima provjeravaju se razmaci, boje, tipografija, pozicije, gumbi, ikone i responzivnost. **Pixel-by-pixel 1:1 podudarnost svih ekrana i uređaja nije još potvrđena stvarnim usporedbama.**
 
-Mjere se razmaci, položaji, tipografija, linije, gumbi i interakcije na jednakim rezolucijama; bez usporedbe stvarnih screenshotova **ne tvrdimo da je rezultat 1:1**.
+Testni proces uključuje PHP i JavaScript provjere, scenarije prava pristupa, licencija, WooCommerce integracije i Android gradnju. Puni vanjski sigurnosni audit i provjera stvarnih produkcijskih uplata još nisu dovršeni.
 
-## Sigurnost i privatnost
-
-Kartični podaci ne prikupljaju se ni ne pohranjuju u Brendigo Pay. Plaćanje se dovršava na stranici pružatelja, a status treba potvrditi na poslužitelju. Lozinke platforme čuvaju se Argon2id hashom; povezani sandbox ključevi šifrirani su lokalno. JSON storage koristi atomske upise i zaključavanje kritičnih operacija.
-
-**Audit nije produkcijska sigurnosna certifikacija.** Pročitaj [nalaze sigurnosnog audita](docs/SECURITY-AUDIT-0.8.0.md), [dead-code audit](docs/DEAD-CODE-AUDIT-0.8.0.md) i [otvorena sigurnosna ograničenja](docs/SECURITY.md). Za javno korištenje potrebni su vanjski pen-test, testni provider računi, provjera PSD2/PCI/GDPR obveza i stvarni WooCommerce integracijski testovi.
-
-## Testiranje i izdanja
-
-```bash
-bash tests/run-all.sh
-python3 scripts/package_release.py --output dist
-```
-
-Automatske provjere obuhvaćaju PHP lint, JSON i HTTP smoke testove, provjere sigurnosnih politika, offline simulirane WooCommerce gateway scenarije i ZIP integritet. Browser vizualni testovi provode se zasebno. U `dist/` nastaju instalacijski paketi za platformu, WordPress i kompletan izvorni kod.
-
-## Brending i licenca
-
-**Proizvod:** Brendigo Pay · **Autor:** Brendigo · **Službena stranica:** https://brendigopay.com · **Stranica autora:** https://brendigo.com
-
-WordPress Plugin URI, Author URI, Contributors: `brendigo`, Text Domain: `brendigo-pay`. GPL-2.0-or-later, uz poštivanje licencija uključenih resursa u `docs/THIRD_PARTY_NOTICES.md`. Ne mijenjati uvjete ni atribucije autorskih prava trećih strana bez prava na to.
+[Pravila sigurnosti](docs/SECURITY.md) · [Vizualna provjera](docs/PIXEL-PARITY.md) · [Testovi](tests/) · [Upute za izdanje](docs/RELEASE-CHECKLIST.md).
 
 ---
 
-*Brendigo Pay • razvijeno pod brendom Brendigo • razvojno SANDBOX izdanje, bez stvarnih plaćanja.*
+<div align="center">
+
+**Brendigo Pay** · Pametna plaćanja za moderan biznis
+
+**Built with [Brendigo](https://brendigo.com)**
+
+© 2026 Brendigo. Licencije izvornog koda i trećih strana navedene su u repozitoriju.
+
+</div>

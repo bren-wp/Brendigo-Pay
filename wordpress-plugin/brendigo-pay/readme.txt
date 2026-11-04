@@ -1,105 +1,79 @@
 === Brendigo Pay ===
 Contributors: brendigo
-Tags: payments, woocommerce, payment links, qr code, checkout
+Tags: payment links, woocommerce, qr codes, checkout, integrations
 Requires at least: 6.4
 Requires PHP: 8.1
-Stable tag: 0.8.5
+Stable tag: 0.8.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Brendigo Pay WordPress/WooCommerce connector for paid Start (1 site), Business (5 sites) and Pro (25 sites) subscriptions. SANDBOX only; no real money.
+Brendigo Pay for WordPress and WooCommerce — payment links, QR codes, and merchant-scoped licensing. Sandbox/test edition; real payments unavailable.
 
 == Description ==
-Connect your WordPress site to the separate Brendigo Pay JSON-based development platform.
-* Standalone WordPress: [brendigo_pay id="24_CHARACTER_ID"] or four Gutenberg blocks (button, link, QR, payment card).
-* WooCommerce: selectable Stripe TEST / PayPal Sandbox / Revolut Sandbox checkout.
-* WooCommerce Classic and Checkout Blocks bridge, HPOS CRUD compatibility declaration.
-* Merchant-scoped API token and server-to-server payment verification.
 
-IMPORTANT: This is NOT a production-ready payment gateway. Real sandbox integrations and WooCommerce versions must still be tested. Never use live payment credentials.
+Brendigo Pay integrates your WordPress website with your own merchant account on the Brendigo Pay platform.
+
+* WordPress: Gutenberg payment card, button, link and QR blocks, plus a shortcode.
+* WooCommerce: Stripe TEST, PayPal Sandbox and Revolut Sandbox choices for Classic and Blocks checkout.
+* Merchant account: manage your own links, connected domains and subscription plan.
+* License control: each HTTPS website requires an authorized license.
+* Synchronized status: site connection, plan validity and last successful sync.
+* Responsive admin interface with direct links to product guides and troubleshooting.
+
+No free plan: Start covers 1 website, Business 5 and Pro 25. Registration does not activate billing or payment processing; the operator verifies paid-plan entitlement.
+
+The plugin is intended for testing and integration development. It does not charge live cards. Never enter production processor credentials.
 
 == Installation ==
-1. Upload the plugin ZIP in WordPress > Plugins > Add New > Upload Plugin.
-2. On the platform, register for Start / Business / Pro and wait for operator-confirmed payment.
-3. Go to Web-stranice in the merchant panel and add this WordPress HTTPS domain. Copy the one-time license key.
-4. Under Brendigo Pay settings, enter the platform HTTPS base URL and save.
-5. Enter the one-time license key in "Aktivacija licencije" and activate. A site-scoped test API token is exchanged and stored encrypted in WordPress options.
-6. Run Test connection.
-7. Add the Gutenberg block or enable the WooCommerce sandbox gateway.
-8. Configure sandbox payment provider credentials on the Brendigo Pay platform.
-9. Manage license count, rotation and revocation under Web-stranice in your merchant account.
 
-== Security ==
-Test API token is encrypted with WordPress salt-derived AES-256-GCM, or use BRENDIGO_PAY_API_KEY in wp-config.php.
-The platform uses test/sandbox hosted checkout and verifies provider payment status before Woo order completion.
+1. Upload the Brendigo Pay ZIP through Plugins > Add New > Upload Plugin, then Activate.
+2. Register an account with the Brendigo Pay platform and select Start, Business or Pro.
+3. After the operator activates your paid plan, open Web-stranice and register the HTTPS address of this WordPress website.
+4. Copy its license key and open Brendigo Pay > Postavke in WordPress.
+5. Set your platform HTTPS address, save, enter your license and select Activate.
+6. Click Sinkroniziraj sada and confirm that the domain, plan and connection status match in WordPress and the merchant panel.
+7. Configure your own test payment provider account in the merchant web panel.
+8. Add a Gutenberg payment block or enable Brendigo Pay Sandbox in WooCommerce > Settings > Payments.
+
+See the full guides at https://brendigopay.com/docs/wordpress and https://brendigopay.com/docs/woocommerce.
+
+== Frequently Asked Questions ==
+
+= Can I log in with the same account on the website and Android? =
+Yes. Both clients use the same merchant login, but your WordPress installation has its own separately activated license.
+
+= Why is the payment option not visible in checkout? =
+Verify that your paid plan and site license are active, the website was synchronized recently, and a supported sandbox provider is configured.
+
+= Does this plugin receive credit card details? =
+No. Payment card entry takes place on the provider's hosted payment page.
+
+= Does Brendigo Pay itself provide bank transfer? =
+WooCommerce has a separate built-in Direct Bank Transfer (BACS) method. Bank transfers must be verified against your bank account before fulfilling an order.
+
+= Is this ready to accept real payments? =
+No. The current version is a sandbox preview. Live provider and regulatory verification are not complete.
 
 == Changelog ==
-= 0.8.5 =
-* Encrypted domain-scoped license heartbeat via POST /api/v1/sites/sync.
-* Manual sync and hourly WP-Cron retry; WordPress admin shows plan, expiry, domain quota and last sync.
-* WooCommerce Classic/Blocks fail closed if the last valid license check is stale or rejected.
-* Platform admin suspension immediately disables API access; installation versions/last seen visible in admin panel.
-* Production payments still unavailable; sandbox-only release.
+
+= 0.8.6 =
+* Linked user-friendly WordPress setup guides, WooCommerce guide and troubleshooting directly from plugin settings.
+* Clarified supported test provider flows versus offline bank transfer and planned domestic providers.
+* Improved synchronized product documentation and responsive admin help navigation.
+* SANDBOX release; no live payments.
 
 = 0.8.5 =
-* Three paid tiers only: Start 1 WordPress website, Business 5 websites, Pro 25 websites. No free package.
-* Site-origin-bound license activation and platform-generated site-specific sandbox API tokens.
-* Site registration and license management in the merchant panel; restricted operator-only paid entitlement assignment.
-* WordPress settings gain license activation UI; responsive administration improvements.
-* Website limits enforced server-side with a locked JSON store; API tokens denied after plan expiry.
-* No live payments or automated subscription billing; plans require independent verification and activation by operator.
-
-= 0.8.5 =
-* HOTFIX: Fixed fatal error when WooCommerce Checkout Blocks loads the payment integration.
-* Reuse the inherited WooCommerce protected settings property instead of redeclaring a private typed property.
-* Gracefully handle unexpected shortcode attributes and invalid WooCommerce settings payloads.
-* Added PHP runtime compatibility tests that instantiate the Blocks payment integration and exercise plugin hooks.
-* Sandbox only; no live payments or certified 1:1 visual parity.
+* Domain-scoped license status, manual synchronization and hourly retry.
+* WooCommerce Classic/Blocks disable an unverified or stale license.
+* Shared Android/web merchant accounts and integrated dashboard status.
+* Security hardening and critical WooCommerce Blocks inheritance fix maintained.
 
 = 0.8.0 =
-* Refined block editor, payment button icons, QR captions and scoped responsive CSS.
-* Hardened platform authentication rate limits, API response bounds and corrected stale UI/dead code.
-* Structural security/dead-code audit with documented remaining risks; not a production certification.
-* SANDBOX-only. Live payment methods and full WordPress/WooCommerce pixel parity remain unverified.
-
-= 0.7.2 =
-* Refined Gutenberg service card, provider selection and admin dimensions against user-supplied references.
-* Added labeled provider monograms in classic and Blocks checkout, with improved keyboard focus and mobile behavior.
-* SANDBOX only; visual parity and live checkout are not certified.
-
-= 0.7.1 =
-* Refined WordPress admin layout and focus styles, hash-linked accessible navigation.
-
-= 0.7.0 =
-* Development repository migration; standardized Brendigo branding, responsive visual QA and CI lint/tests.
-* Sandbox-only. No live payment functionality.
-
-= 0.6.0 =
-* Gutenberg payment-link picker populated via merchant-scoped Brendigo Pay API and authorized WordPress REST proxy.
-* Improved WordPress admin management list with payment amount and copyable shortcode.
-* Refined classic and Checkout Block sandbox payment provider cards and typography.
-* No live payments; requires further WordPress.org plugin checks and full WooCommerce E2E validation.
-
-= 0.5.0 =
-* Official Brendigo Pay site, refreshed WordPress branding and UI components.
-* Responsive design polishing and dedicated icon/favicons.
-* Remains sandbox-only: no live transactions and no raw card storage.
-
-= 0.4.0 =
-* Brendigo visual redesign for WordPress settings, Gutenberg and WooCommerce classic/Blocks provider selectors.
-* QR payment card/block and authenticated provider-side link title/amount retrieval.
-* No live payment support; visual parity not certified.
-
-= 0.3.0 =
-* WooCommerce classic and Blocks sandbox payment provider selection.
-* Allowed redirect hosts for Stripe, PayPal and Revolut; server-side provider status checks.
-* Tested offline with expanded mocks. Real WooCommerce integration test still pending.
-
-= 0.2.0 =
-* Platform connection test, audit, HPOS declaration, defensive order processing.
-
-= 0.1.0 =
-* Initial shortcode, Gutenberg block and Stripe test gateway.
+* Refined Gutenberg blocks, QR captions, payment buttons and responsive checkout controls.
+* Hardened authentication, provider status validation, and offline test coverage.
 
 == External Services ==
-This plugin communicates with the separately hosted Brendigo Pay platform that you configure in settings. It sends a merchant-scoped API token and payment status requests over HTTPS. The platform then contacts Stripe, PayPal or Revolut sandbox APIs as configured. No live card numbers are sent to the Brendigo Pay platform. See https://brendigopay.com for product documentation (website availability is independent of the plugin).
+
+The plugin communicates over HTTPS with the merchant's configured Brendigo Pay platform. That platform connects to the merchant's configured Stripe, PayPal, or Revolut sandbox accounts. No payment card numbers are transferred into the plugin or Brendigo Pay platform.
+
+Product documentation and privacy information: https://brendigopay.com/docs and https://brendigopay.com/privacy.
