@@ -1,4 +1,4 @@
-> **Brendigo Pay v0.7.1 SANDBOX.** The new interface was built from user-provided design references. It is a responsive HTML/CSS implementation, not screenshots used as backgrounds. This does **not** claim validated pixel-by-pixel parity with those references, or readiness for live payments. The standalone platform continues to store data under `platform/storage/data` (JSON), while WordPress/WooCommerce use their own native databases.
+> **Brendigo Pay v0.7.2 SANDBOX.** The new interface was built from user-provided design references. It is a responsive HTML/CSS implementation, not screenshots used as backgrounds. This does **not** claim validated pixel-by-pixel parity with those references, or readiness for live payments. The standalone platform continues to store data under `platform/storage/data` (JSON), while WordPress/WooCommerce use their own native databases.
 
 # ◈ Brendigo Pay
 
@@ -7,7 +7,7 @@
 **Repozitorij:** https://github.com/bren-wp/Brendigo-Pay · **Dizajnerske reference:** [PIXEL-PARITY](docs/PIXEL-PARITY.md) · **Doprinosi:** [CONTRIBUTING](CONTRIBUTING.md)
 
 **Web platforma bez vlastite SQL baze · WordPress dodatak · WooCommerce Checkout · Stripe TEST · PayPal Sandbox · Revolut Sandbox**  
-**Verzija:** `0.7.1` · **Stanje:** razvojno / SANDBOX, bez stvarnih naplata  
+**Verzija:** `0.7.2` · **Stanje:** razvojno / SANDBOX, bez stvarnih naplata  
 **Autor:** Brendigo · **Službena stranica proizvoda:** [brendigopay.com](https://brendigopay.com) · **Stranica autora:** [brendigo.com](https://brendigo.com)
 
 Brendigo Pay je vlastita platforma za izradu naplatnih poveznica i QR kodova, povezivanje postojećih testnih računa kod pružatelja plaćanja te naplatu iz WordPress stranice s WooCommerceom ili bez njega. Plaćanja vodi **povezani pružatelj**, ne Brendigo Pay. Korisnički i transakcijski podaci **platforme** nalaze se u privatnom `storage/data/*.json`, bez MySQL-a ili PostgreSQL-a.

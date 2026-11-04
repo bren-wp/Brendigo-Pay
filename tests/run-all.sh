@@ -10,5 +10,6 @@ php platform/tests/providers.php
 python3 platform/tests/smoke.py
 python3 platform/tests/backup_restore.py
 php tests/woocommerce-gateway.php
+python3 -m py_compile scripts/visual_audit_wp.py
 python3 tests/ui-contract.py
 echo 'PASS: All local checks completed'
