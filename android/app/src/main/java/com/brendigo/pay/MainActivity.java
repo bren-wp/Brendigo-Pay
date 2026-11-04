@@ -273,12 +273,142 @@ public final class MainActivity extends Activity {
                 }
             });
         });
+        TextView register = button("Nemate račun? Registrirajte se", false);
+        margin(register, 0, 12, 0, 0);
+        welcome.addView(register);
+        register.setOnClickListener(v -> showRegistration());
         content.addView(welcome);
         TextView note = label("SANDBOX · Bez stvarnih uplata · Bez pohrane kartičnih podataka", 12, MUTED, false);
         note.setGravity(Gravity.CENTER);
         margin(note, 4, 20, 4, 0);
         content.addView(note);
     }
+    /** Web and Android registration share one server-side Accounts service and identity store. */
+    private void showRegistration() {
+        snapshot = null;
+        base();
+        header(false);
+        makeScroll();
+        LinearLayout form = card(22);
+        LinearLayout head = horizontal();
+        addIcon(head, 46);
+        head.addView(label("Brendigo Pay", 23, NAVY, true));
+        form.addView(head);
+        TextView title = label("Otvorite korisnički račun", 25, NAVY, true);
+        margin(title, 0, 22, 0, 8);
+        form.addView(title);
+        TextView hint = label("Odaberite jedan od tri plaćena paketa. Registracija ne aktivira naplatu; operater mora potvrditi plaćanje.", 13, MUTED, false);
+        margin(hint, 0, 0, 0, 18);
+        form.addView(hint);
+
+        form.addView(label("HTTPS adresa Brendigo Pay platforme", 13, NAVY, true));
+        EditText server = field("https://brendigopay.com", false);
+        server.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
+        server.setText(storage.origin());
+        margin(server, 0, 7, 0, 15);
+        form.addView(server);
+
+        form.addView(label("Naziv tvrtke ili trgovca", 13, NAVY, true));
+        EditText name = field("Naziv trgovca", false);
+        name.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+        margin(name, 0, 7, 0, 15);
+        form.addView(name);
+
+        form.addView(label("Paket (plaća se nakon registracije)", 13, NAVY, true));
+        Spinner tier = new Spinner(this);
+        String[] tiers = {"Start · 19,90 € / mj · 1 domena",
+                "Business · 49,90 € / mj · 5 domena",
+                "Pro · 99,90 € / mj · 25 domena"};
+        tier.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, tiers));
+        tier.setSelection(1);
+        margin(tier, 0, 8, 0, 14);
+        form.addView(tier);
+
+        form.addView(label("Web-stranica (neobavezno)", 13, NAVY, true));
+        EditText website = field("https://moja-trgovina.hr", false);
+        website.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
+        margin(website, 0, 7, 0, 15);
+        form.addView(website);
+
+        form.addView(label("E-mail adresa", 13, NAVY, true));
+        EditText email = field("vas@email.hr", false);
+        margin(email, 0, 7, 0, 15);
+        form.addView(email);
+
+        form.addView(label("Lozinka (najmanje 12 znakova)", 13, NAVY, true));
+        EditText password = field("Nova lozinka", true);
+        margin(password, 0, 7, 0, 15);
+        form.addView(password);
+
+        form.addView(label("Potvrdite lozinku", 13, NAVY, true));
+        EditText confirmation = field("Ponovite lozinku", true);
+        margin(confirmation, 0, 7, 0, 21);
+        form.addView(confirmation);
+
+        TextView register = button("Registriraj korisnički račun  →", true);
+        form.addView(register);
+        register.setOnClickListener(v -> {
+            if (loading) return;
+            String origin = ApiClient.origin(server.getText().toString());
+            String selectedWebsite = website.getText().toString().trim();
+            if (origin == null) { showError("Adresa platforme mora biti HTTPS domena."); return; }
+            if (!selectedWebsite.isEmpty() && ApiClient.origin(selectedWebsite) == null) {
+                showError("Adresa web-stranice mora biti HTTPS domena."); return;
+            }
+            if (name.getText().toString().trim().length() < 2
+                    || email.getText().toString().trim().length() < 5
+                    || password.getText().length() < 12
+                    || !password.getText().toString().equals(confirmation.getText().toString())) {
+                showError("Provjerite naziv, e-mail i podudaranje lozinki (12+ znakova).");
+                return;
+            }
+            loading = true;
+            register.setEnabled(false);
+            register.setText("Registracija...");
+            final String company = name.getText().toString().trim();
+            final String address = email.getText().toString().trim();
+            final String passphrase = password.getText().toString();
+            final String requestedTier = new String[]{"start", "business", "pro"}[tier.getSelectedItemPosition()];
+            worker.execute(() -> {
+                try {
+                    JSONObject body = new JSONObject();
+                    body.put("name", company);
+                    body.put("email", address);
+                    body.put("password", passphrase);
+                    body.put("requested_tier", requestedTier);
+                    body.put("website", selectedWebsite);
+                    JSONObject response = ApiClient.request(origin, null, "POST",
+                            "/api/v1/mobile/register", body);
+                    storage.saveToken(response.getString("token"));
+                    storage.setOrigin(origin);
+                    runOnUiThread(() -> {
+                        loading = false;
+                        showError("Račun je kreiran. Odabrani paket čeka provjeru uplate.");
+                        selectedTab = "Pregled";
+                        refresh();
+                    });
+                } catch (Exception ex) {
+                    runOnUiThread(() -> {
+                        loading = false;
+                        register.setEnabled(true);
+                        register.setText("Registriraj korisnički račun  →");
+                        showError("Registracija nije uspjela: " + ex.getMessage());
+                    });
+                }
+            });
+        });
+
+        TextView login = button("Već imate račun? Prijava", false);
+        margin(login, 0, 12, 0, 0);
+        form.addView(login);
+        login.setOnClickListener(v -> showLogin(""));
+        content.addView(form);
+        TextView privacy = button("Pravila privatnosti i uvjeti usluge", false);
+        margin(privacy, 4, 16, 4, 0);
+        content.addView(privacy);
+        privacy.setOnClickListener(v -> openUrl(storage.origin() + "/privacy"));
+    }
+
     private void showError(String message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
