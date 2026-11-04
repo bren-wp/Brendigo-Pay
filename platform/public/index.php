@@ -8,6 +8,7 @@ use BrendigoPay\StripeConnectSandbox;
 use BrendigoPay\SandboxProviders;
 use BrendigoPay\MobileApi;
 use BrendigoPay\Accounts;
+use function BrendigoPay\legal_page;
 use function BrendigoPay\e;
 use function BrendigoPay\minor_format;
 use function BrendigoPay\money_to_minor;
@@ -28,6 +29,7 @@ require dirname(__DIR__) . '/src/StripeConnectSandbox.php';
 require dirname(__DIR__) . '/src/Ui.php';
 require dirname(__DIR__) . '/src/MobileApi.php';
 require dirname(__DIR__) . '/src/Accounts.php';
+require dirname(__DIR__) . '/src/LegalPages.php';
 
 $configFile = dirname(__DIR__) . '/config.php';
 if (!is_file($configFile)) {
@@ -89,7 +91,7 @@ function render(string $title, string $content): never
 {
     global $path, $config;
     $user = current_user();
-    $marketing = in_array($path, ['/', '/pricing', '/plugin', '/docs', '/login', '/register'], true);
+    $marketing = in_array($path, ['/', '/pricing', '/plugin', '/docs', '/login', '/register', '/about', '/privacy', '/terms', '/cookies', '/refund-policy', '/contact', '/security', '/providers'], true);
     $merchant = $user !== null && (str_starts_with($path, '/dashboard') || $path === '/settings' || $path === '/sites' || $path === '/admin');
     $bodyClass = $merchant ? 'bp-body-merchant' : ($marketing ? 'bp-body-marketing' : 'bp-body-checkout');
     $nav = $user === null
@@ -124,7 +126,25 @@ function render(string $title, string $content): never
     } else {
         echo '<main class="container ' . ($marketing ? 'bp-marketing-main' : '') . '" id="main-content">' . $content . '</main>';
     }
-    echo '<footer class="container footer"><span>© ' . date('Y') . ' Brendigo Pay · <a href="https://brendigo.com" target="_blank" rel="noopener">Brendigo</a></span><nav aria-label="Poveznice podnožja"><a href="/">Naslovnica</a><a href="/pricing">Cijene</a><a href="/plugin">WordPress</a><a href="/docs">Upute</a><a href="https://brendigopay.com" target="_blank" rel="noopener">BrendigoPay.com</a></nav><span>v0.8.2 • SANDBOX • Bez stvarnih plaćanja</span></footer></body></html>';
+    echo '<footer class="bp-footer"><div class="container bp-footer-grid">'
+        . '<div class="bp-footer-brand">' . bp_brand() . '<p>Pametna plaćanja za moderan biznis. '
+        . 'Povežite vlastite pružatelje plaćanja, licencirane domene i testne transakcije na jednom mjestu.</p></div>'
+        . '<nav aria-label="Usluga"><h2>Platforma</h2><a href="/">Naslovnica</a><a href="/pricing">Paketi i cijene</a>'
+        . '<a href="/providers">Načini plaćanja</a><a href="/plugin">WordPress dodatak</a>'
+        . '<a href="/docs">Dokumentacija</a><a href="/login">Korisnički panel</a></nav>'
+        . '<nav aria-label="O nama"><h2>Informacije</h2><a href="/about">O Brendigo Payu</a>'
+        . '<a href="/contact">Kontakt i podrška</a><a href="/security">Sigurnost</a>'
+        . '<a href="https://brendigo.com" rel="noopener noreferrer">Brendigo.com</a></nav>'
+        . '<nav aria-label="Pravni dokumenti"><h2>Pravne stranice</h2>'
+        . '<a href="/privacy">Politika privatnosti</a><a href="/terms">Uvjeti korištenja</a>'
+        . '<a href="/cookies">Kolačići</a><a href="/refund-policy">Otkazivanje i povrati</a></nav>'
+        . '</div><div class="container bp-footer-disclaimer">Brendigo Pay je softverska platforma, '
+        . 'nije banka ni licencirana financijska ili platna institucija, ne drži sredstva kupaca. '
+        . 'Platne transakcije izvršavaju vanjski, zasebno ugovoreni pružatelji. '
+        . 'Trenutačno izdanje dostupno je samo za testna plaćanja.</div>'
+        . '<div class="container bp-footer-bottom"><span>© ' . date('Y') . ' Brendigo Pay · v0.8.5 (SANDBOX)</span>'
+        . '<span>Built with <a href="https://brendigo.com" rel="noopener noreferrer">Brendigo</a></span></div>'
+        . '</footer></body></html>';
     exit;
 }
 
@@ -1106,6 +1126,13 @@ if ($method === 'POST' && preg_match('#^/p/([a-f0-9]{24})/checkout$#D', $path, $
         error_log('Brendigo Pay public sandbox checkout error (' . $provider . '): ' . get_class($e));
         http_response_code(503);
         render('Naplata nije dostupna', message('Testna naplata nije dostupna. Trgovac treba provjeriti postavke pružatelja.'));
+    }
+}
+
+if ($method === 'GET') {
+    $legal = legal_page($path, $config);
+    if ($legal !== null) {
+        render($legal[0], $legal[1]);
     }
 }
 
