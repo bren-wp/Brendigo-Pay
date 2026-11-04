@@ -154,7 +154,16 @@ def main():
                 config_text, count=1,
             )
             assert replacements == 1, 'missing operator configuration'
+            # Operator-provided legal identity is escaped even when config has markup.
+            config_text = config_text.replace(
+                "'legal_operator_name' => ''",
+                "'legal_operator_name' => '<script>alert(1)</script>'",
+            )
             config_file.write_text(config_text)
+            public_contact_status, public_contact, _ = req('/contact')
+            assert public_contact_status == 200
+            assert '&lt;script&gt;alert(1)&lt;/script&gt;' in public_contact
+            assert '<script>alert(1)</script>' not in public_contact
             status, admin_page, _ = req('/admin')
             assert status == 200 and 'Admin Panel' not in admin_page and 'Paketi i licence' in admin_page
             admin_csrf = re.search('name="csrf" value="([a-f0-9]+)"', admin_page).group(1)
