@@ -7,6 +7,7 @@ use BrendigoPay\StripeTest;
 use BrendigoPay\StripeConnectSandbox;
 use BrendigoPay\SandboxProviders;
 use BrendigoPay\MobileApi;
+use BrendigoPay\Accounts;
 use function BrendigoPay\e;
 use function BrendigoPay\minor_format;
 use function BrendigoPay\money_to_minor;
@@ -26,6 +27,7 @@ require dirname(__DIR__) . '/src/SandboxProviders.php';
 require dirname(__DIR__) . '/src/StripeConnectSandbox.php';
 require dirname(__DIR__) . '/src/Ui.php';
 require dirname(__DIR__) . '/src/MobileApi.php';
+require dirname(__DIR__) . '/src/Accounts.php';
 
 $configFile = dirname(__DIR__) . '/config.php';
 if (!is_file($configFile)) {
@@ -36,7 +38,8 @@ $config = require $configFile;
 $store = new JsonStore($config['data_dir']);
 $plans = new \BrendigoPay\Plans($store);
 $licenses = new \BrendigoPay\SiteLicenses($store, $plans, (bool) $config['is_local']);
-$mobileApi = new MobileApi($store, $plans, (string) $config['base_url']);
+$accounts = new Accounts($store, $licenses);
+$mobileApi = new MobileApi($store, $plans, (string) $config['base_url'], $accounts);
 $base = $config['base_url'];
 $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
@@ -758,6 +761,26 @@ if ($method === 'POST' && preg_match('#^/webhooks/stripe/([a-f0-9]{32})$#D', $pa
     exit('ok');
 }
 
+// Unified registration: the web and Android clients write to the same Accounts store.
+if ($path === '/api/v1/mobile/register' && $method === 'POST') {
+    try {
+        $registered = $mobileApi->register(json_request(), (string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown'));
+        if ($registered === null) {
+            fail_api(409, 'This email address is already registered');
+        }
+        // Resolve for auditing without adding identifiers or privileges to the API response.
+        $registeredUser = $mobileApi->authenticate('Bearer ' . $registered['token']);
+        if ($registeredUser !== null) {
+            audit_event($registeredUser[0]['id'], 'account_registered', ['via' => 'mobile']);
+        }
+        json_response($registered, 201);
+    } catch (InvalidArgumentException $e) {
+        fail_api(422, 'Check your name, email, password (12+ characters), paid plan and HTTPS website');
+    } catch (RuntimeException $e) {
+        fail_api(429, 'Too many registration attempts');
+    }
+}
+
 // Separate merchant-only Android access. Mobile bearer tokens cannot authenticate WP plugin routes.
 if ($path === '/api/v1/mobile/login' && $method === 'POST') {
     $input = json_request();
@@ -1120,30 +1143,17 @@ if (in_array($path, ['/login', '/register'], true) && $method === 'GET') {
 
 if ($path === '/register' && $method === 'POST') {
     check_csrf();
-    $name = trim((string) ($_POST['name'] ?? ''));
-    $email = strtolower(trim((string) ($_POST['email'] ?? '')));
-    $password = (string) ($_POST['password'] ?? '');
-    $requestedTier = (string) ($_POST['requested_tier'] ?? '');
-    $website = trim((string) ($_POST['website'] ?? ''));
-    if (!isset(\BrendigoPay\Plans::TIERS[$requestedTier]) || strlen($website) > 255
-        || ($website !== '' && $licenses->origin($website) === null)) {
-        render('Registracija', message('Odaberite jedan od tri plaćena paketa i valjanu HTTPS domenu.'));
+    try {
+        $id = $accounts->register($_POST, (string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown'));
+    } catch (InvalidArgumentException $e) {
+        http_response_code(422);
+        render('Registracija', message('Provjerite naziv, e-adresu, lozinku (12 znakova), plaćeni paket i HTTPS domenu.'));
+    } catch (RuntimeException $e) {
+        http_response_code(429);
+        render('Registracija', message('Previše pokušaja registracije. Pokušajte kasnije.'));
     }
-    if (strlen($name) < 2 || strlen($name) > 100 || !filter_var($email, FILTER_VALIDATE_EMAIL)
-        || strlen($email) > 254 || strlen($password) < 12 || strlen($password) > 256) {
-        render('Registracija', message('Provjerite naziv, e-adresu i lozinku (najmanje 12 znakova).'));
-    }
-    $id = $store->locked('registration', static function () use ($store, $name, $email, $password, $requestedTier, $website): ?string {
-        $hash = hash('sha256', $email);
-        if ($store->read('emails', $hash) !== null) {
-            return null;
-        }
-        $id = random_id();
-        $store->write('users', $id, ['id' => $id, 'name' => $name, 'email' => $email, 'password_hash' => password_hash($password, PASSWORD_ARGON2ID), 'requested_tier' => $requestedTier, 'requested_site' => $website, 'created_at' => gmdate('c')]);
-        $store->write('emails', $hash, ['user_id' => $id]);
-        return $id;
-    });
     if ($id === null) {
+        http_response_code(409);
         render('Registracija', message('E-adresa je već registrirana.'));
     }
     session_regenerate_id(true);

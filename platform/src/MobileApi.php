@@ -15,8 +15,33 @@ final class MobileApi
     public function __construct(
         private readonly JsonStore $store,
         private readonly Plans $plans,
-        private readonly string $baseUrl
+        private readonly string $baseUrl,
+        private readonly Accounts $accounts
     ) {}
+
+    /** Register against the exact same email index and password store as the website. */
+    public function register(array $input, string $ip): ?array
+    {
+        $id = $this->accounts->register($input, $ip);
+        if ($id === null) {
+            return null;
+        }
+        $result = $this->issueToken($id);
+        $result['plan_status'] = 'awaiting_manual_payment_verification';
+        return $result;
+    }
+
+    private function issueToken(string $userId): array
+    {
+        $secret = 'bp_mobile_' . bin2hex(random_bytes(32));
+        $this->store->write('mobile_tokens', hash('sha256', $secret), [
+            'user_id' => $userId,
+            'expires_at' => time() + 7 * 86400,
+            'revoked' => false,
+            'created_at' => gmdate('c'),
+        ]);
+        return ['token' => $secret, 'expires_in' => 7 * 86400, 'token_type' => 'Bearer'];
+    }
 
     /** One use-case: email/password login with the same IP/account lockout buckets as web login. */
     public function login(array $input, string $remoteIp): ?array
@@ -66,14 +91,7 @@ final class MobileApi
         if ($userId === null) {
             return null;
         }
-        $secret = 'bp_mobile_' . bin2hex(random_bytes(32));
-        $this->store->write('mobile_tokens', hash('sha256', $secret), [
-            'user_id' => $userId,
-            'expires_at' => time() + 7 * 86400,
-            'revoked' => false,
-            'created_at' => gmdate('c'),
-        ]);
-        return ['token' => $secret, 'expires_in' => 7 * 86400, 'token_type' => 'Bearer'];
+        return $this->issueToken($userId);
     }
 
     /** Returns [merchant, SHA256(token)] or null. Never accepts a WP site credential. */
