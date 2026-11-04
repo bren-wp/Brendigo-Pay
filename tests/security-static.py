@@ -15,7 +15,10 @@ assert "'count'] >= 8" in web, 'Missing per-account/IP throttle'
 assert "auth_ip_" in web and "auth_" in web
 assert 'session_regenerate_id(true)' in web
 assert 'check_csrf();' in web
-assert "password_hash($password, PASSWORD_ARGON2ID)" in web
+accounts = (ROOT / 'platform/src/Accounts.php').read_text(encoding='utf-8')
+assert "password_hash($password, PASSWORD_ARGON2ID)" in accounts
+assert "registration_rate_" in accounts and "'registration'" in accounts
+assert "'/api/v1/mobile/register'" in web and "'/register'" in web
 assert "X-Frame-Options: DENY" in web and "Content-Security-Policy:" in web
 assert web.count("file_get_contents('php://input', false, null, 0, 1000001)") == 4, 'Webhook bodies must be size bounded'
 assert "LOCK_EX" in store and "rename($temp, $path)" in store
@@ -27,7 +30,7 @@ assert "wp_parse_url($checkoutUrl, PHP_URL_HOST)" in gateway
 assert "has_status(['cancelled', 'refunded', 'failed'])" in gateway
 assert 'payment_complete($txn)' in gateway
 assert "amount_minor" in block and "set('amount')" not in block
-for path in [ROOT / 'platform/public/index.php', ROOT / 'platform/src/Ui.php', *wpbase.rglob('*.php')]:
+for path in [ROOT / 'platform/public/index.php', ROOT / 'platform/src/Ui.php', ROOT / 'platform/src/Accounts.php', *wpbase.rglob('*.php')]:
     text = path.read_text(encoding='utf-8')
     # Avoid unsafe PHP eval and shell execution in runtime code.
     assert not re.search(r'(?<![A-Za-z_])(?:eval|shell_exec|passthru|system)\s*\(', text), f'Unsafe function in {path}'
