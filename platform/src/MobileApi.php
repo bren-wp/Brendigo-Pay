@@ -185,14 +185,17 @@ final class MobileApi
     public function createLink(array $merchant, array $data): array
     {
         $this->plans->activeOrFail((string) $merchant['id']);
-        foreach (['site_id', 'title', 'description', 'amount'] as $key) {
+        foreach (['site_id', 'title', 'amount'] as $key) {
             if (!is_string($data[$key] ?? null)) {
                 throw new RuntimeException('Invalid payload fields');
             }
         }
+        if (!is_string($data['description'] ?? '')) {
+            throw new RuntimeException('Invalid description');
+        }
         $siteId = $data['site_id'];
         $title = trim($data['title']);
-        $description = trim($data['description']);
+        $description = trim($data['description'] ?? '');
         $amount = money_to_minor($data['amount']);
         if (!preg_match('/^[a-f0-9]{24}$/D', $siteId)
             || strlen($title) < 2 || strlen($title) > 160
