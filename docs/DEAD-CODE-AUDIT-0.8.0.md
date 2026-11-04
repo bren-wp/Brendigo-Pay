@@ -31,3 +31,7 @@ python3 -m py_compile scripts/visual_audit_wp.py
 ```
 
 Provjera skenira i osjetljive tokove, ali prisutnost ili odsutnost niza nije dokaz da je kod siguran. Za finalni dead-code rezultat trebaju pokrivenost ruta/hookova, WP+WC E2E i CSS coverage na stvarnim renderima.
+
+## CSS izvještaj o ponavljanju selektora
+
+Pokrenite `python3 scripts/css-duplicates.py`. Skripta bilježi približne duplikate kroz CSS; namjerno ne briše deklaracije, jer su neke razlike unutar media queryja, a neke predstavljaju vizualna preslagivanja u kasnijim izdanjima. Za svaku promjenu treba redovno napraviti usporedbu slike prema `docs/WORDPRESS-PIXEL-CHECKLIST.md`.

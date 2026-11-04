@@ -13,4 +13,11 @@ php tests/woocommerce-gateway.php
 python3 -m py_compile scripts/visual_audit_wp.py
 python3 tests/ui-contract.py
 python3 tests/security-static.py
+python3 scripts/css-duplicates.py
+if command -v node >/dev/null 2>&1; then
+  node --check wordpress-plugin/brendigo-pay/assets/block.js
+  node --check wordpress-plugin/brendigo-pay/assets/woocommerce-block.js
+  node --check wordpress-plugin/brendigo-pay/assets/admin.js
+  echo 'PASS: WordPress plugin JavaScript syntax'
+fi
 echo 'PASS: All local checks completed'
