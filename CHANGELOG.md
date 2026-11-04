@@ -1,5 +1,17 @@
 # Povijest izdanja
 
+## 0.8.3 — 2026-11-04 (SANDBOX)
+
+- Autentificirani endpointi `GET /api/v1/sites/status` i `POST /api/v1/sites/sync` za stanje registrirane domene i status instalacije.
+- Sinkronizacija vezana uz site-scoped token, ID instalacije, canonical HTTPS origin i aktivnu plaćenu pretplatu.
+- Korisnički i administratorski panel pokazuju zadnji kontakt; admin vidi verziju dodatka i može suspendirati paket.
+- WordPress prikazuje stanje licence, paket, iskorištene domene i datum isteka; podržava ručnu i WP-Cron sinkronizaciju.
+- WooCommerce Classic i Blocks skrivaju način naplate ako potvrda licence nedostaje, istekla je ili je odbijena.
+- Novo lokalno testiranje stanja sinkronizacije, odbijanja spoofiranih domena/instalacija i obustavljenih pretplata.
+- Produkcijsko procesiranje stvarnih uplata i 1:1 vizualna certifikacija nisu dostupni.
+
+
+
 ## 0.8.2 — 2026-11-04 (SANDBOX)
 
 - Model tri plaćena plana s fizičkim limitima instalacija Start 1, Business 5, Pro 25; uklonjen besplatni paket iz cjenika.

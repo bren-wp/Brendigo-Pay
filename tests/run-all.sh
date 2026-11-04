@@ -7,6 +7,7 @@ done < <(find platform/src platform/bin platform/public wordpress-plugin tests -
 echo 'PASS: PHP lint (all PHP files)'
 php platform/tests/run.php
 php platform/tests/licenses.php
+php tests/license-sync.php
 php platform/tests/providers.php
 python3 platform/tests/smoke.py
 python3 platform/tests/backup_restore.py

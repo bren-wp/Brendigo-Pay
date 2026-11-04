@@ -11,11 +11,19 @@
   </p>
   <p>
     <img alt="GitHub Actions" src="https://github.com/bren-wp/Brendigo-Pay/actions/workflows/ci.yml/badge.svg">
-    <strong>v0.8.2 · SANDBOX · bez stvarnih uplata</strong>
+    <strong>v0.8.3 · SANDBOX · bez stvarnih uplata</strong>
   </p>
 </div>
 
-> **RAZVOJNO IZDANJE v0.8.2 — SANDBOX**. Brendigo Pay trenutno **ne podržava stvarne uplate**. Stripe TEST, PayPal Sandbox i Revolut Sandbox adapteri nisu potvrđeni u punim vanjskim end-to-end testovima. Ne unositi produkcijske tajne ključeve i ne postavljati kao aktivno sredstvo naplate. Izrada vizualnog sučelja prema referencama **ne znači potvrđenu pixel-by-pixel 1:1 podudarnost**.
+> **RAZVOJNO IZDANJE v0.8.3 — SANDBOX**. Brendigo Pay trenutno **ne podržava stvarne uplate**. Stripe TEST, PayPal Sandbox i Revolut Sandbox adapteri nisu potvrđeni u punim vanjskim end-to-end testovima. Ne unositi produkcijske tajne ključeve i ne postavljati kao aktivno sredstvo naplate. Izrada vizualnog sučelja prema referencama **ne znači potvrđenu pixel-by-pixel 1:1 podudarnost**.
+
+## Sinkronizirani WordPress i web-paneli (v0.8.3)
+
+Platforma prikazuje status pojedine instalacije, verziju dodatka i vrijeme zadnjeg sigurnog kontakta. WordPress po rasporedu (WP-Cron, svakih sat vremena) šalje poslužiteljski zahtjev potpisan vlastitim **domenski ograničenim API tokenom** te ID-jem instalacije. Platforma provjerava isteklu/suspendiranu pretplatu, vlasnika domene, licenciju i instalaciju.
+
+**WooCommerce Classic i Blocks** ne nude Brendigo Pay ako posljednja uspješna sinkronizacija nije potvrđena tijekom prethodna dva sata ili je platforma odbila zahtjev. Administrator može odabrati „Sinkroniziraj sada“ u WP postavkama; status uključuje Start/Business/Pro, iskorištene domene i datum isteka. Operator može suspendirati plaćeni paket iz `/admin` te tako odmah blokirati pristup API-ju.
+
+Ovo je još uvijek **SANDBOX**. Nakon deploya treba potvrditi produkcijske platne pružatelje, automatiziranu naplatu paketa, identitet trgovca, domensku vlasničku provjeru, WordPress/WooCommerce E2E te regulatornu usklađenost. Snimke u README-u odnose se na stvarni raniji UI, ali ne jamče vizualnu 1:1 identičnost svih referenci.
 
 ## Tri plaćena paketa, licence po web-stranici (v0.8.2)
 

@@ -3,7 +3,7 @@ Contributors: brendigo
 Tags: payments, woocommerce, payment links, qr code, checkout
 Requires at least: 6.4
 Requires PHP: 8.1
-Stable tag: 0.8.2
+Stable tag: 0.8.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -34,7 +34,14 @@ Test API token is encrypted with WordPress salt-derived AES-256-GCM, or use BREN
 The platform uses test/sandbox hosted checkout and verifies provider payment status before Woo order completion.
 
 == Changelog ==
-= 0.8.2 =
+= 0.8.3 =
+* Encrypted domain-scoped license heartbeat via POST /api/v1/sites/sync.
+* Manual sync and hourly WP-Cron retry; WordPress admin shows plan, expiry, domain quota and last sync.
+* WooCommerce Classic/Blocks fail closed if the last valid license check is stale or rejected.
+* Platform admin suspension immediately disables API access; installation versions/last seen visible in admin panel.
+* Production payments still unavailable; sandbox-only release.
+
+= 0.8.3 =
 * Three paid tiers only: Start 1 WordPress website, Business 5 websites, Pro 25 websites. No free package.
 * Site-origin-bound license activation and platform-generated site-specific sandbox API tokens.
 * Site registration and license management in the merchant panel; restricted operator-only paid entitlement assignment.
@@ -42,7 +49,7 @@ The platform uses test/sandbox hosted checkout and verifies provider payment sta
 * Website limits enforced server-side with a locked JSON store; API tokens denied after plan expiry.
 * No live payments or automated subscription billing; plans require independent verification and activation by operator.
 
-= 0.8.2 =
+= 0.8.3 =
 * HOTFIX: Fixed fatal error when WooCommerce Checkout Blocks loads the payment integration.
 * Reuse the inherited WooCommerce protected settings property instead of redeclaring a private typed property.
 * Gracefully handle unexpected shortcode attributes and invalid WooCommerce settings payloads.

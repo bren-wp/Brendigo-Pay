@@ -35,6 +35,14 @@ Ovo je prijedlog komercijalnog cjenika. U ovoj verziji **nema automatske naplate
 5. Platforma provjerava origin, aktivan plaćeni plan, zapis licencije i dosljednost ID-ja instalacije. Vraća `bp_test_...` token vezan uz `site_id` i `user_id`.
 6. WordPress čuva samo šifrirani API token u standardnom WP options sustavu. API `/api/v1/me` prikazuje paket, site ID i maksimalni broj domena; podaci o platnim poveznicama filtriraju se po `site_id`.
 
+## Sinkronizacija instaliranog dodatka (v0.8.3)
+
+Nakon aktivacije licencije WordPress automatski obavlja provjeru `POST /api/v1/sites/sync`. Zahtjev uključuje URL domene (origin), trajni ID instalacije, verzije WordPressa, WooCommercea i dodatka. API zahtijeva važeći site-scoped bearer token i validira hash registrirane instalacije; verzije su strogo ograničene i nikad se ne smatraju potvrdom plaćanja.
+
+WordPress zakazuje WP-Cron sinkronizaciju jednom na sat. Administracija prikazuje zadnji kontakt, aktivni Start/Business/Pro paket, iskorišteni limit domena i datum isteka. Ako stanje nije potvrđeno u zadnja **2 sata**, ili posljednja provjera nije uspjela, WooCommerce Classic/Blocks ne nude Brendigo Pay. Server dodatno provjerava plan i licenciju na svakom API zahtjevu, neovisno o lokalnoj provjeri. `GET /api/v1/sites/status` vraća samo podatke autorizirane web-stranice.
+
+Administrator može suspendirati račun u `/admin`; server odmah blokira sve API tokene tog računa. WP sučelje će to prikazati pri sljedećoj provjeri. WP-Cron nije pouzdan periodični scheduler na webovima bez posjeta: za produkciju treba konfigurirati stvarni sistemski cron/monitoring.
+
 ## Sigurnost i produkcijski blokatori
 
 - Web-platforma isključivo koristi privatni `storage/data` JSON; WordPress koristi svoju standardnu WordPress bazu za lokalne opcije.
