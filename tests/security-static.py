@@ -33,6 +33,15 @@ for path in [ROOT / 'platform/public/index.php', ROOT / 'platform/src/Ui.php', *
     assert not re.search(r'(?<![A-Za-z_])(?:eval|shell_exec|passthru|system)\s*\(', text), f'Unsafe function in {path}'
 assert "name=\"card_number\"" not in wp
 assert "name=\"cvc\"" not in wp
-assert "Version: 0.8.1" in wp
+assert "Version: 0.8.2" in wp
+plans = (ROOT / 'platform/src/Plans.php').read_text(encoding='utf-8')
+licenses = (ROOT / 'platform/src/SiteLicenses.php').read_text(encoding='utf-8')
+assert "activeOrFail($merchantId)" in licenses, 'Must enforce active paid plan when issuing licenses'
+assert "siteCount($merchantId) >= $limit" in licenses, 'Must enforce quota on server'
+assert "hash('sha256', $plain)" in licenses, 'Must not store plaintext licenses'
+assert "activeOrFail($record['user_id'])" in licenses, 'Activation requires active plan'
+assert "'billing_mode' => 'manual_verified'" in plans, 'Only operator-verified billing enabled'
+assert "site_id" in web and "site_id" in licenses, 'Require site-scoped API token'
+assert "'admin_user_ids'" in (ROOT / 'platform/bin/setup.php').read_text(), 'Operator auth must be configured'
 assert "Contributors: brendigo" in (wpbase / 'readme.txt').read_text(encoding='utf-8')
 print('PASS: static security guardrails; external audit and E2E required')

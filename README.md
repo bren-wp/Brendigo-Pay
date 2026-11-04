@@ -11,15 +11,37 @@
   </p>
   <p>
     <img alt="GitHub Actions" src="https://github.com/bren-wp/Brendigo-Pay/actions/workflows/ci.yml/badge.svg">
-    <strong>v0.8.1 · SANDBOX · bez stvarnih uplata</strong>
+    <strong>v0.8.2 · SANDBOX · bez stvarnih uplata</strong>
   </p>
 </div>
 
-> **RAZVOJNO IZDANJE v0.8.1 — SANDBOX**. Brendigo Pay trenutno **ne podržava stvarne uplate**. Stripe TEST, PayPal Sandbox i Revolut Sandbox adapteri nisu potvrđeni u punim vanjskim end-to-end testovima. Ne unositi produkcijske tajne ključeve i ne postavljati kao aktivno sredstvo naplate. Izrada vizualnog sučelja prema referencama **ne znači potvrđenu pixel-by-pixel 1:1 podudarnost**.
+> **RAZVOJNO IZDANJE v0.8.2 — SANDBOX**. Brendigo Pay trenutno **ne podržava stvarne uplate**. Stripe TEST, PayPal Sandbox i Revolut Sandbox adapteri nisu potvrđeni u punim vanjskim end-to-end testovima. Ne unositi produkcijske tajne ključeve i ne postavljati kao aktivno sredstvo naplate. Izrada vizualnog sučelja prema referencama **ne znači potvrđenu pixel-by-pixel 1:1 podudarnost**.
 
-## Hitni ispravak WooCommerce fatal error (v0.8.1)
+## Tri plaćena paketa, licence po web-stranici (v0.8.2)
 
-Ispravljen je konflikt naslijeđenog svojstva `$settings` između `BP_Pay_Blocks` i službene WooCommerce `AbstractPaymentMethodType` klase. U ranijoj verziji mogao je izazvati **kritičnu PHP grešku** kada WordPress pokrene integraciju Checkout Blocks. Novu verziju možete instalirati preko postojeće iz odjeljka **Dodaci → Dodaj novi → Prenesi dodatak** ili zamijeniti mapu dodatka; **ne brišite pohranjene postavke i nemojte mijenjati postojeće API ključeve**. Dodatne upute za oporavak: [docs/WORDPRESS-CRITICAL-ERROR-0.8.1.md](docs/WORDPRESS-CRITICAL-ERROR-0.8.1.md).
+| Paket | Predložena cijena / mj | Dopuštene domene |
+|---|---:|---:|
+| **Start** | 19,90 € | 1 |
+| **Business** | 49,90 € | 5 |
+| **Pro** | 99,90 € | 25 |
+
+**Nema besplatnog paketa.** Registracija samo stvara račun i odabire paket, ne potvrđuje uplatu. Budući da produkcijska naplata pretplate nije integrirana, **operator ručno potvrđuje postojeću uplatu i aktivira paket**. Novi korisnici bez aktivirane licence ne mogu koristiti platformu kao naplatni servis. Izdavanje 1/5/25 licenci se provjerava pod zaključavanjem JSON pohrane na serveru.
+
+**Povezivanje:**
+1. Trgovac registrira račun i bira Start, Business ili Pro.
+2. Administrator nakon neovisno verificirane uplate aktivira paket i datum isteka u `/admin`.
+3. Trgovac u `/sites` unosi HTTPS domenu WordPressa, npr. `https://trgovina.hr`, pa dobiva **jednokratni licencni ključ**.
+4. U WordPressu otvara **Brendigo Pay → Postavke**, sprema URL platforme i unosi licencni ključ.
+5. Dodatak šalje licenciju i ID instalacije platformi; nakon provjere vraća se zaseban **`bp_test_` API token**, ograničen na tu domenu i instalaciju.
+6. Korisnički panel prikazuje iskorištene licence i omogućuje rotaciju ili uklanjanje domene. Rotacija opoziva prethodni API ključ.
+
+**Sigurnosna ograničenja:** licencije su u JSON pohrani samo kao SHA-256 sažeci. Za odobravanje paketa obavezna je konfiguracija `admin_user_ids` u privatnoj `platform/config.php`. Aktivacija još ne provodi neovisnu DNS/HTTP potvrdu vlasništva domene, pa ne treba uključivati produkcijske uplate prije njezine implementacije. WordPress standardno koristi vlastitu bazu za opcije dodatka; web-platforma koristi samo `storage/data` JSON.
+
+[Detaljna dokumentacija o paketima i licenci](docs/PAID-PLANS-LICENSES.md).
+
+## Hitni ispravak WooCommerce fatal error (v0.8.2)
+
+Ispravljen je konflikt naslijeđenog svojstva `$settings` između `BP_Pay_Blocks` i službene WooCommerce `AbstractPaymentMethodType` klase. U ranijoj verziji mogao je izazvati **kritičnu PHP grešku** kada WordPress pokrene integraciju Checkout Blocks. Novu verziju možete instalirati preko postojeće iz odjeljka **Dodaci → Dodaj novi → Prenesi dodatak** ili zamijeniti mapu dodatka; **ne brišite pohranjene postavke i nemojte mijenjati postojeće API ključeve**. Dodatne upute za oporavak: [docs/WORDPRESS-CRITICAL-ERROR-0.8.2.md](docs/WORDPRESS-CRITICAL-ERROR-0.8.2.md).
 
 ## Doživite Brendigo Pay
 
@@ -53,7 +75,7 @@ Prikazujemo **stvarne snimke lokalno izvršene web-platforme**, nastale automati
 
 ## Jedno mjesto za različite načine naplate
 
-| Modul | Što je dostupno u v0.8.1 |
+| Modul | Što je dostupno u v0.8.2 |
 |---|---|
 | 🖥️ Web | Registracija, prijava, korisnička nadzorna ploča, izvještaji u testnom načinu |
 | 🔗 Naplatne poveznice | Kreiranje, aktivacija/deaktivacija, javni URL, iznos u EUR |
@@ -101,7 +123,7 @@ Lokalni HTTP dopušten je samo za `localhost`/`127.0.0.1`. Za javni server koris
 
 ### 2. WordPress dodatak
 
-1. Preuzmi `brendigo-pay-wordpress-0.8.1.zip` s [GitHub izdanja](https://github.com/bren-wp/Brendigo-Pay/releases).
+1. Preuzmi `brendigo-pay-wordpress-0.8.2.zip` s [GitHub izdanja](https://github.com/bren-wp/Brendigo-Pay/releases).
 2. U WordPressu otvori **Dodaci → Dodaj novi → Prenesi dodatak**.
 3. U **Brendigo Pay → Postavke** unesi HTTPS adresu platforme i vlastiti `bp_test_...` ključ.
 4. Provjeri vezu. Na platformi konfiguriraj podržane sandbox pružatelje.

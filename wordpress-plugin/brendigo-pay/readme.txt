@@ -3,11 +3,11 @@ Contributors: brendigo
 Tags: payments, woocommerce, payment links, qr code, checkout
 Requires at least: 6.4
 Requires PHP: 8.1
-Stable tag: 0.8.1
+Stable tag: 0.8.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Sandbox-only Brendigo Pay connector for WordPress and WooCommerce. Does NOT support real money.
+Brendigo Pay WordPress/WooCommerce connector for paid Start (1 site), Business (5 sites) and Pro (25 sites) subscriptions. SANDBOX only; no real money.
 
 == Description ==
 Connect your WordPress site to the separate Brendigo Pay JSON-based development platform.
@@ -20,17 +20,29 @@ IMPORTANT: This is NOT a production-ready payment gateway. Real sandbox integrat
 
 == Installation ==
 1. Upload the plugin ZIP in WordPress > Plugins > Add New > Upload Plugin.
-2. Under Brendigo Pay settings, enter platform HTTPS base URL and test merchant API key.
-3. Run Test connection.
-4. Add the Gutenberg payment button or enable the Brendigo Pay gateway in WooCommerce Payments.
-5. Configure sandbox credentials on the separate Brendigo Pay platform.
+2. On the platform, register for Start / Business / Pro and wait for operator-confirmed payment.
+3. Go to Web-stranice in the merchant panel and add this WordPress HTTPS domain. Copy the one-time license key.
+4. Under Brendigo Pay settings, enter the platform HTTPS base URL and save.
+5. Enter the one-time license key in "Aktivacija licencije" and activate. A site-scoped test API token is exchanged and stored encrypted in WordPress options.
+6. Run Test connection.
+7. Add the Gutenberg block or enable the WooCommerce sandbox gateway.
+8. Configure sandbox payment provider credentials on the Brendigo Pay platform.
+9. Manage license count, rotation and revocation under Web-stranice in your merchant account.
 
 == Security ==
 Test API token is encrypted with WordPress salt-derived AES-256-GCM, or use BRENDIGO_PAY_API_KEY in wp-config.php.
 The platform uses test/sandbox hosted checkout and verifies provider payment status before Woo order completion.
 
 == Changelog ==
-= 0.8.1 =
+= 0.8.2 =
+* Three paid tiers only: Start 1 WordPress website, Business 5 websites, Pro 25 websites. No free package.
+* Site-origin-bound license activation and platform-generated site-specific sandbox API tokens.
+* Site registration and license management in the merchant panel; restricted operator-only paid entitlement assignment.
+* WordPress settings gain license activation UI; responsive administration improvements.
+* Website limits enforced server-side with a locked JSON store; API tokens denied after plan expiry.
+* No live payments or automated subscription billing; plans require independent verification and activation by operator.
+
+= 0.8.2 =
 * HOTFIX: Fixed fatal error when WooCommerce Checkout Blocks loads the payment integration.
 * Reuse the inherited WooCommerce protected settings property instead of redeclaring a private typed property.
 * Gracefully handle unexpected shortcode attributes and invalid WooCommerce settings payloads.
