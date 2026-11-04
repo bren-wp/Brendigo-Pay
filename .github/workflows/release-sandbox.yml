@@ -37,3 +37,6 @@ jobs:
           else
             gh release create "${TAG}" "${FILES[@]}" --target "${GITHUB_SHA}" --title "Brendigo Pay ${TAG} (SANDBOX)" --prerelease --notes "Development release only. No real payments. Brendigo Pay uses private JSON storage for its standalone platform and a WordPress/WooCommerce plugin. Visual pixel-perfect parity and production provider E2E testing are NOT certified."
           fi
+          # GitHub may retain a previous stable-release flag when assets are replaced.
+          # Enforce the SANDBOX / pre-release classification on every publish.
+          gh release edit "${TAG}" --prerelease --title "Brendigo Pay ${TAG} (SANDBOX)"
