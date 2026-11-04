@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Local HTTP smoke tests. Uses an isolated temporary copy and never calls Stripe."""
 import contextlib
+from datetime import datetime, timedelta, timezone
 import http.cookiejar
 import json
 import os
@@ -41,7 +42,7 @@ def main():
             if token:
                 headers['Authorization'] = 'Bearer ' + token
             if isinstance(data, dict):
-                if token:
+                if token or path == '/api/v1/license/activate':
                     headers['Content-Type'] = 'application/json'
                     data = json.dumps(data).encode()
                 else:
@@ -64,17 +65,67 @@ def main():
             else:
                 raise RuntimeError('Server did not start')
 
-            status, body, _ = req('/register')
-            assert status == 200
+            status, body, _ = req('/register?plan=business')
+            assert status == 200 and '49,90' in body and '19,90' in body
             csrf = re.search('name="csrf" value="([a-f0-9]+)"', body).group(1)
             status, body, _ = req('/register', {
                 'name': 'Smoke Merchant', 'email': 'smoke@example.com',
+                'requested_tier': 'business', 'website': base,
                 'password': 'this-is-a-long-test-password', 'csrf': csrf,
             })
-            assert status == 200 and 'Smoke Merchant' in body
-            print('PASS: account registration and authenticated dashboard')
+            assert status == 200 and 'Moje web-stranice' in body and 'čeka provjeru uplate' in body
+            print('PASS: new merchant selects paid tier but receives no free license')
             csrf = re.search('name="csrf" value="([a-f0-9]+)"', body).group(1)
-            status, body, _ = req('/dashboard/links', {'title': 'Test service', 'amount': '15,90', 'csrf': csrf})
+            assert req('/sites', {'origin': base, 'csrf': csrf})[0] == 200
+            assert req('/sites')[1].find('0 / 0') != -1
+            # Configure operator ID ONLY in this throwaway local smoke-test instance.
+            user_files = list((project / 'storage/data/users').glob('*.json'))
+            user_id = next(json.loads(file.read_text())['id'] for file in user_files
+                           if json.loads(file.read_text())['email'] == 'smoke@example.com')
+            config_file = project / 'config.php'
+            config_text = config_file.read_text()
+            config_text, replacements = re.subn(
+                r"('admin_user_ids'\s*=>\s*array\s*\()\s*(\))",
+                lambda m: m.group(1) + repr(user_id) + ', ' + m.group(2),
+                config_text, count=1,
+            )
+            assert replacements == 1, 'missing operator configuration'
+            config_file.write_text(config_text)
+            status, admin_page, _ = req('/admin')
+            assert status == 200 and 'Admin Panel' not in admin_page and 'Paketi i licence' in admin_page
+            admin_csrf = re.search('name="csrf" value="([a-f0-9]+)"', admin_page).group(1)
+            expires = (datetime.now(timezone.utc) + timedelta(days=35)).date().isoformat()
+            status, admin_page, _ = req('/admin/plans', {
+                'merchant_id': user_id, 'tier': 'business',
+                'expires': expires, 'payment_verified': '1', 'csrf': admin_csrf,
+            })
+            assert status == 200 and 'Plaćeni paket aktiviran' in admin_page
+            print('PASS: only operator can confirm paid entitlement after manual payment check')
+            status, body, _ = req('/sites')
+            assert status == 200 and '5 web-stranica' not in body and '0 / 5' in body
+            csrf = re.search('name="csrf" value="([a-f0-9]+)"', body).group(1)
+            status, body, _ = req('/sites', {'origin': base, 'csrf': csrf})
+            assert status == 200 and 'bp_lic_' in body
+            license_key = re.search(r'bp_lic_[a-f0-9]{64}', body).group(0)
+            site_id = re.search(r'/sites/([a-f0-9]{24})/rotate', body).group(1)
+            # License cannot be used for a different domain or WordPress installation.
+            assert req('/api/v1/license/activate', {
+                'license_key': license_key, 'site_url': 'https://wrong.example',
+                'installation_id': 'a' * 32,
+            })[0] == 403
+            status, activated, _ = req('/api/v1/license/activate', {
+                'license_key': license_key, 'site_url': base, 'installation_id': 'a' * 32,
+            })
+            token = json.loads(activated)['api_key']
+            assert status == 200 and json.loads(activated)['site_id'] == site_id
+            assert json.loads(req('/api/v1/me', token=token)[1])['plan'] == 'business'
+            assert req('/api/v1/license/activate', {
+                'license_key': license_key, 'site_url': base, 'installation_id': 'b' * 32,
+            })[0] == 403
+            print('PASS: domain and installation-bound WP license activation and API sync')
+            status, body, _ = req('/dashboard/links', {
+                'site_id': site_id, 'title': 'Test service', 'amount': '15,90', 'csrf': csrf,
+            })
             assert status == 200
             link_id = re.search('/p/([a-f0-9]{24})', body).group(1)
             assert req('/p/' + link_id)[0] == 200
@@ -90,9 +141,18 @@ def main():
             attacker_csrf = re.search('name="csrf" value="([a-f0-9]+)"', html).group(1)
             status, html, _ = req('/register', {
                 'name': 'Other Merchant', 'email': 'other@example.com',
-                'password': 'this-is-another-long-password', 'csrf': attacker_csrf,
+                'requested_tier': 'start', 'password': 'this-is-another-long-password', 'csrf': attacker_csrf,
             }, client=attacker)
-            assert status == 200 and 'Other Merchant' in html
+            assert status == 200 and 'Moje web-stranice' in html
+            assert req('/admin', client=attacker)[0] == 403
+            attacker_id = next(json.loads(file.read_text())['id']
+                for file in (project / 'storage/data/users').glob('*.json')
+                if json.loads(file.read_text())['email'] == 'other@example.com')
+            status, admin_page, _ = req('/admin/plans', {
+                'merchant_id': attacker_id, 'tier': 'start',
+                'expires': expires, 'payment_verified': '1', 'csrf': admin_csrf,
+            })
+            assert status == 200 and 'Plaćeni paket aktiviran' in admin_page
             status, html, _ = req('/dashboard/links/' + link_id + '/toggle', {'csrf': attacker_csrf}, client=attacker)
             assert status == 404 and req('/p/' + link_id)[0] == 200
             print('PASS: cross-merchant link mutation rejected')
@@ -103,9 +163,7 @@ def main():
             status, body, _ = req('/settings')
             assert status == 200
             csrf = re.search('name="csrf" value="([a-f0-9]+)"', body).group(1)
-            status, body, _ = req('/settings/token', {'origin': base, 'csrf': csrf})
-            assert status == 200
-            token = re.search(r'bp_test_[a-f0-9]{64}', body).group(0)
+            assert req('/settings/token', {'origin': base, 'csrf': csrf})[0] == 410
             assert req('/api/v1/me', token=token)[0] == 200
             status, result, _ = req('/api/v1/links', {'title': '=DANGEROUS', 'amount': '25.01', 'description': '<script>alert(1)</script>'}, token=token)
             assert status == 201
@@ -122,12 +180,21 @@ def main():
             assert status == 200 and api_id in {item['id'] for item in json.loads(listing)['items']}
             assert link_id in {item['id'] for item in json.loads(listing)['items']}
             assert req('/api/v1/links')[0] == 401
-            other_status, other_page, _ = req('/settings', client=attacker)
-            assert other_status == 200
+            other_status, other_page, _ = req('/sites', client=attacker)
+            assert other_status == 200 and site_id not in other_page
             other_csrf = re.search('name="csrf" value="([a-f0-9]+)"', other_page).group(1)
-            other_status, other_page, _ = req('/settings/token', {'origin': base, 'csrf': other_csrf}, client=attacker)
+            other_status, other_page, _ = req('/sites', {
+                'origin': f'http://localhost:{port}', 'csrf': other_csrf,
+            }, client=attacker)
+            assert other_status == 200 and 'bp_lic_' in other_page
+            other_license = re.search(r'bp_lic_[a-f0-9]{64}', other_page).group(0)
+            other_status, other_activated, _ = req('/api/v1/license/activate', {
+                'license_key': other_license,
+                'site_url': f'http://localhost:{port}',
+                'installation_id': 'c' * 32,
+            })
             assert other_status == 200
-            other_token = re.search(r'bp_test_[a-f0-9]{64}', other_page).group(0)
+            other_token = json.loads(other_activated)['api_key']
             other_status, other_listing, _ = req('/api/v1/links', token=other_token)
             assert other_status == 200 and json.loads(other_listing)['items'] == []
             print('PASS: Gutenberg API link list requires token and isolates merchants')
