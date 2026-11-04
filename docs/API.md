@@ -64,12 +64,13 @@ Zaštićeno istim trgovčevim Bearer tokenom kao i `GET /api/v1/me`. Vraća do 1
 WordPress REST proxy `/wp-json/brendigo-pay/v1/links` zahtijeva korisničku ovlast `edit_posts` te nikada ne vraća API token ili tajne platnih pružatelja.
 
 
-## Android merchant API (v0.8.4)
+## Android merchant API (v0.8.5)
 
 Odvojen prostor `/api/v1/mobile/*`, HTTPS only. API nikada ne prima kartične podatke. Svi zahtjevi koriste `Accept: application/json`; POST zahtjevi `Content-Type: application/json`.
 
 | Metoda | Ruta | Autorizacija | Namjena |
 |---|---|---|---|
+| POST | `/api/v1/mobile/register` | javno, IP-limit | Zajednička registracija Android/web uz plaćeni paket, vraća mobilni token i neaktivni status |
 | POST | `/api/v1/mobile/login` | javno uz ograničenje pokušaja | Izdaj zaseban mobilni token nakon provjere web lozinke (7 dana) |
 | GET | `/api/v1/mobile/overview` | `bp_mobile_...` | Stvarni sandbox prihodi, transakcije, linkovi, licence, status paketa i domena samo vlastitog računa |
 | POST | `/api/v1/mobile/links` | `bp_mobile_...` | Kreiraj platni link na aktiviranoj domeni iz aktivnog plaćenog plana |
@@ -83,3 +84,5 @@ Odvojen prostor `/api/v1/mobile/*`, HTTPS only. API nikada ne prima kartične po
 `POST /api/v1/mobile/links` prihvaća `{"site_id":"24hex","title":"Naziv usluge","amount":"49.90","description":"Opis"}`, nakon čega link postaje vidljiv web-panelu i WP Gutenberg prikazu. Plaćanje ostaje SANDBOX.
 
 **Sigurnosne granice:** aplikacija nije administrator cijele platforme; isključivo merchant token. Izvod, idempotency i transakcijska povijest po vremenskom rasponu dostupni su na webu; nativno su zasad dostupni osnovni pregledi. Produkcijski audit, mobilni pen-test i device E2E još nisu završeni.
+
+Android registracija koristi isti `Accounts::register` servis kao web. JSON sadrži `name`, `email`, `password`, `requested_tier` (`start`, `business`, `pro`), te neobvezni `website`. Odgovor HTTP 201 ima `token` i `plan_status=awaiting_manual_payment_verification`; duplikat vraća 409, nevaljani podaci 422, rate-limit 429. Registracija ne izdaje domensku licencu.

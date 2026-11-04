@@ -4,8 +4,8 @@ Nativna Java Android aplikacija za korisnike Brendigo Pay web-platforme. **Ne ob
 
 ## Zasloni
 
-- **Prijava**: HTTPS adresa vlastite instalacije platforme i postojeći korisnički račun. Lozinka se ne sprema.
-- **Pregled**: stvarni sandbox iznosi/izvještaji, 14-dnevni grafikon iz zapisa i stanje paketa.
+- **Registracija i prijava**: HTTPS adresa vlastite instalacije; registracija s izborom jednog od tri plaćena paketa (bez automatske aktivacije), prijava istim računom kao web. Lozinka se ne sprema.
+- **Pregled**: stvarni sandbox iznosi/izvještaji, 14-dnevni grafikon iz zapisa, stanje paketa i status konfiguracije Stripe, PayPal i Revolut testnih integracija.
 - **Transakcije**: zadnjih 50 transakcija sa statusom i iznosom.
 - **Linkovi**: zadnjih 50 linkova; kreiranje novog, kopiranje HTTPS poveznice te aktivacija/deaktivacija samo vlastitog linka.
 - **Web-stranice**: domene, statusi WordPress instalacija, verzija dodatka, zadnji heartbeat i iskorištenost licence.
