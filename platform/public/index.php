@@ -6,6 +6,7 @@ use BrendigoPay\JsonStore;
 use BrendigoPay\StripeTest;
 use BrendigoPay\StripeConnectSandbox;
 use BrendigoPay\SandboxProviders;
+use BrendigoPay\MobileApi;
 use function BrendigoPay\e;
 use function BrendigoPay\minor_format;
 use function BrendigoPay\money_to_minor;
@@ -24,6 +25,7 @@ require dirname(__DIR__) . '/src/StripeTest.php';
 require dirname(__DIR__) . '/src/SandboxProviders.php';
 require dirname(__DIR__) . '/src/StripeConnectSandbox.php';
 require dirname(__DIR__) . '/src/Ui.php';
+require dirname(__DIR__) . '/src/MobileApi.php';
 
 $configFile = dirname(__DIR__) . '/config.php';
 if (!is_file($configFile)) {
@@ -34,6 +36,7 @@ $config = require $configFile;
 $store = new JsonStore($config['data_dir']);
 $plans = new \BrendigoPay\Plans($store);
 $licenses = new \BrendigoPay\SiteLicenses($store, $plans, (bool) $config['is_local']);
+$mobileApi = new MobileApi($store, $plans, (string) $config['base_url']);
 $base = $config['base_url'];
 $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
@@ -753,6 +756,59 @@ if ($method === 'POST' && preg_match('#^/webhooks/stripe/([a-f0-9]{32})$#D', $pa
     }
     http_response_code(200);
     exit('ok');
+}
+
+// Separate merchant-only Android access. Mobile bearer tokens cannot authenticate WP plugin routes.
+if ($path === '/api/v1/mobile/login' && $method === 'POST') {
+    $input = json_request();
+    try {
+        $result = $mobileApi->login($input, (string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown'));
+    } catch (RuntimeException $e) {
+        fail_api(429, 'Too many login attempts. Try again later.');
+    }
+    if ($result === null) {
+        fail_api(401, 'Invalid credentials');
+    }
+    json_response($result);
+}
+if (str_starts_with($path, '/api/v1/mobile/')) {
+    $auth = $mobileApi->authenticate((string) ($_SERVER['HTTP_AUTHORIZATION'] ?? ''));
+    if ($auth === null) {
+        fail_api(401, 'Mobile session invalid or expired');
+    }
+    [$mobileMerchant, $mobileTokenHash] = $auth;
+    if ($path === '/api/v1/mobile/overview' && $method === 'GET') {
+        json_response($mobileApi->overview($mobileMerchant));
+    }
+    if ($path === '/api/v1/mobile/logout' && $method === 'POST') {
+        $mobileApi->logout($mobileTokenHash);
+        json_response(['ok' => true]);
+    }
+    if ($method === 'POST' &&
+        preg_match('#^/api/v1/mobile/links/([a-f0-9]{24})/toggle$#D', $path, $match)) {
+        try {
+            $enabled = $mobileApi->toggleLink($mobileMerchant, $match[1]);
+            if ($enabled === null) { fail_api(404, 'Link not found'); }
+            audit_event($mobileMerchant['id'], $enabled ? 'payment_link_enabled' : 'payment_link_disabled', [
+                'link_id' => $match[1], 'via' => 'mobile',
+            ]);
+            json_response(['id' => $match[1], 'active' => $enabled]);
+        } catch (RuntimeException $e) {
+            fail_api(403, 'Paid plan is inactive');
+        }
+    }
+    if ($path === '/api/v1/mobile/links' && $method === 'POST') {
+        try {
+            $created = $mobileApi->createLink($mobileMerchant, json_request());
+            audit_event($mobileMerchant['id'], 'payment_link_created', [
+                'link_id' => $created['id'], 'via' => 'mobile',
+            ]);
+            json_response($created, 201);
+        } catch (RuntimeException $e) {
+            fail_api(422, 'Invalid link data, inactive paid plan or website license');
+        }
+    }
+    fail_api(404, 'Mobile endpoint not found');
 }
 
 // Read-only discovery endpoint, not a payment confirmation.

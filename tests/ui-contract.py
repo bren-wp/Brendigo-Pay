@@ -4,7 +4,7 @@ from pathlib import Path
 import re
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION = '0.8.3'
+VERSION = '0.8.4'
 wp = ROOT / 'wordpress-plugin' / 'brendigo-pay'
 required = [
     'assets/public.css', 'assets/admin.css', 'assets/editor.css',

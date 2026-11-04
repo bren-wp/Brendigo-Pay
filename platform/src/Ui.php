@@ -43,7 +43,7 @@ function bp_site_home(): string
   <header class="bp-showcase-heading"><span class="bp-kicker">PLATFORMA ZA VAŠE POSLOVANJE</span><h2 id="bp-showcase-title">Jedno mjesto za različite načine naplate</h2><p>Web-stranica, WordPress, WooCommerce i platne poveznice rade s istom platformom.</p></header>
   <div class="bp-showcase-steps"><article><span class="bp-number">01</span><h3>Povežite testni račun</h3><p>Koristite vlastite podatke platnog pružatelja. Dostupnost ovisi o konfiguraciji.</p></article><article><span class="bp-number">02</span><h3>Objavite naplatnu poveznicu</h3><p>Postavite gumb ili QR kod na WordPress, web ili u dokument za kupca.</p></article><article><span class="bp-number">03</span><h3>Pratite status plaćanja</h3><p>Server provjerava odgovor pružatelja prije označavanja testne transakcije plaćenom.</p></article></div>
 </section>
-<section class="bp-bottom-cta"><div><h2>Jednostavnija naplata za vaše poslovanje</h2><p>Otvorite testni račun i isprobajte Brendigo Pay.</p></div><a href="/register" class="btn btn-white">Započni besplatno →</a></section>
+<section class="bp-bottom-cta"><div><h2>Jednostavnija naplata za vaše poslovanje</h2><p>Otvorite testni račun i isprobajte Brendigo Pay.</p></div><a href="/register" class="btn btn-white">Odaberi paket →</a></section>
 <?php return (string) ob_get_clean();
 }
 

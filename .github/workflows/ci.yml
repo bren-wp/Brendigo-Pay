@@ -21,6 +21,8 @@ jobs:
         run: python3 --version
       - name: PHP lint and offline test suite
         run: bash tests/run-all.sh
+      - name: Android structural security contract
+        run: python3 tests/android-contract.py
       - name: Build release archives
         run: python3 scripts/package_release.py --output dist
       - name: Validate ZIP archives

@@ -54,3 +54,8 @@ Administrator može suspendirati račun u `/admin`; server odmah blokira sve API
 ## Granice UX testiranja
 
 Sučelje se usklađuje s referentnim dizajnom, ali nije potvrđena točna vizualna 1:1 podudarnost na pravim WordPress/WooCommerce instalacijama, preglednicima i rezolucijama.
+
+
+## Android pregled i ista licencna pravila (v0.8.4)
+
+Android se prijavljuje korisničkim računom i dobiva poseban mobilni token s trajanjem sedam dana. Nije dopušteno aktivirati WP dodatak mobilnim tokenom; WordPress i dalje ima ključ vezan uz konkretnu domenu i instalaciju. Android prikazuje **isti** broj iskorištenih domenskih mjesta (1 / 5 / 25) i aktivni paket kao korisnički panel, te može kreirati/aktivirati/deaktivirati vlastite testne linkove za već aktiviranu domenu. Neaktivni ili suspendirani paket na serveru odbija nove promjene linkova. Detalji API-ja u `docs/API.md`.
