@@ -1,0 +1,45 @@
+name: Brendigo Pay checks
+on:
+  push:
+    branches: [main, 'feat/**', 'fix/**']
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  php-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: curl, sodium, openssl, mbstring
+          coverage: none
+      - name: Python version
+        run: python3 --version
+      - name: PHP lint and offline test suite
+        run: bash tests/run-all.sh
+      - name: Build release archives
+        run: python3 scripts/package_release.py --output dist
+      - name: Validate ZIP archives
+        run: |
+          python3 - <<'PYTEST'
+          from pathlib import Path
+          from zipfile import ZipFile
+          for p in Path('dist').glob('*.zip'):
+              with ZipFile(p) as f:
+                  assert f.testzip() is None, p
+                  names = f.namelist()
+                  assert not any('/config.php' in n or '/storage/data/users/' in n for n in names)
+              print('OK:', p)
+          PYTEST
+      - name: Publish test archives as workflow artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: brendigo-pay-sandbox-archives
+          path: |
+            dist/*.zip
+            dist/SHA256SUMS.txt
+          retention-days: 14
