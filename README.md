@@ -29,6 +29,8 @@ Platforma prikazuje status pojedine instalacije, verziju dodatka i vrijeme zadnj
 
 **WooCommerce Classic i Blocks** ne nude Brendigo Pay ako posljednja uspješna sinkronizacija nije potvrđena tijekom prethodna dva sata ili je platforma odbila zahtjev. Administrator može odabrati „Sinkroniziraj sada“ u WP postavkama; status uključuje Start/Business/Pro, iskorištene domene i datum isteka. Operator može suspendirati plaćeni paket iz `/admin` te tako odmah blokirati pristup API-ju.
 
+[Ciljani sigurnosni pregled Android i API izdanja 0.8.4](docs/SECURITY-REVIEW-0.8.4.md).
+
 Ovo je još uvijek **SANDBOX**. Nakon deploya treba potvrditi produkcijske platne pružatelje, automatiziranu naplatu paketa, identitet trgovca, domensku vlasničku provjeru, WordPress/WooCommerce E2E te regulatornu usklađenost. Snimke u README-u odnose se na stvarni raniji UI, ali ne jamče vizualnu 1:1 identičnost svih referenci.
 
 ## Tri plaćena paketa, licence po web-stranici (v0.8.4)
@@ -68,7 +70,7 @@ Prikazujemo **stvarne snimke lokalno izvršene web-platforme**, nastale automati
 | [![Stvarna lokalna naplatna stranica](docs/screenshots/sandbox-checkout-desktop.png)](docs/screenshots/sandbox-checkout-desktop.png) | [![Stvarni lokalni obrazac naplatne poveznice](docs/screenshots/new-payment-link-desktop.png)](docs/screenshots/new-payment-link-desktop.png) |
 
 <details>
-<summary><strong>Mobilne snimke aplikacije (stvarni lokalni prikaz)</strong></summary>
+<summary><strong>Mobilne snimke web sučelja (nisu screenshotovi nativne Android aplikacije)</strong></summary>
 
 | Naslovnica | Nadzorna ploča | Naplata | Novi link |
 |:--:|:--:|:--:|:--:|
