@@ -75,6 +75,51 @@ def main():
             })
             assert status == 200 and 'Moje web-stranice' in body and 'čeka provjeru uplate' in body
             print('PASS: new merchant selects paid tier but receives no free license')
+            # Android registration and web login must use the identical user/email/Argon2id store.
+            assert req('/api/v1/mobile/register', {
+                'name': 'Bad Plan', 'email': 'badplan@example.com',
+                'password': 'this-is-a-long-test-password', 'requested_tier': 'free',
+            })[0] == 422
+            registration_status, registration_body, _ = req('/api/v1/mobile/register', {
+                'name': 'Android Registered Merchant', 'email': 'android-user@example.com',
+                'password': 'android-registration-password-15',
+                'requested_tier': 'pro', 'website': base,
+            })
+            assert registration_status == 201, (registration_status, registration_body)
+            registration = json.loads(registration_body)
+            assert registration['token'].startswith('bp_mobile_')
+            assert registration['plan_status'] == 'awaiting_manual_payment_verification'
+            assert req('/api/v1/mobile/register', {
+                'name': 'Android Registered Merchant', 'email': 'android-user@example.com',
+                'password': 'android-registration-password-15',
+                'requested_tier': 'business',
+            })[0] == 409
+            android_overview = json.loads(req('/api/v1/mobile/overview', token=registration['token'])[1])
+            assert android_overview['merchant']['email'] == 'android-user@example.com'
+            assert android_overview['subscription']['status'] == 'inactive'
+            assert android_overview['subscription']['requested_tier'] == 'pro'
+            assert android_overview['subscription']['site_limit'] == 0
+            assert android_overview['sites'] == [] and android_overview['transactions'] == []
+            assert req('/api/v1/mobile/links', {
+                'site_id': 'b' * 24, 'title': 'Should not work', 'amount': '12.00'
+            }, token=registration['token'])[0] == 422
+            android_web_client = urllib.request.build_opener(
+                urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
+            login_page_status, login_page, _ = req('/login', client=android_web_client)
+            assert login_page_status == 200
+            android_web_csrf = re.search('name="csrf" value="([a-f0-9]+)"', login_page).group(1)
+            mobile_to_web, site_page, _ = req('/login', {
+                'email': 'android-user@example.com',
+                'password': 'android-registration-password-15',
+                'csrf': android_web_csrf,
+            }, client=android_web_client)
+            assert mobile_to_web == 200 and 'Moje web-stranice' not in site_page
+            site_status_code, site_page, _ = req('/sites', client=android_web_client)
+            assert site_status_code == 200 and '0 / 0' in site_page
+            assert req('/admin', client=android_web_client)[0] == 403
+            assert req('/api/v1/me', token=registration['token'])[0] == 401
+            print('PASS: Android registration -> web login, same user and no free entitlements')
+
             csrf = re.search('name="csrf" value="([a-f0-9]+)"', body).group(1)
             assert req('/sites', {'origin': base, 'csrf': csrf})[0] == 200
             assert req('/sites')[1].find('0 / 0') != -1
