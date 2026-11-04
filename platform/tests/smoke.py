@@ -42,7 +42,7 @@ def main():
             if token:
                 headers['Authorization'] = 'Bearer ' + token
             if isinstance(data, dict):
-                if token or path == '/api/v1/license/activate':
+                if token or path == '/api/v1/license/activate' or path.startswith('/api/v1/mobile/'):
                     headers['Content-Type'] = 'application/json'
                     data = json.dumps(data).encode()
                 else:
@@ -101,6 +101,22 @@ def main():
             })
             assert status == 200 and 'Plaćeni paket aktiviran' in admin_page
             print('PASS: only operator can confirm paid entitlement after manual payment check')
+            assert req('/api/v1/mobile/overview')[0] == 401
+            assert req('/api/v1/mobile/login', {
+                'email': 'smoke@example.com', 'password': 'incorrect',
+            })[0] == 401
+            mobile_login_status, mobile_login, _ = req('/api/v1/mobile/login', {
+                'email': 'smoke@example.com', 'password': 'this-is-a-long-test-password',
+            })
+            assert mobile_login_status == 200, (mobile_login_status, mobile_login)
+            mobile_token = json.loads(mobile_login)['token']
+            assert mobile_token.startswith('bp_mobile_')
+            assert req('/api/v1/me', token=mobile_token)[0] == 401
+            mobile_status, mobile_body, _ = req('/api/v1/mobile/overview', token=mobile_token)
+            assert mobile_status == 200
+            assert json.loads(mobile_body)['subscription']['tier'] == 'business'
+            assert json.loads(mobile_body)['merchant']['email'] == 'smoke@example.com'
+            print('PASS: Android signs into the same merchant, never a WordPress API token')
             status, body, _ = req('/sites')
             assert status == 200 and '5 web-stranica' not in body and '0 / 5' in body
             csrf = re.search('name="csrf" value="([a-f0-9]+)"', body).group(1)
@@ -137,6 +153,24 @@ def main():
             assert site_status['plugin_version'] == '0.8.3' and site_status['last_seen_at']
             assert '0.8.3' in req('/admin')[1] and site_status['origin'] in req('/sites')[1]
             print('PASS: authenticated, version-bounded WordPress heartbeat and synchronized admin/user views')
+            mobile_status, mobile_body, _ = req('/api/v1/mobile/overview', token=mobile_token)
+            assert mobile_status == 200
+            mobile_data = json.loads(mobile_body)
+            assert mobile_data['subscription']['sites_used'] == 1
+            assert mobile_data['sites'][0]['id'] == site_id
+            assert mobile_data['sites'][0]['plugin_version'] == '0.8.3'
+            mobile_create_status, created, _ = req('/api/v1/mobile/links', {
+                'site_id': site_id, 'title': 'Created on Android',
+                'amount': '24.90', 'description': 'Synced from user panel',
+            }, token=mobile_token)
+            assert mobile_create_status == 201, (mobile_create_status, created)
+            mobile_link_id = json.loads(created)['id']
+            assert req('/p/' + mobile_link_id)[0] == 200
+            assert mobile_link_id in req('/api/v1/links', token=token)[1]
+            assert req('/api/v1/mobile/links', {
+                'site_id': 'f' * 24, 'title': 'Illegal link', 'amount': '99.00',
+            }, token=mobile_token)[0] == 422
+            print('PASS: Android overview and payment link creation share the WP/web merchant data store')
             assert req('/api/v1/license/activate', {
                 'license_key': license_key, 'site_url': base, 'installation_id': 'b' * 32,
             })[0] == 403
@@ -177,6 +211,20 @@ def main():
             status, html, _ = req('/dashboard/links/' + link_id + '/toggle', {'csrf': attacker_csrf}, client=attacker)
             assert status == 404 and req('/p/' + link_id)[0] == 200
             print('PASS: cross-merchant link mutation rejected')
+            attacker_mobile_status, attacker_mobile_body, _ = req('/api/v1/mobile/login', {
+                'email': 'other@example.com', 'password': 'this-is-another-long-password',
+            })
+            assert attacker_mobile_status == 200
+            attacker_mobile_token = json.loads(attacker_mobile_body)['token']
+            attacker_overview = json.loads(req('/api/v1/mobile/overview', token=attacker_mobile_token)[1])
+            assert all(item['id'] != site_id for item in attacker_overview['sites'])
+            assert all(item['id'] != mobile_link_id for item in attacker_overview['links'])
+            assert req('/api/v1/mobile/links', {
+                'site_id': site_id, 'title': 'Cross-owner attempt', 'amount': '50.00',
+            }, token=attacker_mobile_token)[0] == 422
+            assert req('/api/v1/mobile/logout', {}, token=attacker_mobile_token)[0] == 200
+            assert req('/api/v1/mobile/overview', token=attacker_mobile_token)[0] == 401
+            print('PASS: merchant isolation and immediate Android token logout revocation')
             status, body, _ = req('/settings/stripe-connect/callback?state=' + '0'*48 + '&code=ac_test')
             assert status == 419 and 'Nevaljana ili istekla' in body
             assert req('/webhooks/stripe-connect', data=b'{}', method='POST')[0] == 404
