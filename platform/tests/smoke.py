@@ -65,6 +65,22 @@ def main():
             else:
                 raise RuntimeError('Server did not start')
 
+            for legal_path, expected in [
+                ('/privacy', 'Politika privatnosti'),
+                ('/terms', 'Uvjeti korištenja'),
+                ('/cookies', 'Kolačići'),
+                ('/refund-policy', 'Otkazivanje i povrati'),
+                ('/contact', 'Kontakt i podrška'),
+                ('/about', 'O platformi'),
+                ('/security', 'Sigurnost platforme'),
+                ('/providers', 'Načini plaćanja'),
+            ]:
+                legal_status, legal_html, _ = req(legal_path)
+                assert legal_status == 200 and expected in legal_html
+                assert 'https://brendigo.com' in legal_html
+                assert 'Built with' in legal_html and 'nije banka' in legal_html
+            assert req('/no-such-legal-page')[0] == 404
+            print('PASS: all public legal pages, responsive brand footer and explicit payment disclaimer')
             status, body, _ = req('/register?plan=business')
             assert status == 200 and '49,90' in body and '19,90' in body, f"register GET: {status}, body={body[:420]!r}"
             csrf = re.search('name="csrf" value="([a-f0-9]+)"', body).group(1)

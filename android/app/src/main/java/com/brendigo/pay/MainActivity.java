@@ -406,7 +406,19 @@ public final class MainActivity extends Activity {
         TextView privacy = button("Pravila privatnosti i uvjeti usluge", false);
         margin(privacy, 4, 16, 4, 0);
         content.addView(privacy);
-        privacy.setOnClickListener(v -> openUrl(storage.origin() + "/privacy"));
+        privacy.setOnClickListener(v -> {
+            String currentOrigin = ApiClient.origin(server.getText().toString());
+            if (currentOrigin == null) {
+                showError("Unesite HTTPS adresu platforme.");
+            } else {
+                new AlertDialog.Builder(this)
+                        .setTitle("Pravne informacije")
+                        .setItems(new String[]{"Politika privatnosti", "Uvjeti korištenja"},
+                                (dialog, selected) -> openUrl(currentOrigin
+                                        + (selected == 0 ? "/privacy" : "/terms")))
+                        .show();
+            }
+        });
     }
 
     private void showError(String message) {

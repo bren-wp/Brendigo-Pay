@@ -61,4 +61,9 @@ assert '.bp-admin-sync-details' in admin and '.bp-admin-sync-panel' in admin
 assert 'bp-merchant-main .table-wrap table' in (ROOT / 'platform/public/assets/app.css').read_text(encoding='utf-8')
 assert 'bp-admin-sync-heading' in (wp / 'views/admin-settings.php').read_text(encoding='utf-8')
 assert not re.search(r'name=["\']card_number["\']', block + wc + gateway)
-print('PASS: version, branding, 10 references, Gutenberg and checkout UI contracts (structural only)')
+legal = (ROOT / 'platform/src/LegalPages.php').read_text(encoding='utf-8')
+for path in ['/privacy', '/terms', '/cookies', '/refund-policy', '/contact', '/about', '/security', '/providers']:
+    assert f"'{path}'" in legal
+assert 'Built with' in (ROOT / 'platform/public/index.php').read_text()
+assert '.bp-footer-grid' in (ROOT / 'platform/public/assets/app.css').read_text()
+print('PASS: version, brand, 10 references, legal pages, WP and checkout UI contracts (structural only)')
