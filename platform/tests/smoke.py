@@ -100,6 +100,9 @@ def main():
             assert android_overview['subscription']['requested_tier'] == 'pro'
             assert android_overview['subscription']['site_limit'] == 0
             assert android_overview['sites'] == [] and android_overview['transactions'] == []
+            assert android_overview['integrations'] == {
+                'stripe': False, 'paypal': False, 'revolut': False,
+            }
             assert req('/api/v1/mobile/links', {
                 'site_id': 'b' * 24, 'title': 'Should not work', 'amount': '12.00'
             }, token=registration['token'])[0] == 422

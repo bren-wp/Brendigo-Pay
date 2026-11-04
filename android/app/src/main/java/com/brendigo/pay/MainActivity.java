@@ -566,6 +566,26 @@ public final class MainActivity extends Activity {
         status.addView(label("Vrijedi do: " + string(subscription, "expires_at", "Čeka potvrdu naplate"), 12, MUTED, false));
         margin(status, 4, 0, 4, 18);
         content.addView(status);
+        sectionTitle("Povezani pružatelji plaćanja");
+        LinearLayout providers = card(17);
+        JSONObject configured = obj(snapshot, "integrations");
+        for (String provider : new String[]{"Stripe", "PayPal", "Revolut"}) {
+            String key = provider.toLowerCase(Locale.ROOT);
+            LinearLayout item = horizontal();
+            item.setPadding(0, dp(8), 0, dp(8));
+            TextView titleProvider = label(provider, 14, NAVY, true);
+            item.addView(titleProvider, new LinearLayout.LayoutParams(0, dp(32), 1));
+            boolean connected = configured.optBoolean(key, false);
+            item.addView(chip(connected ? "Konfiguriran · test" : "Nije povezan",
+                    connected ? "active" : "pending"));
+            providers.addView(item);
+        }
+        TextView providerLink = button("Upravljaj pružateljima na webu  →", false);
+        margin(providerLink, 0, 12, 0, 0);
+        providers.addView(providerLink);
+        providerLink.setOnClickListener(v -> openUrl(storage.origin() + "/settings"));
+        margin(providers, 4, 0, 4, 17);
+        content.addView(providers);
         sectionTitle("Nedavne transakcije");
         appendTransactions(arr(snapshot, "transactions"), 4);
         TextView more = button("Prikaži sve transakcije  →", false);

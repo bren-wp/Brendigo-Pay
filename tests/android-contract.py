@@ -26,4 +26,5 @@ assert "private function issueToken" in server and "accounts->register" in serve
 assert "showRegistration()" in src and "'/api/v1/mobile/register'" in routing
 assert "password_hash($password, PASSWORD_ARGON2ID)" in (r/'platform/src/Accounts.php').read_text()
 assert "activeOrFail" in server and "user_id" in server
+assert "'integrations' => [" in server and '"integrations"' in src
 print('PASS: Android secure source, version, design screens and merchant API contracts')

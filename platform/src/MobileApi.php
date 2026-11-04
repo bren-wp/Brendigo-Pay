@@ -156,6 +156,12 @@ final class MobileApi
                 'transactions' => count($transactions),
                 'active_links' => count(array_filter($links, static fn (array $l): bool => ($l['active'] ?? true) === true)),
             ],
+            'integrations' => [
+                'stripe' => $this->store->read('stripe', $id) !== null
+                    || $this->store->read('stripe_connect', $id) !== null,
+                'paypal' => $this->store->read('paypal', $id) !== null,
+                'revolut' => $this->store->read('revolut', $id) !== null,
+            ],
             'sites' => array_map(static fn (array $s): array => [
                 'id' => (string) $s['id'],
                 'origin' => (string) $s['origin'],
