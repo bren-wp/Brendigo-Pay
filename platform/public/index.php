@@ -896,7 +896,9 @@ if ($method === 'GET' && preg_match('#^/api/v1/payments/([a-f0-9]{32,64})$#D', $
 // Public links: display only configured sandbox payment providers.
 if ($method === 'GET' && preg_match('#^/p/([a-f0-9]{24})$#D', $path, $m)) {
     $link = $store->read('links', $m[1]);
-    if ($link === null || ($link['active'] ?? true) !== true) {
+    if ($link === null || ($link['active'] ?? true) !== true
+        || $plans->current((string) ($link['user_id'] ?? '')) === null
+        || (!empty($link['site_id']) && (($store->read('sites', $link['site_id'])['status'] ?? '') !== 'active'))) {
         http_response_code(404);
         render('Nije pronađeno', message('Naplatna poveznica nije pronađena ili je isključena.'));
     }
@@ -910,7 +912,9 @@ if ($method === 'GET' && preg_match('#^/p/([a-f0-9]{24})$#D', $path, $m)) {
 if ($method === 'POST' && preg_match('#^/p/([a-f0-9]{24})/checkout$#D', $path, $m)) {
     check_csrf();
     $link = $store->read('links', $m[1]);
-    if ($link === null || ($link['active'] ?? true) !== true) {
+    if ($link === null || ($link['active'] ?? true) !== true
+        || $plans->current((string) ($link['user_id'] ?? '')) === null
+        || (!empty($link['site_id']) && (($store->read('sites', $link['site_id'])['status'] ?? '') !== 'active'))) {
         http_response_code(404);
         exit;
     }
@@ -1092,7 +1096,18 @@ if ($path === '/dashboard/links' && $method === 'POST') {
     if (strlen($title) < 2 || strlen($title) > 160 || strlen($description) > 500 || $amount === null) {
         render('Pogreška', message('Opis mora imati 2–160 znakova, a iznos mora biti valjan i veći od nule.'));
     }
-    $link = ['id' => random_id(12), 'user_id' => $user['id'], 'title' => $title, 'description' => $description, 'amount_minor' => $amount, 'currency' => 'EUR', 'active' => true, 'created_at' => gmdate('c')];
+    $siteIds = array_values(array_map(
+        static fn (array $site): string => $site['id'],
+        array_filter($store->all('sites'), static fn (array $site): bool =>
+            ($site['user_id'] ?? '') === $user['id'] && ($site['status'] ?? '') === 'active')
+    ));
+    $selectedSite = (string) ($_POST['site_id'] ?? '');
+    if ($selectedSite === '' && count($siteIds) === 1) { $selectedSite = $siteIds[0]; }
+    if (!in_array($selectedSite, $siteIds, true)) {
+        http_response_code(422);
+        render('Nedostaje web-stranica', message('Najprije povežite WordPress domenu pa odaberite kojoj stranici pripada poveznica.'));
+    }
+    $link = ['id' => random_id(12), 'user_id' => $user['id'], 'site_id' => $selectedSite, 'title' => $title, 'description' => $description, 'amount_minor' => $amount, 'currency' => 'EUR', 'active' => true, 'created_at' => gmdate('c')];
     $store->write('links', $link['id'], $link);
     audit_event($user['id'], 'payment_link_created', ['link_id' => $link['id'], 'via' => 'dashboard']);
     redirect('/dashboard');
