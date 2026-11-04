@@ -99,7 +99,7 @@ def main():
                     assert 'bp-guide-layout' in guide_html and '<h1>' in guide_html, page
                     assert 'Built with' in guide_html and 'brendigo.com' in guide_html
                     assert 'storage/data' not in guide_html and 'JSON pohrana' not in guide_html
-                    assert 'Pravila privatnosti' in guide_html
+                    assert 'Politika privatnosti' in guide_html
                     guide_count += 1
             assert guide_count == 37, guide_count
             assert req('/docs/nepostojeca')[0] == 404
