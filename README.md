@@ -11,8 +11,7 @@
   </p>
   <p>
     <img alt="GitHub Actions" src="https://github.com/bren-wp/Brendigo-Pay/actions/workflows/ci.yml/badge.svg">
-    <img alt="Sandbox only" src="https://img.shields.io/badge/mode-SANDBOX-315bfa">
-    <img alt="Version" src="https://img.shields.io/badge/version-0.8.0-06c6b6">
+    <strong>v0.8.0 · SANDBOX · bez stvarnih uplata</strong>
   </p>
 </div>
 

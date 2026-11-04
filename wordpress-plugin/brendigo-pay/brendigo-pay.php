@@ -66,7 +66,7 @@ function bp_pay_shortcode(array $atts = []): string
     $qr = $atts['show_qr'] === 'yes';
     $icon = $atts['show_icon'] === 'yes';
     $qrCaption = sanitize_text_field((string) $atts['qr_caption']);
-    $qrCaption = mb_substr($qrCaption, 0, 90);
+    $qrCaption = function_exists('mb_substr') ? mb_substr($qrCaption, 0, 90) : substr($qrCaption, 0, 90);
     $layout = in_array($atts['layout'], ['button', 'card'], true) ? $atts['layout'] : 'button';
     wp_enqueue_style('bp-pay-public');
     if ($qr) { wp_enqueue_script('bp-pay-local-qr'); }
