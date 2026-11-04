@@ -3,7 +3,7 @@
  * Plugin Name: Brendigo Pay
  * Plugin URI: https://brendigopay.com
  * Description: Sandbox integracija Brendigo Pay naplatnih poveznica za WordPress i WooCommerce (Stripe, PayPal, Revolut).
- * Version: 0.8.2
+ * Version: 0.8.3
  * Requires at least: 6.4
  * Requires PHP: 8.1
  * Author: Brendigo
@@ -20,7 +20,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('BP_PAY_VERSION', '0.8.2');
+define('BP_PAY_VERSION', '0.8.3');
 define('BP_PAY_FILE', __FILE__);
 
 define('BP_PAY_PATH', plugin_dir_path(__FILE__));
@@ -39,6 +39,15 @@ add_action('admin_menu', ['BP_Pay_Settings', 'menu']);
 add_action('admin_init', ['BP_Pay_Settings', 'register']);
 add_action('admin_post_brendigo_pay_test_connection', ['BP_Pay_Settings', 'test_connection']);
 add_action('admin_post_brendigo_pay_activate_license', ['BP_Pay_Settings', 'activate_license']);
+add_action('admin_post_brendigo_pay_sync', ['BP_Pay_Settings', 'manual_sync']);
+add_action('brendigo_pay_site_sync', ['BP_Pay_Settings', 'sync_installation']);
+add_action('init', ['BP_Pay_Settings', 'schedule_sync'], 20);
+if (function_exists('register_activation_hook')) {
+    register_activation_hook(BP_PAY_FILE, ['BP_Pay_Settings', 'schedule_sync']);
+}
+if (function_exists('register_deactivation_hook')) {
+    register_deactivation_hook(BP_PAY_FILE, ['BP_Pay_Settings', 'unschedule_sync']);
+}
 add_shortcode('brendigo_pay', 'bp_pay_shortcode');
 
 function bp_pay_shortcode($atts = []): string

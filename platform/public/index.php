@@ -786,6 +786,96 @@ if ($path === '/api/v1/license/activate' && $method === 'POST') {
         fail_api(403, 'License activation failed. Check the domain, package and key.');
     }
 }
+/**
+ * Publicly reachable only with a valid domain-scoped API token and an active paid
+ * entitlement. These records show installation connectivity, not payment success.
+ */
+if ($path === '/api/v1/sites/status' && $method === 'GET') {
+    $token = authenticate_api();
+    $site = $store->read('sites', $token['site_id']);
+    $plan = $plans->activeOrFail($token['user_id']);
+    json_response([
+        'site_id' => $token['site_id'],
+        'origin' => $token['origin'],
+        'status' => $site['status'],
+        'plan' => $plan['tier'],
+        'expires_at' => $plan['expires_at'],
+        'website_limit' => $plans->siteLimit($token['user_id']),
+        'websites_used' => $plans->siteCount($token['user_id']),
+        'last_seen_at' => $site['last_seen_at'] ?? null,
+        'plugin_version' => $site['plugin_version'] ?? null,
+        'wordpress_version' => $site['wordpress_version'] ?? null,
+        'woocommerce_version' => $site['woocommerce_version'] ?? null,
+        'mode' => 'test',
+    ]);
+}
+
+// An explicit WordPress server-to-server heartbeat; no unauthenticated write path.
+if ($path === '/api/v1/sites/sync' && $method === 'POST') {
+    $token = authenticate_api();
+    $input = json_request();
+    foreach (['site_url', 'installation_id', 'plugin_version', 'wordpress_version', 'woocommerce_version'] as $field) {
+        if (!isset($input[$field]) || !is_string($input[$field])) {
+            fail_api(422, 'Invalid installation status');
+        }
+    }
+    $origin = $licenses->origin($input['site_url']);
+    $installationId = $input['installation_id'];
+    if ($origin === null || !hash_equals($token['origin'], $origin)
+        || !preg_match('/^[a-f0-9]{32}$/D', $installationId)) {
+        fail_api(403, 'Installation or origin mismatch');
+    }
+    $versions = [
+        'plugin_version' => $input['plugin_version'],
+        'wordpress_version' => $input['wordpress_version'],
+        'woocommerce_version' => $input['woocommerce_version'],
+    ];
+    foreach ($versions as $key => $version) {
+        if (strlen($version) > 32 || ($version !== '' &&
+            !preg_match('/^[0-9]{1,3}(?:\.[0-9]{1,3}){0,3}(?:[-+][a-zA-Z0-9.-]{1,20})?$/D', $version))) {
+            fail_api(422, 'Invalid ' . $key);
+        }
+    }
+    if ($versions['plugin_version'] === '' || $versions['wordpress_version'] === '') {
+        fail_api(422, 'Missing installed version');
+    }
+    $status = $store->locked('merchant_sites_' . $token['user_id'], static function () use ($store, $token, $installationId, $versions): ?array {
+        $site = $store->read('sites', $token['site_id']);
+        if ($site === null || ($site['status'] ?? '') !== 'active'
+            || ($site['user_id'] ?? '') !== $token['user_id']
+            || ($site['origin'] ?? '') !== $token['origin']) {
+            return null;
+        }
+        $license = $store->read('licenses', (string) $site['license_hash']);
+        $authorization = (string) ($_SERVER['HTTP_AUTHORIZATION'] ?? '');
+        $apiKey = str_starts_with($authorization, 'Bearer ') ? substr($authorization, 7) : '';
+        if ($license === null || ($license['revoked'] ?? true) === true
+            || !hash_equals((string) ($license['installation_hash'] ?? ''), hash('sha256', $installationId))
+            || !hash_equals((string) ($license['active_token_hash'] ?? ''), hash('sha256', $apiKey))) {
+            return null;
+        }
+        $site['last_seen_at'] = gmdate('c');
+        foreach ($versions as $field => $value) {
+            $site[$field] = $value === '' ? null : $value;
+        }
+        $store->write('sites', $token['site_id'], $site);
+        return $site;
+    });
+    if ($status === null) { fail_api(403, 'Installation credential revoked'); }
+    $plan = $plans->activeOrFail($token['user_id']);
+    json_response([
+        'site_id' => $token['site_id'],
+        'origin' => $token['origin'],
+        'status' => 'active',
+        'plan' => $plan['tier'],
+        'expires_at' => $plan['expires_at'],
+        'website_limit' => $plans->siteLimit($token['user_id']),
+        'websites_used' => $plans->siteCount($token['user_id']),
+        'last_seen_at' => $status['last_seen_at'],
+        'mode' => 'test',
+    ]);
+}
+
 if ($path === '/api/v1/me' && $method === 'GET') {
     $token = authenticate_api();
     $user = $store->read('users', $token['user_id']);
@@ -1182,7 +1272,8 @@ if ($path === '/sites' && $method === 'GET') {
     foreach ($sites as $site) {
         $rows .= '<tr><td><strong>' . e($site['origin']) . '</strong></td><td>' .
             ($site['status'] === 'active' ? '<span class="pill on">Povezano (TEST)</span>' : '<span class="pill off">Čeka aktivaciju</span>') .
-            '</td><td>' . e((string) ($site['activated_at'] ?? '—')) . '</td><td><form class="inline-form" method="post" action="/sites/' . e($site['id']) . '/rotate">' .
+            '</td><td>' . e((string) ($site['activated_at'] ?? '—')) . '</td><td>' .
+            e((string) ($site['last_seen_at'] ?? 'Nije sinkronizirano')) . '</td><td><form class="inline-form" method="post" action="/sites/' . e($site['id']) . '/rotate">' .
             csrf() . '<button type="submit" class="btn secondary small">Obnovi licenciju</button></form><form class="inline-form" method="post" action="/sites/' . e($site['id']) . '/remove">' .
             csrf() . '<button type="submit" class="btn secondary small">Ukloni</button></form></td></tr>';
     }
@@ -1204,8 +1295,8 @@ if ($path === '/sites' && $method === 'GET') {
         '<button type="submit" class="btn" ' . (count($sites) >= $limit ? 'disabled' : '') . '>Kreiraj licenciju</button></form></section>'
         : '<section class="bp-surface"><h2>Aktivacija paketa je na čekanju</h2><p>Registracija računa ne pokreće pretplatu niti daje besplatne licence. Administrator mora provjeriti stvarnu uplatu i potvrditi jedan od tri paketa prije povezivanja WordPressa.</p><a href="/pricing" class="btn secondary">Pogledaj pakete</a></section>';
     render('Web-stranice i licence', $intro . ($messageText ? message($messageText) : '') . $secretBox . $form .
-        '<section class="bp-surface bp-data-card"><div class="bp-section-top"><h2>Registrirane domene</h2><small>' . count($sites) . ' web-stranica</small></div><div class="table-wrap"><table><thead><tr><th>Domena</th><th>Status</th><th>Aktivacija (UTC)</th><th>Upravljanje</th></tr></thead><tbody>' .
-        ($rows ?: '<tr><td colspan="4">Još nema registriranih stranica.</td></tr>') . '</tbody></table></div></section>');
+        '<section class="bp-surface bp-data-card"><div class="bp-section-top"><h2>Registrirane domene</h2><small>' . count($sites) . ' web-stranica</small></div><div class="table-wrap"><table><thead><tr><th>Domena</th><th>Status</th><th>Aktivacija (UTC)</th><th>Posljednji kontakt (UTC)</th><th>Upravljanje</th></tr></thead><tbody>' .
+        ($rows ?: '<tr><td colspan="5">Još nema registriranih stranica.</td></tr>') . '</tbody></table></div></section>');
 }
 
 if ($path === '/sites' && $method === 'POST') {
@@ -1254,14 +1345,19 @@ if ($path === '/admin' && $method === 'GET') {
             '<select name="tier" aria-label="Paket za trgovca"><option value="start">Start (1)</option><option value="business">Business (5)</option><option value="pro">Pro (25)</option></select>' .
             '<input type="date" name="expires" required min="' . gmdate('Y-m-d', time() + 86400) . '" aria-label="Datum isteka">' .
             '<label><input type="checkbox" name="payment_verified" value="1" required> Potvrđena uplata</label>' .
-            '<button class="btn secondary small" type="submit">Aktiviraj plaćeni plan</button></form></td></tr>';
+            '<button class="btn secondary small" type="submit">Aktiviraj plaćeni plan</button></form>' .
+            ($entitlement ? '<form method="post" action="/admin/plans/suspend" class="bp-admin-grant">' . csrf() .
+                '<input type="hidden" name="merchant_id" value="' . e($merchant['id']) . '">' .
+                '<button class="btn secondary small" type="submit">Suspendiraj paket</button></form>' : '') . '</td></tr>';
     }
     $sites = $store->all('sites');
     $siteRows = '';
     foreach ($sites as $site) {
         if (($site['status'] ?? '') === 'deleted') { continue; }
         $siteRows .= '<tr><td>' . e($site['origin']) . '</td><td><code>' . e($site['user_id']) . '</code></td><td>' .
-            e((string) ($site['status'] ?? 'pending')) . '</td></tr>';
+            e((string) ($site['status'] ?? 'pending')) . '</td><td>' .
+            e((string) ($site['last_seen_at'] ?? 'Nije sinkronizirano')) . '</td><td>' .
+            e((string) ($site['plugin_version'] ?? '—')) . '</td></tr>';
     }
     $flash = $_SESSION['admin_notice'] ?? null;
     unset($_SESSION['admin_notice']);
@@ -1269,8 +1365,8 @@ if ($path === '/admin' && $method === 'GET') {
         ($flash ? message($flash) : '') .
         '<section class="bp-surface bp-data-card"><h2>Korisnici i pretplate</h2><div class="table-wrap"><table><thead><tr><th>Korisnik</th><th>Zahtjev</th><th>Aktivni paket</th><th>Domene</th><th>Upravljačka radnja</th></tr></thead><tbody>' .
         ($rows ?: '<tr><td colspan="5">Nema korisnika.</td></tr>') . '</tbody></table></div></section>' .
-        '<section class="bp-surface bp-data-card"><h2>Instalacije dodatka</h2><div class="table-wrap"><table><thead><tr><th>Domena</th><th>Trgovac</th><th>Status</th></tr></thead><tbody>' .
-        ($siteRows ?: '<tr><td colspan="3">Nema instalacija.</td></tr>') . '</tbody></table></div></section>');
+        '<section class="bp-surface bp-data-card"><h2>Instalacije dodatka</h2><div class="table-wrap"><table><thead><tr><th>Domena</th><th>Trgovac</th><th>Status</th><th>Posljednji kontakt (UTC)</th><th>Verzija dodatka</th></tr></thead><tbody>' .
+        ($siteRows ?: '<tr><td colspan="5">Nema instalacija.</td></tr>') . '</tbody></table></div></section>');
 }
 if ($path === '/admin/plans' && $method === 'POST') {
     $operator = login_required();
@@ -1297,6 +1393,27 @@ if ($path === '/admin/plans' && $method === 'POST') {
         $_SESSION['admin_notice'] = 'Plaćeni paket aktiviran nakon administratorske potvrde.';
     } catch (RuntimeException $e) {
         $_SESSION['admin_notice'] = 'Aktivacija nije uspjela. Provjerite korisnika, datum i maksimalan broj domena.';
+    }
+    redirect('/admin');
+}
+
+if ($path === '/admin/plans/suspend' && $method === 'POST') {
+    $operator = login_required();
+    if (!in_array($operator['id'], (array) ($config['admin_user_ids'] ?? []), true)) {
+        http_response_code(403);
+        render('Pristup odbijen', message('Administratorska radnja nije dozvoljena.'));
+    }
+    check_csrf();
+    $merchantId = (string) ($_POST['merchant_id'] ?? '');
+    try {
+        if (!preg_match('/^[a-f0-9]{32}$/D', $merchantId)) {
+            throw new RuntimeException('Invalid merchant');
+        }
+        $plans->suspend($merchantId, $operator['id']);
+        audit_event($operator['id'], 'paid_plan_suspended', ['merchant_id' => $merchantId]);
+        $_SESSION['admin_notice'] = 'Paket suspendiran. Pristup licenciranim API funkcijama odmah je blokiran.';
+    } catch (RuntimeException $e) {
+        $_SESSION['admin_notice'] = 'Suspenzija nije uspjela.';
     }
     redirect('/admin');
 }

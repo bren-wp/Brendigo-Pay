@@ -22,6 +22,7 @@ final class BP_Pay_Blocks extends \Automattic\WooCommerce\Blocks\Payments\Integr
     {
         return ($this->settings['enabled'] ?? 'no') === 'yes'
             && BP_Pay_Settings::api_key() !== '' && BP_Pay_Settings::api_base() !== ''
+            && BP_Pay_Settings::license_is_current()
             && (!function_exists('get_woocommerce_currency') || get_woocommerce_currency() === 'EUR');
     }
 

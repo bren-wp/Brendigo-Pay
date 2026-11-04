@@ -33,7 +33,7 @@ for path in [ROOT / 'platform/public/index.php', ROOT / 'platform/src/Ui.php', *
     assert not re.search(r'(?<![A-Za-z_])(?:eval|shell_exec|passthru|system)\s*\(', text), f'Unsafe function in {path}'
 assert "name=\"card_number\"" not in wp
 assert "name=\"cvc\"" not in wp
-assert "Version: 0.8.2" in wp
+assert "Version: 0.8.3" in wp
 plans = (ROOT / 'platform/src/Plans.php').read_text(encoding='utf-8')
 licenses = (ROOT / 'platform/src/SiteLicenses.php').read_text(encoding='utf-8')
 assert "activeOrFail($merchantId)" in licenses, 'Must enforce active paid plan when issuing licenses'
@@ -43,5 +43,13 @@ assert "activeOrFail($record['user_id'])" in licenses, 'Activation requires acti
 assert "'billing_mode' => 'manual_verified'" in plans, 'Only operator-verified billing enabled'
 assert "site_id" in web and "site_id" in licenses, 'Require site-scoped API token'
 assert "'admin_user_ids'" in (ROOT / 'platform/bin/setup.php').read_text(), 'Operator auth must be configured'
+settings_php = (wpbase / 'includes/class-bp-settings.php').read_text(encoding='utf-8')
+assert "'/api/v1/sites/sync'" in web and "'/api/v1/sites/status'" in web, 'Missing licensed site status API'
+assert "installation_hash" in web and "'merchant_sites_'" in web, 'Heartbeat requires installation proof and locking'
+assert "check_csrf();" in web and "'/admin/plans/suspend'" in web, 'Admin suspension must use CSRF and operator gate'
+assert "license_is_current()" in gateway and "license_is_current()" in (wpbase / 'includes/class-bp-blocks.php').read_text()
+assert "last_ok" in settings_php and "7200" in settings_php, 'WooCommerce site license freshness check missing'
+assert "update_option('bp_pay_sync_status'" in settings_php, 'Status must be synced to WP panel'
+assert "brendigo_pay_site_sync" in wp, 'WordPress cron hook missing'
 assert "Contributors: brendigo" in (wpbase / 'readme.txt').read_text(encoding='utf-8')
 print('PASS: static security guardrails; external audit and E2E required')

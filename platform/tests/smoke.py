@@ -119,6 +119,24 @@ def main():
             token = json.loads(activated)['api_key']
             assert status == 200 and json.loads(activated)['site_id'] == site_id
             assert json.loads(req('/api/v1/me', token=token)[1])['plan'] == 'business'
+            status, snapshot, _ = req('/api/v1/sites/status', token=token)
+            assert status == 200
+            assert json.loads(snapshot)['website_limit'] == 5
+            assert json.loads(snapshot)['websites_used'] == 1
+            assert json.loads(snapshot)['last_seen_at'] is None
+            payload = {
+                'site_url': base, 'installation_id': 'a' * 32,
+                'plugin_version': '0.8.3', 'wordpress_version': '6.9.1',
+                'woocommerce_version': '10.3.0',
+            }
+            assert req('/api/v1/sites/sync', {**payload, 'installation_id': 'b' * 32}, token=token)[0] == 403
+            assert req('/api/v1/sites/sync', {**payload, 'site_url': 'https://wrong.example'}, token=token)[0] == 403
+            assert req('/api/v1/sites/sync', {**payload, 'plugin_version': '<script>'}, token=token)[0] == 422
+            assert req('/api/v1/sites/sync', payload, token=token)[0] == 200
+            site_status = json.loads(req('/api/v1/sites/status', token=token)[1])
+            assert site_status['plugin_version'] == '0.8.3' and site_status['last_seen_at']
+            assert '0.8.3' in req('/admin')[1] and site_status['origin'] in req('/sites')[1]
+            print('PASS: authenticated, version-bounded WordPress heartbeat and synchronized admin/user views')
             assert req('/api/v1/license/activate', {
                 'license_key': license_key, 'site_url': base, 'installation_id': 'b' * 32,
             })[0] == 403
@@ -145,6 +163,9 @@ def main():
             }, client=attacker)
             assert status == 200 and 'Moje web-stranice' in html
             assert req('/admin', client=attacker)[0] == 403
+            assert req('/admin/plans/suspend', {
+                'merchant_id': user_id, 'csrf': attacker_csrf,
+            }, client=attacker)[0] == 403
             attacker_id = next(json.loads(file.read_text())['id']
                 for file in (project / 'storage/data/users').glob('*.json')
                 if json.loads(file.read_text())['email'] == 'other@example.com')
@@ -198,6 +219,16 @@ def main():
             other_status, other_listing, _ = req('/api/v1/links', token=other_token)
             assert other_status == 200 and json.loads(other_listing)['items'] == []
             print('PASS: Gutenberg API link list requires token and isolates merchants')
+            status, admin_html, _ = req('/admin')
+            assert status == 200
+            admin_csrf2 = re.search('name="csrf" value="([a-f0-9]+)"', admin_html).group(1)
+            status, admin_html, _ = req('/admin/plans/suspend', {
+                'merchant_id': attacker_id, 'csrf': admin_csrf2,
+            })
+            assert status == 200 and 'Paket suspendiran' in admin_html
+            assert req('/api/v1/sites/status', token=other_token)[0] == 403
+            assert req('/api/v1/sites/sync', payload, token=other_token)[0] == 403
+            print('PASS: admin-only plan suspension immediately rejects the plugin API')
             # This product does not store or render raw card inputs.
             assert 'name="card_number"' not in rendered and 'name="cvc"' not in rendered
             status, raw, _ = req('/api/v1/checkout', {

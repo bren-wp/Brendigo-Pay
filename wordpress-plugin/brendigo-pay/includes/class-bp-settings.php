@@ -63,6 +63,128 @@ final class BP_Pay_Settings
         $settings['token_encrypted'] = $encrypted;
         $settings['site_id'] = $siteId;
         update_option(self::OPTION, $settings, false);
+        update_option('bp_pay_sync_status', ['status' => 'pending', 'last_ok' => 0], false);
+    }
+
+
+    /** WordPress installation origin; no path, credentials or fragment. */
+    public static function site_origin(): string
+    {
+        $parsed = wp_parse_url(home_url('/'));
+        if (!is_array($parsed) || !isset($parsed['scheme'], $parsed['host'])) {
+            return '';
+        }
+        $scheme = strtolower((string) $parsed['scheme']);
+        $host = strtolower((string) $parsed['host']);
+        if (!in_array($scheme, ['https', 'http'], true) || $host === '') {
+            return '';
+        }
+        return $scheme . '://' . $host . (isset($parsed['port']) ? ':' . (int) $parsed['port'] : '');
+    }
+
+    /** Stored connectivity state, never payment or customer credentials. */
+    public static function sync_status(): array
+    {
+        $result = get_option('bp_pay_sync_status', []);
+        return is_array($result) ? $result : [];
+    }
+
+    /** Checkout is fail-closed if license has not been validated recently. */
+    public static function license_is_current(): bool
+    {
+        $status = self::sync_status();
+        $settings = get_option(self::OPTION, []);
+        return is_array($settings)
+            && (string) ($status['status'] ?? '') === 'active'
+            && (int) ($status['last_ok'] ?? 0) > time() - 7200
+            && (int) ($status['last_ok'] ?? 0) <= time() + 60
+            && ($settings['site_id'] ?? '') !== ''
+            && hash_equals((string) $settings['site_id'], (string) ($status['site_id'] ?? ''))
+            && self::site_origin() !== ''
+            && hash_equals(self::site_origin(), (string) ($status['origin'] ?? ''));
+    }
+
+    /**
+     * Send a bounded, authenticated installation heartbeat. The server verifies
+     * subscription, domain, installation identity and token ownership.
+     */
+    public static function sync_installation(): bool
+    {
+        $siteOrigin = self::site_origin();
+        $installation = get_option('bp_pay_installation_id', '');
+        $existing = self::sync_status();
+        if ($siteOrigin === '' || !is_string($installation)
+            || !preg_match('/^[a-f0-9]{32}$/D', $installation)
+            || self::api_key() === '') {
+            update_option('bp_pay_sync_status', [
+                'status' => 'not_configured', 'last_ok' => 0, 'checked_at' => time(),
+            ], false);
+            return false;
+        }
+        $wpVersion = function_exists('get_bloginfo') ? (string) get_bloginfo('version') : '';
+        $wcVersion = defined('WC_VERSION') ? (string) WC_VERSION : '';
+        $response = BP_Pay_API::request('POST', '/api/v1/sites/sync', [
+            'site_url' => $siteOrigin,
+            'installation_id' => $installation,
+            'plugin_version' => BP_PAY_VERSION,
+            'wordpress_version' => $wpVersion,
+            'woocommerce_version' => $wcVersion,
+        ]);
+        $saved = get_option(self::OPTION, []);
+        $saved = is_array($saved) ? $saved : [];
+        $ok = is_array($response) && !is_wp_error($response)
+            && ($response['mode'] ?? '') === 'test'
+            && ($response['status'] ?? '') === 'active'
+            && isset($response['site_id'], $response['origin'], $response['plan'], $response['expires_at'])
+            && (string) $response['site_id'] === (string) ($saved['site_id'] ?? '')
+            && hash_equals($siteOrigin, (string) $response['origin'])
+            && in_array((string) $response['plan'], ['start', 'business', 'pro'], true)
+            && is_numeric($response['website_limit'] ?? null)
+            && is_numeric($response['websites_used'] ?? null);
+        if (!$ok) {
+            update_option('bp_pay_sync_status', [
+                'status' => 'unavailable', 'checked_at' => time(),
+                'last_ok' => (int) ($existing['last_ok'] ?? 0),
+            ], false);
+            return false;
+        }
+        update_option('bp_pay_sync_status', [
+            'status' => 'active',
+            'last_ok' => time(), 'checked_at' => time(),
+            'site_id' => (string) $response['site_id'],
+            'origin' => $siteOrigin,
+            'plan' => (string) $response['plan'],
+            'expires_at' => (string) $response['expires_at'],
+            'website_limit' => max(0, (int) $response['website_limit']),
+            'websites_used' => max(0, (int) $response['websites_used']),
+        ], false);
+        return true;
+    }
+
+    public static function schedule_sync(): void
+    {
+        if (!wp_next_scheduled('brendigo_pay_site_sync')) {
+            wp_schedule_event(time() + 120, 'hourly', 'brendigo_pay_site_sync');
+        }
+    }
+
+    public static function unschedule_sync(): void
+    {
+        wp_clear_scheduled_hook('brendigo_pay_site_sync');
+    }
+
+    public static function manual_sync(): void
+    {
+        if (!current_user_can('manage_options')) {
+            wp_die(esc_html__('Nemate dopuštenje za ovu radnju.', 'brendigo-pay'));
+        }
+        check_admin_referer('brendigo_pay_sync');
+        $ok = self::sync_installation();
+        wp_safe_redirect(add_query_arg([
+            'page' => 'brendigo-pay',
+            'bp_connection' => $ok ? 'success' : 'failure',
+        ], admin_url('admin.php')));
+        exit;
     }
 
     public static function activate_license(): void
@@ -74,6 +196,7 @@ final class BP_Pay_Settings
         $license = isset($_POST['bp_license']) && is_string($_POST['bp_license'])
             ? trim(wp_unslash($_POST['bp_license'])) : '';
         $success = false;
+        $partial = false;
         if (preg_match('/^bp_lic_[a-f0-9]{64}$/D', $license)) {
             $installation = get_option('bp_pay_installation_id', '');
             if (!is_string($installation) || !preg_match('/^[a-f0-9]{32}$/D', $installation)) {
@@ -86,7 +209,10 @@ final class BP_Pay_Settings
                 if (!is_wp_error($activation)) {
                     try {
                         self::save_activation($activation['api_key'], $activation['site_id']);
-                        $success = true;
+                        $success = self::sync_installation();
+                        if (!$success) {
+                            $partial = true; // Activation succeeded, but the live status check did not.
+                        }
                     } catch (\Throwable $e) {
                         error_log('Brendigo Pay license activation local storage error.');
                     }
@@ -94,7 +220,7 @@ final class BP_Pay_Settings
             }
         }
         wp_safe_redirect(add_query_arg(
-            ['page' => 'brendigo-pay', 'bp_license_status' => $success ? 'success' : 'failure'],
+            ['page' => 'brendigo-pay', 'bp_license_status' => $success ? 'success' : ($partial ? 'partial' : 'failure')],
             admin_url('admin.php')
         ));
         exit;
@@ -128,17 +254,18 @@ final class BP_Pay_Settings
         if ($validScheme && !empty($parsed['host']) && !array_key_exists('user', $parsed) && !array_key_exists('pass', $parsed) && empty($parsed['fragment'])
             && !array_key_exists('query', $parsed) && !array_key_exists('fragment', $parsed)
             && (empty($parsed['path']) || $parsed['path'] === '/')) {
+            if (($out['url'] ?? '') !== $candidate) {
+                unset($out['token_encrypted'], $out['site_id']);
+                update_option('bp_pay_sync_status', ['status' => 'pending', 'last_ok' => 0], false);
+            }
             $out['url'] = $candidate;
         } else {
             add_settings_error(self::OPTION, 'invalid_url', __('Unesite HTTPS adresu Brendigo Pay platforme.', 'brendigo-pay'));
         }
-        $secret = trim((string) ($input['api_key'] ?? ''));
-        if ($secret !== '') {
-            if (preg_match('/^bp_test_[a-f0-9]{64}$/D', $secret)) {
-                $out['token_encrypted'] = self::encrypt($secret);
-            } else {
-                add_settings_error(self::OPTION, 'invalid_key', __('API ključ nije valjan.', 'brendigo-pay'));
-            }
+        // Only the license activation route can provision a new site-scoped API token.
+        if (!empty($input['api_key'])) {
+            add_settings_error(self::OPTION, 'deprecated_api_key',
+                __('Ručni unos API tokena nije podržan. Aktivirajte licenciju.', 'brendigo-pay'));
         }
         return $out;
     }
@@ -149,16 +276,7 @@ final class BP_Pay_Settings
             wp_die(esc_html__('Nemate dopuštenje za ovu radnju.', 'brendigo-pay'));
         }
         check_admin_referer('brendigo_pay_test_connection');
-        $response = BP_Pay_API::request('GET', '/api/v1/me');
-        $parsed = wp_parse_url(home_url('/'));
-        $localOrigin = is_array($parsed) && isset($parsed['scheme'], $parsed['host'])
-            ? strtolower($parsed['scheme']) . '://' . strtolower($parsed['host'])
-                . (isset($parsed['port']) ? ':' . (int) $parsed['port'] : '')
-            : '';
-        $ok = !is_wp_error($response) && ($response['mode'] ?? '') === 'test'
-            && isset($response['origin'], $response['merchant_name'])
-            && (string) $response['origin'] === $localOrigin
-            && !empty($response['site_id']) && !empty($response['plan']);
+        $ok = self::sync_installation();
         $args = ['page' => 'brendigo-pay', 'bp_connection' => $ok ? 'success' : 'failure'];
         wp_safe_redirect(add_query_arg($args, admin_url('admin.php')));
         exit;
