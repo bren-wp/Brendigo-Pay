@@ -1,3 +1,8 @@
+## 0.7.1 — WordPress visual parity iteration
+- Responsive visual refinements for WordPress plugin admin, form controls and provider cards.
+- Accessible active menu tabs with URL hash and `aria-current`.
+- Pixel-diff command for exactly matching screenshot dimensions; does not certify 1:1 parity.
+
 # Changelog
 
 ## 0.7.0 — GitHub import and baseline visual QA

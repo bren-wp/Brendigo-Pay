@@ -1,4 +1,4 @@
-> **Brendigo Pay v0.7.0 SANDBOX.** The new interface was built from user-provided design references. It is a responsive HTML/CSS implementation, not screenshots used as backgrounds. This does **not** claim validated pixel-by-pixel parity with those references, or readiness for live payments. The standalone platform continues to store data under `platform/storage/data` (JSON), while WordPress/WooCommerce use their own native databases.
+> **Brendigo Pay v0.7.1 SANDBOX.** The new interface was built from user-provided design references. It is a responsive HTML/CSS implementation, not screenshots used as backgrounds. This does **not** claim validated pixel-by-pixel parity with those references, or readiness for live payments. The standalone platform continues to store data under `platform/storage/data` (JSON), while WordPress/WooCommerce use their own native databases.
 
 # ◈ Brendigo Pay
 
@@ -7,14 +7,20 @@
 **Repozitorij:** https://github.com/bren-wp/Brendigo-Pay · **Dizajnerske reference:** [PIXEL-PARITY](docs/PIXEL-PARITY.md) · **Doprinosi:** [CONTRIBUTING](CONTRIBUTING.md)
 
 **Web platforma bez vlastite SQL baze · WordPress dodatak · WooCommerce Checkout · Stripe TEST · PayPal Sandbox · Revolut Sandbox**  
-**Verzija:** `0.7.0` · **Stanje:** razvojno / SANDBOX, bez stvarnih naplata  
+**Verzija:** `0.7.1` · **Stanje:** razvojno / SANDBOX, bez stvarnih naplata  
 **Autor:** Brendigo · **Službena stranica proizvoda:** [brendigopay.com](https://brendigopay.com) · **Stranica autora:** [brendigo.com](https://brendigo.com)
 
 Brendigo Pay je vlastita platforma za izradu naplatnih poveznica i QR kodova, povezivanje postojećih testnih računa kod pružatelja plaćanja te naplatu iz WordPress stranice s WooCommerceom ili bez njega. Plaćanja vodi **povezani pružatelj**, ne Brendigo Pay. Korisnički i transakcijski podaci **platforme** nalaze se u privatnom `storage/data/*.json`, bez MySQL-a ili PostgreSQL-a.
 
 > **UPOZORENJE:** Ovo je razvojni prototip s integracijama za testna okruženja. **Ne unositi live ključeve, ne koristiti za stvarni novac i ne predstavljati kao gotov platni sustav.** Platforma još nije prošla stvarna end-to-end sandbox testiranja kod tri pružatelja, provjeru na instaliranom WordPressu/WooCommerceu, profesionalni sigurnosni audit ni pravnu provjeru modela usluge.
 
-## Novo u v0.7.0 — GitHub izvorni kod i testiranje
+## Novo u v0.7.1 — prvi korak pixel-parity WordPress administracije
+
+- Dosljednije dimenzije kartica i obrazaca WordPress dodatka, gradient dekoracija i fokus stanja.
+- Tabovi slijede URL hash i `aria-current` za pristupačnu navigaciju.
+- `scripts/visual_compare.py` uspoređuje stvarne screenshotove sa referencom samo kada su dimenzije jednake.
+
+## Prethodno u v0.7.0 — GitHub izvorni kod i testiranje
 
 - Objavljen projektni izvorni kod web-platforme i WordPress/WooCommerce dodatka u repozitoriju.
 - Ugrađeni GitHub Actions testovi koji provjeravaju PHP, lokalne sandbox testove i instalacijske ZIP-ove.
@@ -41,7 +47,7 @@ Brendigo Pay je vlastita platforma za izradu naplatnih poveznica i QR kodova, po
 
 ## Trenutno dostupno
 
-| Modul | Status v0.7.0 |
+| Modul | Status v0.7.1 |
 |---|---|
 | Registracija, prijava, PHP sesije u JSON-u | Implementirano, lokalno testirano; nema 2FA ni potvrde e-adrese |
 | Naplatne poveznice (EUR), QR, upravljanje aktivnošću | Implementirano i HTTP testirano |
@@ -83,7 +89,7 @@ Kod za platne adaptere upotrebljava samo testne/sandbox API hostove. **Unošenje
 
 ## WordPress dodatak — s WooCommerceom ili bez njega
 
-Instalirajte `brendigo-pay-wordpress-0.7.0.zip` iz **WordPress → Dodaci → Dodaj novi → Prenesi dodatak**. U **Brendigo Pay** unesite URL platforme i generirani API ključ za točnu HTTPS domenu WordPress stranice. Kliknite **Testiraj povezivanje**.
+Instalirajte `brendigo-pay-wordpress-0.7.1.zip` iz **WordPress → Dodaci → Dodaj novi → Prenesi dodatak**. U **Brendigo Pay** unesite URL platforme i generirani API ključ za točnu HTTPS domenu WordPress stranice. Kliknite **Testiraj povezivanje**.
 
 Za običan WordPress unesite shortcode `[brendigo_pay id="ID_IZ_WEB_NADZORNE_PLOČE"]` ili Gutenberg blok *Brendigo Pay*. U WooCommerceu omogućite gateway pod **WooCommerce → Postavke → Plaćanja**. U classic checkoutu i u Checkout Blocku kupac može odabrati testnog pružatelja; ako njegov račun nije konfiguriran na platformi, API vraća pogrešku i narudžba se ne naplaćuje.
 

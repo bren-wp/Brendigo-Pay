@@ -27,3 +27,12 @@
 - WooCommerce i Gutenberg usporediti u pravoj WordPress instalaciji; lokalni mock testovi nisu dovoljni.
 
 **Stanje v0.7.0:** postoje funkcionalni predlošci i responsive stilovi; potpuna 1:1 podudarnost i produkcijski platni servisi nisu potvrđeni.
+
+## Reproducibilna usporedba
+
+`python3 scripts/visual_compare.py design/references/09-home.jpeg putanja/do/stvarnog-prikaza.png`
+
+Usporedba **odbija** snimke različite veličine (ne rasteže snimke jer bi rezultat bio pogrešan).
+Metrika prikazuje prosječnu apsolutnu RGB razliku i postotak različitih piksela; ne potvrđuje automatski kvalitetu niti upotrebljivost. Poredak slojeva, margine, visine, statusi i ponašanje kontrola obvezno se ručno provjeravaju.
+
+**WordPress v0.7.1:** aktivni tabovi sada slijede URL hash, `aria-current` i fokus; unaprijeđeni su responzivni razmaci i kontrole. To nije konačna 1:1 verifikacija.

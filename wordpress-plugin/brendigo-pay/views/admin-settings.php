@@ -15,7 +15,7 @@ if (!is_array($linkItems)) { $linkItems = []; }
     <h1 class="bp-admin-title"><?php esc_html_e('Postavke Brendigo Pay', 'brendigo-pay'); ?></h1>
     <p class="bp-admin-description"><?php esc_html_e('Povežite testni račun, pregledajte pružatelje plaćanja i upravljajte naplatom na svojoj WordPress stranici.', 'brendigo-pay'); ?></p>
     <nav class="bp-admin-tabs" aria-label="Brendigo Pay sekcije">
-        <a class="bp-admin-tab bp-admin-tab-active" href="#bp-general">⚙ Opće postavke</a>
+        <a class="bp-admin-tab bp-admin-tab-active" href="#bp-general" aria-current="location">⚙ Opće postavke</a>
         <a class="bp-admin-tab" href="#bp-providers">◇ Pružatelji plaćanja</a>
         <a class="bp-admin-tab" href="#bp-links">↗ Platni linkovi</a>
         <a class="bp-admin-tab" href="#bp-qr">▦ QR kodovi</a>
