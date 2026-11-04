@@ -132,7 +132,7 @@ def main():
             assert req('/api/v1/sites/sync', {**payload, 'installation_id': 'b' * 32}, token=token)[0] == 403
             assert req('/api/v1/sites/sync', {**payload, 'site_url': 'https://wrong.example'}, token=token)[0] == 403
             assert req('/api/v1/sites/sync', {**payload, 'plugin_version': '<script>'}, token=token)[0] == 422
-            assert req('/api/v1/sites/sync', payload)[0] == 200
+            assert req('/api/v1/sites/sync', payload, token=token)[0] == 200
             site_status = json.loads(req('/api/v1/sites/status', token=token)[1])
             assert site_status['plugin_version'] == '0.8.3' and site_status['last_seen_at']
             assert '0.8.3' in req('/admin')[1] and site_status['origin'] in req('/sites')[1]
