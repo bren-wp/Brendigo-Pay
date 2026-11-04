@@ -18,7 +18,8 @@ def compare(reference: Path, actual: Path) -> tuple[float, float]:
             raise ValueError(f'Viewport mismatch: reference {a.size}, actual {b.size}. Re-render at the same width and height; do not resize.')
         difference = ImageChops.difference(a, b)
         average_error = sum(ImageStat.Stat(difference).mean) / 3
-        different_pixels = sum(1 for px in difference.getdata() if px != (0, 0, 0))
+        data = difference.tobytes()
+        different_pixels = sum(1 for i in range(0, len(data), 3) if any(data[i:i + 3]))
         return average_error, different_pixels / (a.width * a.height)
 
 
