@@ -21,8 +21,11 @@ final class MobileApi
     /** One use-case: email/password login with the same IP/account lockout buckets as web login. */
     public function login(array $input, string $remoteIp): ?array
     {
-        $email = strtolower(trim((string) ($input['email'] ?? '')));
-        $password = (string) ($input['password'] ?? '');
+        if (!is_string($input['email'] ?? null) || !is_string($input['password'] ?? null)) {
+            return null;
+        }
+        $email = strtolower(trim($input['email']));
+        $password = $input['password'];
         if (!filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($email) > 254
             || strlen($password) < 1 || strlen($password) > 256) {
             return null;
@@ -182,10 +185,15 @@ final class MobileApi
     public function createLink(array $merchant, array $data): array
     {
         $this->plans->activeOrFail((string) $merchant['id']);
-        $siteId = (string) ($data['site_id'] ?? '');
-        $title = trim((string) ($data['title'] ?? ''));
-        $description = trim((string) ($data['description'] ?? ''));
-        $amount = money_to_minor((string) ($data['amount'] ?? ''));
+        foreach (['site_id', 'title', 'description', 'amount'] as $key) {
+            if (!is_string($data[$key] ?? null)) {
+                throw new RuntimeException('Invalid payload fields');
+            }
+        }
+        $siteId = $data['site_id'];
+        $title = trim($data['title']);
+        $description = trim($data['description']);
+        $amount = money_to_minor($data['amount']);
         if (!preg_match('/^[a-f0-9]{24}$/D', $siteId)
             || strlen($title) < 2 || strlen($title) > 160
             || strlen($description) > 500 || $amount === null) {
