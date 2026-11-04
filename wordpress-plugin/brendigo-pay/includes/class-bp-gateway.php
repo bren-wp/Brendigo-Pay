@@ -63,6 +63,10 @@ final class BP_Pay_Gateway extends WC_Payment_Gateway
 
     public function process_payment($order_id): array
     {
+        if (!BP_Pay_Settings::license_is_current()) {
+            wc_add_notice(__('Licencija Brendigo Paya nije potvrđena. Sinkronizirajte dodatak u postavkama.', 'brendigo-pay'), 'error');
+            return ['result' => 'failure'];
+        }
         $order = wc_get_order($order_id);
         if ($order instanceof WC_Order && $order->is_paid()) {
             return ['result' => 'success', 'redirect' => $order->get_checkout_order_received_url()];

@@ -163,6 +163,9 @@ def main():
             }, client=attacker)
             assert status == 200 and 'Moje web-stranice' in html
             assert req('/admin', client=attacker)[0] == 403
+            assert req('/admin/plans/suspend', {
+                'merchant_id': user_id, 'csrf': attacker_csrf,
+            }, client=attacker)[0] == 403
             attacker_id = next(json.loads(file.read_text())['id']
                 for file in (project / 'storage/data/users').glob('*.json')
                 if json.loads(file.read_text())['email'] == 'other@example.com')

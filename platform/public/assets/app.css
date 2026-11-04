@@ -493,3 +493,28 @@ html {overflow-x:clip;}
 @media(max-width:520px){.bp-license-summary{grid-template-columns:1fr}.bp-site-registration{padding:16px!important}.bp-site-form .btn{width:100%}}
 
 .bp-tier-sites{display:block;color:#183bc9;background:#eaf1ff;border-radius:10px;padding:9px 12px;margin:10px 0 14px;font-size:1rem}.bp-price-featured .bp-tier-sites{color:#fff;background:#224dbb}.bp-price-cards .btn{width:100%;justify-content:center;text-align:center}.bp-link-form select[name=site_id]{width:100%;max-width:100%;min-height:42px;border:1px solid #c9d5ee;border-radius:9px;padding:8px 11px;background:#fff;color:#101b42}@media(max-width:700px){.bp-price-cards{grid-template-columns:1fr;}.bp-pricing-details{grid-template-columns:1fr}}
+
+/* v0.8.3: responsive merchant license and admin tables */
+.bp-merchant-main,.bp-merchant-shell,.bp-merchant-heading,.bp-data-card{min-width:0}
+.bp-merchant-main .table-wrap,.bp-merchant-main .bp-data-card .table-wrap{overflow-x:auto;overscroll-behavior-inline:contain;max-width:100%}
+.bp-merchant-main .table-wrap table{min-width:710px;border-collapse:separate;border-spacing:0}
+.bp-merchant-main .table-wrap th{white-space:nowrap}
+.bp-merchant-main .table-wrap td{vertical-align:middle}
+.bp-merchant-main .table-wrap td form{display:inline-flex;align-items:center;margin:3px;max-width:100%}
+.bp-merchant-main .table-wrap code{overflow-wrap:anywhere}
+.bp-merchant-main .bp-admin-grant{display:grid;grid-template-columns:1fr;min-width:155px}
+.bp-merchant-main .bp-admin-grant input,.bp-merchant-main .bp-admin-grant select{max-width:100%;box-sizing:border-box}
+.bp-merchant-main .bp-admin-grant .btn{white-space:normal;line-height:1.3;text-align:center}
+.bp-merchant-main .bp-site-form input:focus-visible{outline:2px solid #315cff;outline-offset:2px}
+@media(max-width:900px){
+ .bp-merchant-main .bp-data-card{padding:16px}
+ .bp-merchant-main .bp-site-registration{grid-template-columns:1fr}
+ .bp-merchant-main .bp-license-summary{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:550px){
+ .bp-merchant-main .bp-license-summary{grid-template-columns:1fr}
+ .bp-merchant-main .bp-site-registration{gap:12px}
+ .bp-merchant-main .bp-license-once pre{font-size:12px}
+ .bp-merchant-main .bp-data-card{padding:13px}
+}
+@media(prefers-reduced-motion:reduce){.bp-merchant-main .btn{transition:none}}

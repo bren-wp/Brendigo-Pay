@@ -93,6 +93,10 @@ require dirname(__DIR__) . '/wordpress-plugin/brendigo-pay/includes/class-bp-gat
 $GLOBALS['order'] = new WC_Order();
 $gateway = new BP_Pay_Gateway();
 ensure($gateway->is_available(), 'gateway available for EUR test checkout');
+$GLOBALS['test_license_active'] = false;
+ensure(!$gateway->is_available(), 'gateway not offered for inactive or stale license');
+ensure($gateway->process_payment(17)['result'] === 'failure', 'direct checkout entry point rejects stale license');
+$GLOBALS['test_license_active'] = true;
 ensure($gateway->has_fields === true, 'classic checkout provider dropdown is enabled');
 $result = $gateway->process_payment(17);
 ensure($result['result'] === 'success' && $result['redirect'] === 'https://checkout.stripe.com/c/pay/cs_test_fake', 'checkout redirect allowlisted');
