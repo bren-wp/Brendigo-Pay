@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Brendigo Pay">
+<defs><linearGradient id="g" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#0925cb"/><stop offset=".54" stop-color="#345cff"/><stop offset="1" stop-color="#08cfbb"/></linearGradient></defs>
+<path d="M10 12C10 6 15 4 21 7l31 15c6 3 6 12 0 15L18 54c-6 3-12-1-12-7V31l12-6v16l23-12-23-11V25L10 29Z" fill="url(#g)"/>
+<path d="M19 25 34 18l14 7c6 3 6 11 0 14L19 53c-5 3-10-1-10-6v-8l10-5v7l22-12-9-4-13 7Z" fill="#05bfae" opacity=".95"/>
+<path d="m23 26 16-8 13 7c5 2 4 7 0 9L23 49Z" fill="#fff"/>
+<path d="M34 26q5 5 0 10m5-13q8 8 0 16" stroke="#2557e7" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+</svg>

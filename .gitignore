@@ -1,0 +1,20 @@
+# Brendigo Pay runtime secrets and JSON records
+.env
+.env.*
+!.env.example
+**/config.php
+**/storage/data/*
+!**/storage/data/.gitkeep
+**/storage/logs/*
+**/*.log
+**/*.lock
+
+# Generated release archives and build output
+/dist/
+/visual-qa/
+**/node_modules/
+**/vendor/
+**/__pycache__/
+**/.pytest_cache/
+*.pyc
+.DS_Store

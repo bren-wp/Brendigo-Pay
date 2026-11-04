@@ -1,0 +1,29 @@
+.bp-editor-shell { border:1px solid #c5d4f7; background:#fff; border-radius:14px; overflow:hidden; font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; box-shadow:0 7px 22px #223b6510; }
+.bp-editor-heading { background:linear-gradient(115deg,#e5f9fa,#f0f3ff); color:#1a3dc0; padding:12px 16px; font-size:12px; letter-spacing:.11em; font-weight:800; }
+.bp-editor-preview { display:grid; grid-template-columns:minmax(120px, .85fr) 1.15fr; gap:18px; padding:17px; }
+.bp-editor-preview-art { min-height:195px; border-radius:14px; background:radial-gradient(ellipse at 20% 15%,#affffc,transparent 40%),linear-gradient(140deg,#ecf7ff,#9ec5ff 63%,#325bec); display:flex; align-items:center; justify-content:center; font-size:4rem; color:#1b46c8; }
+.bp-editor-preview-body { align-self:center; }
+.bp-editor-preview-body h3 { font-size:1.35rem; font-weight:800; margin:8px 0; color:#12204c; }
+.bp-editor-preview-body p { color:#5b6c85; }
+.bp-editor-preview-body .bp-editor-button { background:linear-gradient(180deg,#4771ff,#0f30d9); color:#fff; text-align:center; padding:12px 16px; border-radius:9px; font-weight:800; }
+.bp-editor-preview-body small { display:block; margin-top:8px; }
+.bp-editor-provider-label { font-weight:750; color:#2035a1; font-size:.88rem; }
+@media(max-width:600px) { .bp-editor-preview { grid-template-columns:1fr; } .bp-editor-preview-art { min-height:90px; } }
+/* Editor is a realistic preview, never a source for the payment amount. */
+.bp-editor-shell{border-radius:17px;box-shadow:0 9px 23px #20376018;}
+.bp-editor-heading{background:linear-gradient(100deg,#f1f6ff,#dafafa);}
+.bp-editor-preview-art{background:radial-gradient(ellipse at 12% 14%,#adf7f2,transparent 42%),linear-gradient(135deg,#edf7ff,#c5ddff 56%,#5c88ee);}
+.bp-editor-preview-body .bp-editor-button{border-radius:10px;padding:14px 18px;}
+.bp-editor-preview-body small{color:#607294;overflow-wrap:anywhere;}
+.bp-editor-preview-body h3{letter-spacing:-.04em;}
+@media(max-width:780px){.bp-editor-preview{grid-template-columns:1fr;}.bp-editor-preview-art{min-height:100px;}}
+
+/* v0.6.0 Gutenberg actual-link editor preview */
+.bp-editor-preview-device{width:77%;height:74%;border:7px solid #192957;border-radius:13px;background:linear-gradient(140deg,#fff,#e5eeff);color:#315bfa;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;transform:perspective(500px) rotateY(-12deg) rotateX(4deg);font-size:3rem;box-shadow:0 18px 24px #182f6f28;}
+.bp-editor-preview-device span{font-weight:850;font-size:.89rem;color:#122768;}
+.bp-editor-amount{font-weight:850;font-size:1.9rem;color:#182eae;display:block;margin:10px 0 6px;}
+.bp-editor-missing{padding:13px;border:1px solid #ffdda0;border-radius:9px;background:#fff8e8;font-size:.87rem;color:#885d14;}
+.bp-editor-qr-placeholder{display:flex;align-items:center;gap:12px;margin-top:14px;padding-top:14px;border-top:1px solid #dfe7f6;font-size:2.1rem;color:#315bfa;}
+.bp-editor-qr-placeholder small{font-size:.7rem;margin:0;color:#5b6c85;}
+.bp-editor-preview-body .bp-editor-button{font-size:.96rem;line-height:1.4;box-shadow:0 6px 17px #1a3dcb30;}
+.bp-editor-shell{box-shadow:0 9px 28px #162e8116;border-color:#d8e4fa;}
