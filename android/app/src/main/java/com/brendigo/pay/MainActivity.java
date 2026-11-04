@@ -839,6 +839,10 @@ public final class MainActivity extends Activity {
         TextView origin = label("Platforma: " + storage.origin(), 13, BLUE, false);
         margin(origin, 0, 15, 0, 0);
         form.addView(origin);
+        TextView help = button("Upute za integraciju i podrška  →", false);
+        margin(help, 0, 17, 0, 0);
+        form.addView(help);
+        help.setOnClickListener(v -> showSupportGuideMenu());
         new AlertDialog.Builder(this)
                 .setTitle("Brendigo Pay račun")
                 .setView(form)
@@ -846,6 +850,26 @@ public final class MainActivity extends Activity {
                 .setNegativeButton("Zatvori", null)
                 .setPositiveButton("Odjava", (d, w) -> logout()).show();
     }
+    /** Official help links follow the same server as the connected merchant account. */
+    private void showSupportGuideMenu() {
+        String origin = storage.origin();
+        if (ApiClient.origin(origin) == null) {
+            showError("Neispravna HTTPS adresa platforme.");
+            return;
+        }
+        final String[] names = {"Brzi početak", "WordPress instalacija", "WooCommerce naplata",
+                "Android aplikacija", "Platni pružatelji", "Licence i domene",
+                "Rješavanje poteškoća", "Pravila privatnosti", "Kontakt"};
+        final String[] paths = {"/docs/quickstart", "/docs/wordpress", "/docs/woocommerce",
+                "/docs/android", "/docs/providers", "/docs/sites",
+                "/docs/troubleshooting", "/privacy", "/contact"};
+        new AlertDialog.Builder(this)
+                .setTitle("Brendigo Pay — dokumentacija")
+                .setItems(names, (dialog, index) -> openUrl(origin + paths[index]))
+                .setNegativeButton("Zatvori", null)
+                .show();
+    }
+
     private void logout() {
         String old = storage.token();
         storage.clearToken();

@@ -70,4 +70,12 @@ for path in ['/privacy', '/terms', '/cookies', '/refund-policy', '/contact', '/a
     assert f"'{path}'" in legal
 assert 'Built with' in (ROOT / 'platform/public/index.php').read_text()
 assert '.bp-footer-grid' in (ROOT / 'platform/public/assets/app.css').read_text()
-print('PASS: version, brand, 10 references, legal pages, WP and checkout UI contracts (structural only)')
+guide_source=(ROOT / 'platform/src/PublicGuides.php').read_text(encoding='utf-8')
+assert 'function bp_guide_catalog()' in guide_source
+assert 'function bp_guide_page(string $path)' in guide_source
+assert '/features' in guide_source and '/integrations' in guide_source
+assert "bp_guide_page($path)" in (ROOT / 'platform/public/index.php').read_text()
+assert 'bp-admin-guide-links' in (wp / 'views/admin-settings.php').read_text()
+assert 'showSupportGuideMenu()' in (ROOT / 'android/app/src/main/java/com/brendigo/pay/MainActivity.java').read_text()
+assert (ROOT / 'platform/public/assets/screenshots/user-dashboard-desktop.png').is_file()
+print('PASS: version, legal pages, user-facing guides, WP and checkout UI contracts (structural only)')
