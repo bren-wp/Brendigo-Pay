@@ -7,7 +7,7 @@ declare(strict_types=1);
 define('ABSPATH', '/test-wordpress/');
 define('BP_PAY_PATH', dirname(__DIR__) . '/wordpress-plugin/brendigo-pay/');
 define('BP_PAY_FILE', BP_PAY_PATH . 'brendigo-pay.php');
-define('BP_PAY_VERSION', '0.8.8');
+define('BP_PAY_VERSION', '0.8.9');
 
 function __(string $value, string $domain = ''): string { return $value; }
 function esc_html(mixed $value): string { return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); }
