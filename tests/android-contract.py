@@ -11,7 +11,7 @@ build = (android/'app/build.gradle').read_text()
 server = (r/'platform/src/MobileApi.php').read_text()
 routing = (r/'platform/public/index.php').read_text()
 assert (android/'app/src/main/res/drawable-nodpi/brand_icon.png').is_file()
-assert 'minSdk 24' in build and 'targetSdk 36' in build and "versionName '0.8.6'" in build
+assert 'minSdk 24' in build and 'targetSdk 36' in build and "versionName '0.8.7'" in build
 assert 'usesCleartextTraffic="false"' in manifest and 'allowBackup="false"' in manifest
 assert 'AndroidKeyStore' in secrets and 'AES/GCM/NoPadding' in secrets
 assert 'setInstanceFollowRedirects(false)' in api and 'HttpsURLConnection' in api
