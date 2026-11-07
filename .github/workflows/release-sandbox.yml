@@ -38,9 +38,9 @@ jobs:
       - name: Package Brendigo Pay SANDBOX
         run: |
           python3 scripts/package_release.py --output dist
-          cp android/app/build/outputs/apk/debug/app-debug.apk dist/Brendigo-Pay-Android-0.8.6-debug.apk
-          cp android/app/build/outputs/bundle/release/app-release.aab dist/Brendigo-Pay-Android-0.8.6-unsigned.aab
-          (cd dist && sha256sum Brendigo-Pay-Android-0.8.6-debug.apk Brendigo-Pay-Android-0.8.6-unsigned.aab >> SHA256SUMS.txt)
+          cp android/app/build/outputs/apk/debug/app-debug.apk dist/Brendigo-Pay-Android-0.8.7-debug.apk
+          cp android/app/build/outputs/bundle/release/app-release.aab dist/Brendigo-Pay-Android-0.8.7-unsigned.aab
+          (cd dist && sha256sum Brendigo-Pay-Android-0.8.7-debug.apk Brendigo-Pay-Android-0.8.7-unsigned.aab >> SHA256SUMS.txt)
       - name: Publish or update sandbox prerelease
         env:
           GH_TOKEN: ${{ github.token }}
@@ -53,7 +53,7 @@ jobs:
           if gh release view "${TAG}" >/dev/null 2>&1; then
             gh release upload "${TAG}" "${FILES[@]}" --clobber
           else
-            gh release create "${TAG}" "${FILES[@]}" --target "${GITHUB_SHA}" --title "Brendigo Pay ${TAG} (SANDBOX)" --prerelease --notes "Development release only. No real payments. Brendigo Pay uses private JSON storage for its standalone platform and a WordPress/WooCommerce plugin. Visual pixel-perfect parity and production provider E2E testing are NOT certified."
+            gh release create "${TAG}" "${FILES[@]}" --target "${GITHUB_SHA}" --title "Brendigo Pay ${TAG} (SANDBOX)" --prerelease --notes "Sandbox release only; no live payment processing. WordPress/WooCommerce and Android are for testing. Pixel-perfect UI parity and production PSP E2E are not certified. Debug APK and unsigned AAB are not Google Play production artifacts."
           fi
           # GitHub may retain a previous stable-release flag when assets are replaced.
           # Enforce the SANDBOX / pre-release classification on every publish.
