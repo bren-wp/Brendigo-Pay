@@ -77,6 +77,27 @@ $plans->grant($merchant["id"], "business", gmdate("c", time() + 60 * 86400), $me
 $licenses = new \BrendigoPay\SiteLicenses($store, $plans, true);
 $issued = $licenses->issue($merchant["id"], getenv("BP_QA_BASE"));
 $licenses->activate($issued["license"], getenv("BP_QA_BASE"), str_repeat("a", 32));
+// Only in this disposable screenshot fixture: transactions are test evidence
+// with deliberately synthetic, non-personal values; never production claims.
+foreach (range(0, 29) as $index) {
+    $created = gmdate("c", time() - $index * 86400 - 7200);
+    $status = $index % 9 === 0 ? "pending" : "paid";
+    $provider = ["stripe", "paypal", "revolut"][$index % 3];
+    $record = [
+        "id" => bin2hex(random_bytes(16)),
+        "user_id" => $merchant["id"],
+        "site_id" => $issued["site"]["id"],
+        "description" => "Vizualni test — usluga " . ($index + 1),
+        "amount_minor" => 1490 + (($index * 1793) % 92000),
+        "currency" => "EUR",
+        "reference" => "QA-SAMPLE-" . str_pad((string) $index, 3, "0", STR_PAD_LEFT),
+        "provider" => $provider,
+        "status" => $status,
+        "created_at" => $created,
+        "paid_at" => $status === "paid" ? $created : null,
+    ];
+    $store->write("transactions", $record["id"], $record);
+}
 echo $issued["site"]["id"];
 '''
                 test_env = dict(os.environ, BP_QA_BASE=base)
