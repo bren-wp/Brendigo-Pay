@@ -41,7 +41,7 @@ with tempfile.TemporaryDirectory(prefix='brendigo-qa-') as td:
             if os.environ.get('BP_VISUAL_ONLY','desktop') != label: continue
             jar.clear()
             with sync_playwright() as pp:
-                browser=pp.chromium.launch(executable_path='/usr/bin/chromium',headless=True,args=['--no-sandbox'])
+                browser=pp.chromium.launch(**({'executable_path':'/usr/bin/chromium'} if Path('/usr/bin/chromium').is_file() else {}),headless=True,args=['--no-sandbox'])
                 context=browser.new_context(viewport={'width':width,'height':height},device_scale_factor=1)
                 page=context.new_page()
                 errors=[]
@@ -53,6 +53,8 @@ with tempfile.TemporaryDirectory(prefix='brendigo-qa-') as td:
                     assert scroll<=width+2,(name,label,'horizontal overflow',scroll)
                     if label in ('desktop','mobile'):
                         page.screenshot(path=str(OUTPUT/f'{name}-{label}.png'),full_page=True)
+                    if label == 'desktop' and name in ('home','pricing'):
+                        page.screenshot(path=str(OUTPUT/('09-home.png' if name=='home' else '08-pricing.png')),full_page=False)
                 html=fetch('/register');csrf=re.search('name="csrf" value="([a-f0-9]+)"',html).group(1)
                 html=fetch('/register',{'name':'Visual Merchant','email':'visual@example.com','password':'visual-qa-long-password-123','csrf':csrf})
                 scroll=render(page,html)
@@ -61,6 +63,11 @@ with tempfile.TemporaryDirectory(prefix='brendigo-qa-') as td:
                 assert scroll<=width+2,('dashboard',label,'overflow',scroll)
                 if label in ('desktop','mobile'):
                     page.screenshot(path=str(OUTPUT/f'dashboard-{label}.png'),full_page=True)
+                if label == 'desktop':
+                    page.screenshot(path=str(OUTPUT/'06-merchant-dashboard.png'),full_page=False)
+                    render(page,fetch('/dashboard?tab=transactions'))
+                    page.screenshot(path=str(OUTPUT/'04-transactions.png'),full_page=False)
+                    render(page,html)
                 page.locator('[data-open-dialog="bp-new-link"]').click()
                 assert page.locator('dialog#bp-new-link').evaluate('(x)=>x.open')
                 page.locator('[name="title"]').fill('Usluga testiranja')
@@ -68,6 +75,8 @@ with tempfile.TemporaryDirectory(prefix='brendigo-qa-') as td:
                 assert '49,90' in page.locator('[data-live-amount]').inner_text()
                 if label in ('desktop','mobile'):
                     page.screenshot(path=str(OUTPUT/f'payment-dialog-{label}.png'))
+                if label == 'desktop':
+                    page.screenshot(path=str(OUTPUT/'05-payment-link-modal.png'),full_page=False)
                 csrf=re.search('name="csrf" value="([a-f0-9]+)"',html).group(1)
                 html=fetch('/dashboard/links',{'title':'Usluga testiranja','description':'Testna usluga','amount':'49,90','csrf':csrf})
                 link_id=re.search('/p/([a-f0-9]{24})',html).group(1)
@@ -78,6 +87,8 @@ with tempfile.TemporaryDirectory(prefix='brendigo-qa-') as td:
                 assert page.locator('[name="card_number"]').count()==0
                 if label in ('desktop','mobile'):
                     page.screenshot(path=str(OUTPUT/f'checkout-{label}.png'),full_page=True)
+                if label == 'desktop':
+                    page.screenshot(path=str(OUTPUT/'07-payment-checkout.png'),full_page=False)
                 assert not errors,(label,errors)
                 print('PASS',label,'5 public routes, dashboard, live modal and checkout; no overflow or JS errors')
                 context.close();browser.close()

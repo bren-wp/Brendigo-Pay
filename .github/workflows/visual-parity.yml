@@ -1,0 +1,45 @@
+name: Brendigo Pay 10-reference visual audit
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'platform/public/assets/app.css'
+      - 'platform/src/Ui.php'
+      - 'wordpress-plugin/brendigo-pay/assets/**'
+      - 'tests/visual-qa.py'
+      - 'scripts/visual_audit_10.py'
+      - '.github/workflows/visual-parity.yml'
+permissions:
+  contents: read
+jobs:
+  actual-web-captures:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: curl, sodium, openssl, mbstring
+          coverage: none
+      - name: Install Chromium and screenshot audit dependencies
+        run: |
+          python -m pip install --disable-pip-version-check playwright pillow
+          python -m playwright install --with-deps chromium
+      - name: Capture six actual web screens at reference viewport
+        env:
+          BP_VISUAL_ONLY: desktop
+          BP_VISUAL_QA_DIR: visual-qa
+        run: python tests/visual-qa.py
+      - name: Measure all ten references and identify missing captures
+        run: python scripts/visual_audit_10.py --screenshots visual-qa --output visual-qa/assessment --diffs
+      - name: Store real screenshots, metrics and missing-screen report
+        uses: actions/upload-artifact@v4
+        with:
+          name: brendigo-pay-ten-reference-visual-audit
+          path: visual-qa/
+          retention-days: 30
