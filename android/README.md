@@ -1,4 +1,4 @@
-# Brendigo Pay Android — 0.8.7 (SANDBOX)
+# Brendigo Pay Android — 0.8.8 (SANDBOX)
 
 Nativna Java Android aplikacija za korisnike Brendigo Pay web-platforme. **Ne obrađuje stvarne uplate**. Izvorni kod je u `/android`; Android aplikacija koristi isti merchant račun, podatke, transakcije, licencije i platne poveznice kao web i WordPress. Ne koristi WebView, vanjski CDN ni analytics SDK.
 

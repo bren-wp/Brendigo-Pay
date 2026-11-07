@@ -1,3 +1,12 @@
+## 0.8.8 — 2026-11-07 (SANDBOX)
+
+- WordPress administracija: sedam odvojenih WordPress podstranica u lijevom izborniku umjesto jedne duge stranice s gornjim tabovima. Potvrđeno izolacijskim regresijskim testovima.
+- Stranice i paneli: ciljana 1:1 prilagodba visine javnog zaglavlja, početnog hero prikaza, cjenika, usporedne tablice, FAQ-a i modala za novi platni link.
+- Android: responzivne KPI kartice, kontrast/brending i pristupačne oznake navigacije.
+- WordPress: uređeni admin, Gutenberg i WooCommerce stilovi i dodan lokalni dnevnik sinkronizacije bez pohrane tajni.
+- GitHub Actions: automatizirano snimanje šest stvarnih web prikaza i dijagnostička usporedba svih deset referenci s odvojenim statusima nesnimljenih WordPress zaslona.
+- Naplatni sustavi ostaju SANDBOX; produkcijska certifikacija i potpuna pixel-perfect 1:1 podudarnost nisu potvrđene.
+
 ## 0.8.7 — 2026-11-07 (SANDBOX)
 
 - Usklađeni vizualni tokeni i izgled naslovnice, cjenika, korisničke ploče, platnog dijaloga i sandbox checkouta sa slikovnim referencama.
