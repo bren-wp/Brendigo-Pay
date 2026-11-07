@@ -1,3 +1,13 @@
+## 0.8.9 — 2026-11-07 (SANDBOX)
+
+- Nastavljena pixel-perfect geometrija korisničke nadzorne ploče, tablice transakcija, detaljnog panela i javnog checkouta prema referencama.
+- Modal za nove platne poveznice ima stvarni odabir preferiranog sandbox pružatelja i 7/14/30-dnevni rok valjanosti s poslužiteljskom provjerom pri naplati; nepovezani pružatelji ne mogu se odabrati.
+- Checkout prikazuje istinite, nedostupne opcije kada merchant nije konfigurirao pružatelja. Kartični podaci i dalje se ne prikupljaju lokalno.
+- Početna stranica i mobilni rasporedi vizualno su dorađeni bez izmišljanja korisničkih recenzija, prihoda ili aktivnih integracija.
+- WordPress dodatak i dalje ima sedam zasebnih administratorskih podstranica, ne jednu stranicu koja skrola među sekcijama.
+- Automatizirana provjera deset referenci sada izričito bilježi prag **ispod 10 %** i neprolazne ili neizmjerene zaslone; ručni režim može zahtijevati strogi prolaz.
+- **Cilj ispod 10 % još nije postignut.** Stvarne WordPress/Gutenberg/WooCommerce snimke te produkcijska platna certifikacija ostaju otvoreni. Izdanje je SANDBOX.
+
 ## 0.8.8 — 2026-11-07 (SANDBOX)
 
 - WordPress administracija: sedam odvojenih WordPress podstranica u lijevom izborniku umjesto jedne duge stranice s gornjim tabovima. Potvrđeno izolacijskim regresijskim testovima.
