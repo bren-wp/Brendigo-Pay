@@ -67,14 +67,14 @@ require "src/Support.php";
 require "src/Plans.php";
 require "src/SiteLicenses.php";
 $config = require "config.php";
-$store = new \\BrendigoPay\\JsonStore($config["data_dir"]);
+$store = new \BrendigoPay\JsonStore($config["data_dir"]);
 $matches = array_values(array_filter($store->all("users"),
     static fn($u) => ($u["email"] ?? "") === "visual@example.com"));
-if (count($matches) !== 1) { throw new \\RuntimeException("Visual test merchant unavailable"); }
+if (count($matches) !== 1) { throw new \RuntimeException("Visual test merchant unavailable"); }
 $merchant = $matches[0];
-$plans = new \\BrendigoPay\\Plans($store);
+$plans = new \BrendigoPay\Plans($store);
 $plans->grant($merchant["id"], "business", gmdate("c", time() + 60 * 86400), $merchant["id"]);
-$licenses = new \\BrendigoPay\\SiteLicenses($store, $plans, true);
+$licenses = new \BrendigoPay\SiteLicenses($store, $plans, true);
 $issued = $licenses->issue($merchant["id"], getenv("BP_QA_BASE"));
 $licenses->activate($issued["license"], getenv("BP_QA_BASE"), str_repeat("a", 32));
 echo $issued["site"]["id"];
