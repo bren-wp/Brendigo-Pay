@@ -263,3 +263,10 @@
 .bp-admin-wrap .bp-admin-section-view code {overflow-wrap:anywhere;white-space:normal;}
 .bp-admin-wrap .bp-admin-section-view .bp-admin-sync-details {margin-top:18px;}
 @media (max-width:782px){.bp-admin-wrap .bp-admin-section-view{padding:16px;}}
+
+/* Each WordPress submenu opens a separate admin page, never a long one-page anchor menu. */
+.bp-admin-wrap .bp-admin-section-view { min-height: 280px; }
+.bp-admin-wrap .bp-admin-hero { margin-bottom: 0; }
+.bp-admin-wrap .bp-admin-description { margin-bottom: 20px; }
+.bp-admin-wrap .bp-admin-section-view .bp-admin-table-scroller { max-width: 100%; overflow-x: auto; }
+@media (max-width: 782px) { .bp-admin-wrap .bp-admin-section-view { min-height: 180px; } }

@@ -77,6 +77,7 @@ assert '/features' in guide_source and '/integrations' in guide_source
 assert "bp_guide_page($path)" in (ROOT / 'platform/public/index.php').read_text()
 assert 'bp-admin-guide-links' in (wp / 'views/admin-settings.php').read_text()
 assert '<nav class="bp-admin-tabs"' not in wp_admin_view, 'top navigation must be removed'
+assert (ROOT / 'tests/wp-admin-sections.php').is_file()
 assert 'add_submenu_page(' in (wp / 'includes/class-bp-settings.php').read_text()
 assert "'brendigo-pay-logs'" in (wp / 'includes/class-bp-settings.php').read_text()
 assert "'brendigo-pay-qr'" in (wp / 'includes/class-bp-settings.php').read_text()
