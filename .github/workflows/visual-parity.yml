@@ -1,6 +1,12 @@
 name: Brendigo Pay 10-reference visual audit
 on:
   workflow_dispatch:
+    inputs:
+      enforce_target:
+        description: "Fail unless every measured screen is below 10% (requires real WordPress screenshots)"
+        type: boolean
+        required: false
+        default: false
   push:
     branches: [main]
     paths:
@@ -43,3 +49,7 @@ jobs:
           name: brendigo-pay-ten-reference-visual-audit
           path: visual-qa/
           retention-days: 30
+
+      - name: Optional strict below-10-percent acceptance (manual runs only)
+        if: github.event_name == 'workflow_dispatch' && inputs.enforce_target
+        run: python scripts/visual_audit_10.py --screenshots visual-qa --output visual-qa/assessment --target 10 --require-target

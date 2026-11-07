@@ -54,7 +54,12 @@ def main() -> None:
                         help="Directory with viewport screenshots captured from running software")
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--diffs", action="store_true", help="Save diagnostic difference images as audit artifacts")
+    parser.add_argument("--target", type=float, default=10.0, help="Strict maximum percent changed pixels, per measured screen")
+    parser.add_argument("--require-target", action="store_true",
+                        help="Return failure unless every measurable screen is below target")
     args = parser.parse_args()
+    if not 0 <= args.target <= 100:
+        parser.error("--target must be between 0 and 100")
     args.output.mkdir(parents=True, exist_ok=True)
     results = []
     for reference_name, actual_name, title, caveat in SCREENS:
@@ -72,8 +77,21 @@ def main() -> None:
                                  args.output / "diffs" / (reference.stem + ".png") if args.diffs else None))
         results.append(result)
 
+    measured = [rec for rec in results if "pixels_luma_difference_gt8_percent" in rec]
+    unmeasured_screens = [rec for rec in results
+                          if "pixels_luma_difference_gt8_percent" not in rec
+                          and rec["status"] != "style-guide-manual-check"]
+    for rec in measured:
+        rec["below_target"] = rec["pixels_luma_difference_gt8_percent"] < args.target
+    passed = sum(bool(rec["below_target"]) for rec in measured)
+    target_met = len(measured) == 9 and passed == 9 and not unmeasured_screens
     report = {"generated_utc": datetime.now(timezone.utc).isoformat(),
               "source": "design/references", "viewport_expected": [1448, 1086],
+              "target_percent_strict": args.target,
+              "measured_screens": len(measured), "screens_below_target": passed,
+              "unmeasured_screens": len(unmeasured_screens),
+              "all_nine_screens_below_target": target_met,
+              "brand_identity_requires_separate_manual_review": True,
               "certified_pixel_parity": False, "records": results}
     (args.output / "report.json").write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     lines = [
@@ -81,6 +99,11 @@ def main() -> None:
         "",
         "Ovo je **dijagnostičko mjerenje**, ne potvrda 1:1. JPEG referentne slike su koncepti.",
         "Stvarni rezultat može odstupati zbog sadržaja, tema WordPressa i platformskih fontova.",
+        "",
+        f"**Cilj: svi pojedinačni zasloni strogo ispod {args.target:g} %.**",
+        f"**Prolazi: {passed}/{len(measured)} izmjerenih zaslona; bez snimke: {len(unmeasured_screens)}.**",
+        "**Ukupni kriterij zaslona:** " + ("ISPUNJEN" if target_met else "NIJE ISPUNJEN") + ".",
+        "Brand identity (referenca 10) je vodič, ne zaslon; zahtijeva odvojenu ručnu provjeru.",
         "",
         "| Referenca | Zaslon | Status | MAE RGB | Pikseli s razlikom >8 |",
         "|---|---|---|---:|---:|",
@@ -100,6 +123,9 @@ def main() -> None:
     for rec in results:
         print(rec["reference"], rec["status"], rec.get("rgb_mae_0_255", ""))
     print("Report:", args.output / "report.md")
+    print(f"Target strictly <{args.target:g}%: {passed}/{len(measured)} measured; {len(unmeasured_screens)} missing")
+    if args.require_target and not target_met:
+        raise SystemExit("FAIL: screens not all captured and strictly below visual threshold")
 
 
 if __name__ == "__main__":

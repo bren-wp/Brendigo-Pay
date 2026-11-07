@@ -151,3 +151,10 @@ assert 'bp-checkout-provider-inactive' in checkout_source
 assert 'aria-disabled="true"' in checkout_source
 assert 'bp-hosted-disabled' in checkout_source
 assert '.bp-body-checkout .bp-ref-checkout>.bp-checkout-payment' in web_css
+
+# The numeric <10% target is reported explicitly and cannot pass with missing WP screenshots.
+audit_code=(ROOT/'scripts/visual_audit_10.py').read_text()
+assert 'all_nine_screens_below_target' in audit_code
+assert 'unmeasured_screens' in audit_code
+assert 'args.require_target and not target_met' in audit_code
+assert 'below-10-percent acceptance' in (ROOT/'.github/workflows/visual-parity.yml').read_text()
