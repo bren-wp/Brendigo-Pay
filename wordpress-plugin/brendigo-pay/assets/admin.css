@@ -204,3 +204,55 @@
 .bp-admin-guide-links a{max-width:100%;white-space:normal;line-height:1.4;text-align:center}
 @media(max-width:600px){.bp-admin-guide-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.bp-admin-guide-links a{width:100%}}
 @media(max-width:360px){.bp-admin-guide-links{grid-template-columns:1fr}}
+
+/* v0.8.8: Brand identity reference, scoped to the Brendigo Pay WP admin only. */
+.bp-admin-wrap {
+    --bp-indigo:#1e2bb8; --bp-royal:#3b5bff; --bp-cyan:#06c6b6;
+    --bp-success:#22c55e; --bp-white:#fff; --bp-surface:#f3f6fb;
+    --bp-gray:#9aa4b2; --bp-navy:#0f172a;
+}
+.bp-admin-wrap .bp-admin-hero {
+    background:radial-gradient(ellipse at 78% 5%,#a6ebf880,transparent 38%),
+               linear-gradient(104deg,#fff 29%,#f0f5ff 65%,#ddfaff);
+    border-color:#d8e4f7;
+    box-shadow:0 9px 22px rgba(25,57,123,.07);
+}
+.bp-admin-wrap .bp-admin-mark {
+    background:transparent;
+    border-radius:14px;
+    box-shadow:none;
+    flex-shrink:0;
+}
+.bp-admin-wrap .bp-admin-mark img {display:block;max-width:100%;height:auto;}
+.bp-admin-wrap .bp-admin-brand strong {color:#0f172a;}
+.bp-admin-wrap .bp-admin-brand em {color:var(--bp-royal);}
+.bp-admin-wrap .bp-admin-brand small {color:#273558;}
+.bp-admin-wrap .bp-admin-tabs .bp-admin-tab-active {
+    background:linear-gradient(120deg,#3b5bff,#1e2bb8);
+    color:#fff;
+    box-shadow:0 4px 13px rgba(30,43,184,.16);
+}
+.bp-admin-wrap .bp-admin-panel {border-color:#dce4f4;}
+.bp-admin-wrap .bp-admin-provider-grid .bp-admin-provider {min-width:0;}
+.bp-admin-wrap .bp-admin-provider h3 {color:#101b44;}
+.bp-admin-wrap .bp-admin-provider p {line-height:1.55;}
+.bp-admin-wrap .bp-admin-sync-ok {color:#0c723b;background:#e6f9ec;}
+.bp-admin-wrap .bp-admin-sync-off {color:#815314;background:#fff4df;}
+.bp-admin-wrap .bp-admin-environment-disabled {border:1px dashed #b6bfd0;}
+.bp-admin-wrap .bp-admin-input:focus-visible {outline:3px solid #06c6b6;outline-offset:2px;border-color:#3b5bff;}
+.bp-admin-wrap .bp-admin-button {background:linear-gradient(135deg,#3b5bff,#1e2bb8);border-color:#1e2bb8;}
+.bp-admin-wrap .bp-admin-button:hover {background:linear-gradient(135deg,#3657f6,#1724a4);}
+.bp-admin-wrap .bp-admin-guide-links a {overflow-wrap:anywhere;}
+@media(max-width:782px) {
+    .bp-admin-wrap .bp-admin-brand {gap:9px;}
+    .bp-admin-wrap .bp-admin-brand strong {font-size:clamp(1.25rem,4.5vw,1.7rem);}
+    .bp-admin-wrap .bp-admin-hero-art {display:none;}
+    .bp-admin-wrap .bp-admin-provider-grid {grid-template-columns:1fr;}
+    .bp-admin-wrap .bp-admin-tabs {gap:3px;}
+}
+@media(max-width:480px) {
+    .bp-admin-wrap .bp-admin-hero {padding:14px 12px;}
+    .bp-admin-wrap .bp-admin-mark {width:48px;height:48px;}
+    .bp-admin-wrap .bp-admin-brand small {letter-spacing:.07em;line-height:1.4;}
+    .bp-admin-wrap .bp-admin-sync-summary,.bp-admin-wrap .bp-admin-copy-row {min-width:0;flex-wrap:wrap;}
+}

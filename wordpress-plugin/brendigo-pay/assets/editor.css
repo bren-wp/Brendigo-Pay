@@ -49,3 +49,23 @@
 .bp-editor-preview-body{min-width:0;overflow-wrap:anywhere;}
 .bp-editor-button{box-shadow:0 5px 12px rgba(18,47,155,.2);}
 @container(max-width:540px){.bp-editor-preview{grid-template-columns:1fr;}.bp-editor-preview-art{min-height:136px;}.bp-editor-preview-device{height:112px;}}
+
+/* v0.8.8: Gutenberg block parity with brand sheet and checkout widget. */
+.bp-editor-shell {
+    --bp-indigo:#1e2bb8; --bp-royal:#3b5bff; --bp-cyan:#06c6b6;
+    --bp-ink:#0f172a; --bp-surface:#f3f6fb;
+    border-color:#dce4f4;
+    box-shadow:0 10px 28px rgba(24,55,136,.075);
+}
+.bp-editor-heading {color:var(--bp-indigo);background:linear-gradient(110deg,#f5f9ff,#d9f8f7);}
+.bp-editor-preview-art {background:radial-gradient(ellipse at 10% 10%,#b6fff6,transparent 42%),linear-gradient(140deg,#f3f6fb,#bddaff 55%,#3b5bff);}
+.bp-editor-preview-body h3 {color:var(--bp-ink);overflow-wrap:anywhere;}
+.bp-editor-amount {color:var(--bp-indigo);font-variant-numeric:tabular-nums;}
+.bp-editor-preview-body .bp-editor-button {background:linear-gradient(125deg,#3b5bff,#1e2bb8);min-height:48px;}
+.bp-editor-preview-body .bp-editor-button:focus-visible {outline:3px solid var(--bp-cyan);outline-offset:3px;}
+.bp-editor-missing {border-color:#f1cf8b;}
+@container(max-width:440px) {
+    .bp-editor-preview {grid-template-columns:1fr;padding:14px;gap:13px;}
+    .bp-editor-preview-art {min-height:106px;}
+    .bp-editor-preview-device {max-height:90px;}
+}

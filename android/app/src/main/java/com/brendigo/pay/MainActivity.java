@@ -50,11 +50,11 @@ import java.util.concurrent.Executors;
 public final class MainActivity extends Activity {
     private static final int NAVY = Color.rgb(15, 23, 42);
     private static final int SIDEBAR = Color.rgb(16, 30, 87);
-    private static final int BLUE = Color.rgb(49, 91, 250);
+    private static final int BLUE = Color.rgb(59, 91, 255);
     private static final int BG = Color.rgb(243, 246, 251);
     private static final int MUTED = Color.rgb(100, 116, 139);
     private static final int STROKE = Color.rgb(220, 228, 244);
-    private static final int GREEN = Color.rgb(24, 153, 69);
+    private static final int GREEN = Color.rgb(34, 197, 94);
     private static final String[] TABS = {"Pregled", "Transakcije", "Linkovi", "Web-stranice"};
     private final ExecutorService worker = Executors.newSingleThreadExecutor();
     private SecureStore storage;
@@ -100,7 +100,7 @@ public final class MainActivity extends Activity {
     }
     private GradientDrawable gradient(int radius) {
         GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.TL_BR,
-                new int[]{Color.rgb(59, 107, 255), Color.rgb(13, 40, 211)});
+                new int[]{Color.rgb(59, 91, 255), Color.rgb(30, 43, 184)});
         g.setCornerRadius(dp(radius));
         return g;
     }
@@ -166,6 +166,7 @@ public final class MainActivity extends Activity {
             account.setOnClickListener(v -> showProfile());
             bar.addView(account);
         }
+        bar.setContentDescription(authenticated ? "Brendigo Pay, korisnički račun" : "Brendigo Pay, prijava");
         screen.addView(bar, new LinearLayout.LayoutParams(-1, dp(67)));
     }
     private void makeScroll() {
@@ -499,6 +500,9 @@ public final class MainActivity extends Activity {
             TextView item = label(tab, widthDp() < 360 ? 10 : 11,
                     active ? Color.WHITE : Color.rgb(195, 209, 244), active);
             item.setGravity(Gravity.CENTER);
+            item.setContentDescription("Otvori " + tab + (active ? ", odabrano" : ""));
+            item.setSelected(active);
+            item.setFocusable(true);
             item.setMinHeight(dp(49));
             if (active) item.setBackground(surface(Color.rgb(44, 86, 231), 12, 0));
             nav.addView(item, new LinearLayout.LayoutParams(0, -1, 1));
@@ -542,7 +546,11 @@ public final class MainActivity extends Activity {
         margin(big, 0, 12, 0, 6);
         box.addView(big);
         box.addView(label(subtitle, 11, featured ? Color.rgb(225, 235, 255) : MUTED, false));
-        LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(0, dp(118), 1);
+        final boolean stacked = row.getOrientation() == LinearLayout.VERTICAL;
+        LinearLayout.LayoutParams p = stacked
+                ? new LinearLayout.LayoutParams(-1, -2)
+                : new LinearLayout.LayoutParams(0, dp(118), 1);
+        if (stacked) box.setMinimumHeight(dp(102));
         p.setMargins(dp(4), 0, dp(4), dp(10));
         row.addView(box, p);
     }
@@ -551,11 +559,12 @@ public final class MainActivity extends Activity {
         JSONObject metrics = obj(snapshot, "metrics");
         JSONObject subscription = obj(snapshot, "subscription");
         pageHeading("Pregled", "Pozdrav, " + string(merchant, "name", "korisniče") + ". Vaši podaci sinkronizirani su s web-panelom.");
-        LinearLayout first = horizontal();
+        // Keep KPI values and explanations readable on narrow Android screens.
+        LinearLayout first = widthDp() < 420 ? vertical() : horizontal();
         metric("Ukupna testna naplata", money(metrics.optLong("paid_minor", 0)), "Potvrđeni testni zapisi", true, first);
         metric("Uspješne uplate", String.valueOf(metrics.optInt("successful_payments", 0)), "U sandbox okruženju", false, first);
         content.addView(first);
-        LinearLayout second = horizontal();
+        LinearLayout second = widthDp() < 420 ? vertical() : horizontal();
         metric("Aktivni linkovi", String.valueOf(metrics.optInt("active_links", 0)), "Za povezane domene", false, second);
         metric("Web-stranice", subscription.optInt("sites_used", 0) + " / " + subscription.optInt("site_limit", 0),
                 string(subscription, "tier", "Bez paketa").toUpperCase(Locale.ROOT), false, second);

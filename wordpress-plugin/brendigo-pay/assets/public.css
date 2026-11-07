@@ -110,3 +110,35 @@
 .bp-wc-provider input{position:relative;z-index:1;}
 .bp-wc-provider-list{min-width:0;}
 @media(max-width:540px){.woocommerce #payment .payment_method_brendigo_pay .payment_box{padding:14px;}.bp-wc-provider-content small{overflow-wrap:anywhere;}}
+
+/* v0.8.8: same payment selection language across WooCommerce Classic and Blocks. */
+.bp-pay-widget,.brendigo-pay-block,
+.woocommerce #payment .payment_method_brendigo_pay {
+    --bp-indigo:#1e2bb8; --bp-royal:#3b5bff; --bp-cyan:#06c6b6;
+    --bp-success:#22c55e; --bp-surface:#f3f6fb; --bp-ink:#0f172a;
+}
+.bp-pay-widget-head {background:linear-gradient(109deg,#1e2bb8 0%,#3b5bff 65%,#06c6b6);}
+.bp-pay-widget-card {border-radius:16px;box-shadow:0 10px 28px rgba(24,55,136,.095);}
+.bp-pay-widget-card .bp-pay-button {min-height:48px;border-radius:10px;}
+.woocommerce #payment .payment_method_brendigo_pay .payment_box,
+.wc-block-components-payment-methods__content .brendigo-pay-block {
+    border-color:#a8b9f4;
+    border-radius:16px;
+    background:linear-gradient(155deg,#fff,#f7faff);
+}
+.bp-wc-provider {min-width:0;min-height:64px;border-radius:11px;line-height:1.4;}
+.bp-wc-provider:has(input[type=radio]:checked) {
+    background:#edf3ff;
+    border-color:var(--bp-royal);
+    box-shadow:inset 0 0 0 1px var(--bp-royal);
+}
+.bp-wc-provider-content {min-width:0;overflow-wrap:anywhere;}
+.bp-wc-provider input[type=radio] {accent-color:var(--bp-royal);}
+.bp-pay-widget a:focus-visible,
+.bp-pay-widget button:focus-visible,
+.bp-wc-provider:focus-within {outline:3px solid var(--bp-cyan);outline-offset:3px;}
+@media(max-width:540px) {
+    .bp-wc-provider {padding:11px;gap:9px;}
+    .bp-wc-provider-content b {font-size:.88rem;}
+    .woocommerce #payment .payment_method_brendigo_pay .payment_box {padding:13px;}
+}
