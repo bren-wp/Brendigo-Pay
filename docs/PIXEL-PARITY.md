@@ -51,3 +51,8 @@ Metrika prikazuje prosječnu apsolutnu RGB razliku i postotak različitih piksel
 ## Fokusirani 1:1 checklist za WordPress
 
 Vidi [WORDPRESS-PIXEL-CHECKLIST.md](WORDPRESS-PIXEL-CHECKLIST.md) za detaljan element-po-element plan, ROI koordinate i provjere za WooCommerce checkout, Gutenberg editor i WordPress administraciju. Pokretanje lokalnih mjerenja: `python3 scripts/visual_audit_wp.py SCREEN /path/to/screenshot.png`.
+
+
+## v0.8.8 — geometrija potvrđena tek nakon stvarnog mjerenja
+
+Poboljšani su visina zaglavlja, hero i kartica cijena, dvostupčani prikaz, margine, FAQ i dijalog novog platnog linka. Izmjene su CSS komponente, ne pozadine od referentnih slika. Žive cijene i stvarni sandbox podaci namjerno se ne zamjenjuju ilustrativnim podacima s referenci. Usporedbu obvezno ponoviti na 1448 × 1086, 768 × 1024 i 390 × 844; bez izvještaja ne tvrditi da je dizajn 1:1.

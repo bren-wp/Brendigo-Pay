@@ -104,4 +104,13 @@ for token in ['--bp-indigo:#1e2bb8', '--bp-royal:#3b5bff', '--bp-cyan:#06c6b6',
               '@media(max-width:800px)', '@media(max-width:560px)']:
     assert token in web_css, token
 
+
+// Reference geometry is applied to actual source elements (no screenshot image backgrounds).
+for (constSelector of ['.bp-body-marketing .bp-pricing-intro',
+                       '.bp-body-marketing .bp-price-cards article',
+                       '.bp-body-marketing .bp-home-hero',
+                       '.bp-link-dialog .bp-dialog-inner']) {
+    assert constSelector in web_css, constSelector
+}
+
 print('PASS: version, legal pages, user-facing guides, WP and checkout UI contracts (structural only)')

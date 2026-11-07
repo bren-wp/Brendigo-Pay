@@ -707,3 +707,261 @@ html {overflow-x:clip;}
 @media(prefers-reduced-motion:reduce){
     .bp-merchant-sidebar a,.bp-ref-checkout .bp-provider-tile{transition:none;}
 }
+
+
+/* v0.8.8 reference geometry pass — real HTML widgets, never screenshot backgrounds.
+   The reference's free Start tier, financial statistics, reviews and unverified
+   payment capabilities are intentionally NOT copied as product claims. */
+@media (min-width: 1061px) {
+  .bp-body-marketing .top { height: 62px; }
+  .bp-body-marketing .top-inner { min-height: 62px; }
+  .bp-body-marketing:has(.bp-price-cards) .container {
+    width: min(1308px, calc(100% - 52px));
+  }
+  .bp-body-marketing .bp-home-hero {
+    grid-template-columns: minmax(0, 47%) minmax(0, 53%);
+    min-height: 350px;
+    padding: 10px 0 15px;
+  }
+  .bp-body-marketing .bp-home-hero .bp-hero-art {
+    min-height: 345px;
+    transform: scale(.91);
+    transform-origin: 55% 50%;
+  }
+  .bp-body-marketing .bp-home-copy h1 {
+    font-size: clamp(2.3rem, 2.84vw, 2.66rem);
+    line-height: 1.07;
+    max-width: 690px;
+    margin: 14px 0 11px;
+  }
+  .bp-body-marketing .bp-home-copy>p {
+    font-size: .95rem;
+    margin: 0;
+    line-height: 1.48;
+  }
+  .bp-body-marketing .bp-home-copy .bp-actions { margin-top: 17px; }
+  .bp-body-marketing .bp-home-copy .bp-benefits { margin-top: 15px; }
+  .bp-body-marketing .bp-feature-strip { margin-top: 2px; }
+  .bp-body-marketing .bp-home-grid { margin: 12px 0; }
+  .bp-body-marketing .bp-home-grid .bp-surface {
+    min-height: 145px;
+    padding: 16px 20px;
+  }
+  .bp-body-marketing .bp-home-grid .bp-surface h2 {
+    font-size: 1.22rem;
+    margin: 2px 0 9px;
+  }
+  .bp-body-marketing .bp-home-grid .bp-surface p {
+    font-size: .84rem;
+    line-height: 1.43;
+  }
+  .bp-body-marketing .bp-home-grid .bp-integration-chips span,
+  .bp-body-marketing .bp-home-grid .bp-provider-grid span {
+    padding: 9px 12px;
+  }
+  /* Align price-hero, compact tier panels, comparison and FAQ to reference 08. */
+  .bp-body-marketing .bp-pricing-intro {
+    min-height: 244px;
+    padding: 10px 33% 12px 0;
+    isolation: isolate;
+  }
+  .bp-body-marketing .bp-pricing-intro::before {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    z-index: -1;
+    inset: 0 -4vw 4px -4vw;
+    background: linear-gradient(105deg, transparent 35%, #dbedff 65%, #b7f3f4 81%, #52dce8 95%);
+    opacity: .43;
+  }
+  .bp-body-marketing .bp-pricing-intro h1 {
+    font-size: clamp(2rem, 3vw, 2.7rem);
+    letter-spacing: -.045em;
+    margin: 13px 0 7px;
+  }
+  .bp-body-marketing .bp-pricing-intro>p {
+    font-size: .93rem;
+    line-height: 1.38;
+    max-width: 660px;
+    margin: 0;
+  }
+  .bp-body-marketing .bp-pricing-intro .bp-benefits {
+    gap: 10px 20px;
+    margin-top: 14px;
+    font-size: .75rem;
+  }
+  .bp-body-marketing .bp-pricing-illustration {
+    right: 4%;
+    top: 13%;
+    width: 316px;
+    height: 154px;
+    border-radius: 23px;
+    transform: rotate(-13deg);
+    background: linear-gradient(128deg, #187ad8, #1739ca 60%, #0e175f);
+    box-shadow: 0 18px 24px #132a812e;
+  }
+  .bp-body-marketing .bp-price-cards {
+    gap: 15px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .bp-body-marketing .bp-price-cards article {
+    display: grid;
+    grid-template-columns: 55px minmax(0,1fr);
+    grid-template-areas:
+      "icon name"
+      "icon description"
+      "amount amount"
+      "sites sites"
+      "list list"
+      "action action";
+    grid-template-rows: 28px 28px auto auto 1fr auto;
+    gap: 0 12px;
+    min-width: 0;
+    min-height: 293px;
+    padding: 16px 20px;
+    align-content: stretch;
+    border-radius: 17px;
+  }
+  .bp-body-marketing .bp-price-cards article>.bp-feature-icon {
+    grid-area: icon;
+    align-self: center;
+    width: 53px;
+    height: 53px;
+    margin: 0;
+    border-radius: 14px;
+  }
+  .bp-body-marketing .bp-price-cards article>h2 {
+    grid-area: name;
+    margin: 0;
+    align-self: end;
+    font-size: 1.54rem;
+    line-height: 1.05;
+  }
+  .bp-body-marketing .bp-price-cards article>p:not(.bp-price-value) {
+    grid-area: description;
+    margin: 4px 0 0;
+    line-height: 1.2;
+    font-size: .79rem;
+    align-self: start;
+  }
+  .bp-body-marketing .bp-price-cards .bp-price-value {
+    grid-area: amount;
+    font-size: 2.2rem;
+    margin: 5px 0 1px;
+    letter-spacing: -.055em;
+    line-height: 1.14;
+  }
+  .bp-body-marketing .bp-price-cards .bp-tier-sites {
+    grid-area: sites;
+    padding: 7px 10px;
+    margin: 4px 0 4px;
+    border-radius: 9px;
+    font-size: .81rem;
+  }
+  .bp-body-marketing .bp-price-cards ul {
+    grid-area: list;
+    padding-left: 18px;
+    margin: 0 0 6px;
+    line-height: 1.25;
+  }
+  .bp-body-marketing .bp-price-cards li {
+    font-size: .78rem;
+    line-height: 1.25;
+    padding: 1px 0;
+    margin: 2px 0;
+  }
+  .bp-body-marketing .bp-price-cards .btn {
+    grid-area: action;
+    width: 100%;
+    margin: 0;
+    min-height: 39px;
+    padding: 8px 11px;
+    font-size: .87rem;
+    align-self: end;
+  }
+  .bp-body-marketing .bp-price-cards .bp-price-ribbon {
+    left: 29%;
+    right: 29%;
+    top: -12px;
+    padding: 4px 8px;
+    letter-spacing: 0;
+  }
+  .bp-body-marketing .bp-pricing-details {
+    grid-template-columns: minmax(0,1.15fr) minmax(0,1fr);
+    gap: 14px;
+    margin-top: 13px;
+  }
+  .bp-body-marketing .bp-pricing-details .bp-surface {
+    padding: 14px 16px;
+    border-radius: 16px;
+  }
+  .bp-body-marketing .bp-pricing-details h2 {
+    font-size: 1.23rem;
+    margin: 0 0 9px;
+  }
+  .bp-body-marketing .bp-pricing-details table { font-size: .76rem; }
+  .bp-body-marketing .bp-pricing-details th,
+  .bp-body-marketing .bp-pricing-details td { padding: 6px 8px; }
+  .bp-body-marketing .bp-faq details {
+    padding: 9px 11px;
+    margin: 7px 0;
+    border-radius: 10px;
+  }
+  .bp-body-marketing .bp-faq details summary { font-size: .78rem; }
+  .bp-body-marketing .bp-faq details p { font-size: .76rem; line-height: 1.4; }
+  .bp-body-marketing .bp-bottom-cta {
+    min-height: 88px;
+    padding: 15px 35px;
+    margin-top: 14px;
+  }
+  /* New payment link: closer overlay/preview proportions, functional form stays native. */
+  .bp-link-dialog {
+    width: min(722px, calc(100vw - 44px));
+    min-height: min(824px, calc(100dvh - 32px));
+    max-height: calc(100dvh - 24px);
+    border-radius: 23px;
+    border-color: #d6e3f8;
+    overflow-y: auto;
+  }
+  .bp-link-dialog .bp-dialog-heading {
+    padding: 26px 27px 22px;
+    min-height: 148px;
+  }
+  .bp-link-dialog .bp-dialog-heading h2 {
+    font-size: 1.95rem;
+    letter-spacing: -.045em;
+    margin: 12px 0 5px;
+  }
+  .bp-link-dialog .bp-dialog-inner {
+    grid-template-columns: minmax(0,1.04fr) minmax(0,.96fr);
+    padding: 12px 22px 20px;
+    gap: 15px;
+    align-items: stretch;
+  }
+  .bp-link-dialog .bp-link-form label { font-size: .81rem; }
+  .bp-link-dialog .bp-link-form>label { margin: 6px 0; }
+  .bp-link-dialog .bp-link-form input,
+  .bp-link-dialog .bp-link-form select,
+  .bp-link-dialog .bp-link-form textarea { min-height: 40px; }
+  .bp-link-dialog .bp-preview-card { margin-top: 11px; }
+  .bp-link-dialog .bp-dialog-actions { margin-top: 15px; padding-top: 13px; }
+  .bp-link-dialog .bp-link-preview { padding: 14px; border-radius: 15px; }
+}
+@media (min-width: 801px) and (max-width: 1060px) {
+  .bp-body-marketing .bp-home-hero { min-height: 410px; }
+  .bp-body-marketing .bp-price-cards article { padding: 19px 15px; }
+  .bp-body-marketing .bp-pricing-intro { min-height: 235px; }
+}
+@media (max-width: 800px) {
+  .bp-body-marketing .bp-pricing-intro { min-height: 0; padding: 23px 0 26px; }
+  .bp-body-marketing .bp-price-cards { grid-template-columns: 1fr; gap: 18px; }
+  .bp-body-marketing .bp-price-cards article { min-height: 0; }
+  .bp-body-marketing .bp-price-cards li { padding-block: 1px; }
+  .bp-link-dialog { width: calc(100vw - 22px); max-height: calc(100dvh - 20px); }
+  .bp-link-dialog .bp-dialog-heading { padding: 19px 17px 14px; }
+  .bp-link-dialog .bp-dialog-inner { grid-template-columns: 1fr; gap: 14px; padding: 9px 16px 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bp-body-marketing .bp-home-hero .bp-hero-art { transition: none; }
+}
+
