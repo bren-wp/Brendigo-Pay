@@ -2,7 +2,7 @@
 /** WP sync contract tests with local stubs; NOT a real WordPress integration test. */
 declare(strict_types=1);
 define('ABSPATH', '/wordpress-test');
-define('BP_PAY_VERSION', '0.8.7');
+define('BP_PAY_VERSION', '0.8.8');
 define('BRENDIGO_PAY_API_KEY', 'bp_test_' . str_repeat('a', 64));
 $GLOBALS['bp_options'] = [
     'brendigo_pay_settings' => [
