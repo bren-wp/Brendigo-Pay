@@ -1127,3 +1127,49 @@ html {overflow-x:clip;}
  .bp-home-proof .bp-proof-fact:last-child {grid-column:span 2;}
 }
 
+
+
+/* Reference 07: asymmetric checkout hero and tall right-hand provider panel.
+ * Disabled provider choices are truthful when merchant credentials do not exist. */
+@media (min-width:1051px){
+ .bp-body-checkout .top { height:63px; }
+ .bp-body-checkout .top-inner { min-height:63px; }
+ .bp-body-checkout .bp-checkout-heading { width:45%;min-height:238px;padding-top:27px; }
+ .bp-body-checkout .bp-checkout-heading h1 { font-size:2.45rem;letter-spacing:-.05em;line-height:1.12;margin:18px 0 10px; }
+ .bp-body-checkout .bp-checkout-heading p { font-size:.97rem;line-height:1.5;max-width:540px; }
+ .bp-body-checkout .bp-checkout-heading .bp-benefits { margin-top:17px;gap:14px; }
+ .bp-body-checkout .bp-ref-checkout { grid-template-columns:minmax(0,.89fr) minmax(0,1.16fr);gap:19px;align-items:start; }
+ .bp-body-checkout .bp-ref-checkout>.bp-checkout-payment {
+   margin-top:-201px;min-height:860px;padding:25px 25px 23px;
+ }
+ .bp-body-checkout .bp-checkout-payment>h2 {font-size:1.39rem;line-height:1.25;margin:0 0 8px;}
+ .bp-body-checkout .bp-checkout-payment>p {font-size:.88rem;margin:0 0 20px;}
+ .bp-body-checkout .bp-checkout-left {gap:17px;}
+ .bp-body-checkout .bp-order-description { padding:22px 23px; }
+ .bp-body-checkout .bp-order-product {margin:14px 0;padding:17px 0;}
+ .bp-body-checkout .bp-checkout-trust {min-height:124px;}
+ .bp-body-checkout .bp-ref-checkout .bp-checkout-payment { background:#fff; }
+ .bp-body-checkout .bp-checkout-payment .bp-checkout-provider-fieldset {gap:12px;margin:18px 0 25px;}
+ .bp-body-checkout .bp-provider-tile {min-height:67px;padding:12px 12px;}
+ .bp-body-checkout .bp-hosted-payment {margin:17px 0;padding:18px 17px;}
+ .bp-body-checkout .bp-payment-total {margin-top:17px;}
+ .bp-body-checkout .bp-checkout-security {margin-top:12px;}
+ .bp-body-checkout .bp-checkout-note {margin-top:15px;}
+}
+.bp-checkout-not-connected {font-size:.83rem;line-height:1.4;}
+.bp-checkout-provider-inactive {border:0;margin:12px 0;padding:0;}
+.bp-checkout-provider-inactive .bp-provider-tile {opacity:.68;cursor:not-allowed;background:#f5f8fc;}
+.bp-checkout-provider-inactive input {accent-color:#9aa7c4;}
+.bp-hosted-disabled {background:linear-gradient(150deg,#f9fbff,#f1f5ff);border-style:dashed;}
+.bp-checkout-submit[disabled] {background:#ccd5e9;border-color:#ccd5e9;color:#425270;cursor:not-allowed;box-shadow:none;}
+.bp-checkout-security {padding:13px 14px;border-radius:12px;background:#e9faef;border:1px solid #d7f3df;color:#126b3b;font-size:.78rem;font-weight:650;line-height:1.4;}
+@media (min-width:801px) and (max-width:1050px){
+ .bp-body-checkout .bp-checkout-heading {padding-top:18px;}
+ .bp-body-checkout .bp-checkout-payment {min-height:650px;}
+}
+@media (max-width:800px){
+ .bp-body-checkout .bp-checkout-heading {width:100%;}
+ .bp-body-checkout .bp-checkout-payment {margin-top:0;min-height:0;}
+ .bp-checkout-provider-inactive {display:grid;grid-template-columns:1fr;gap:8px;}
+}
+

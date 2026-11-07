@@ -144,3 +144,10 @@ assert 'class="bp-home-proof"' in public_ui
 assert 'podržana sandbox pružatelja' in public_ui
 assert '10.000+' not in public_ui
 assert '.bp-home-proof { display:grid' in web_css
+
+# Unconfigured checkout presents disabled, non-misleading payment choices.
+checkout_source=(ROOT/'platform/src/Ui.php').read_text()
+assert 'bp-checkout-provider-inactive' in checkout_source
+assert 'aria-disabled="true"' in checkout_source
+assert 'bp-hosted-disabled' in checkout_source
+assert '.bp-body-checkout .bp-ref-checkout>.bp-checkout-payment' in web_css

@@ -281,10 +281,21 @@ function bp_public_payment(array $link, array $available, string $base, string $
     </fieldset>
     <div class="bp-choice-step"><span class="bp-step">2</span><div><h2>Nastavite na sigurnu testnu naplatu</h2><p>Podatke o kartici, ako su potrebni, unosite isključivo na službenoj stranici odabranog pružatelja.</p></div></div>
     <div class="bp-hosted-payment"><div class="bp-hosted-payment-header"><span>▣</span><strong>Hosted checkout</strong><span class="bp-hosted-badge">SANDBOX</span></div><p>Brendigo Pay ne prikazuje vlastiti obrazac za broj kartice, datum isteka ni CVC. Nakon preusmjeravanja koristite isključivo testne podatke pružatelja.</p></div>
-    <div class="bp-payment-total"><span>Ukupno za plaćanje</span><b><?= minor_format((int) $link['amount_minor']) ?></b></div>
     <button type="submit" class="btn bp-checkout-submit">🔒 Nastavi na testno plaćanje <span aria-hidden="true">→</span></button>
   </form>
-  <?php else: ?><div class="message" role="status">Trgovac još nije konfigurirao nijedan testni platni račun.</div><?php endif; ?>
+  <?php else: ?>
+   <div class="message bp-checkout-not-connected" role="status">Trgovac još nije konfigurirao nijedan testni platni račun. Odabir plaćanja bit će dostupan nakon povezivanja.</div>
+   <fieldset class="bp-checkout-provider-fieldset bp-checkout-provider-inactive" disabled><legend class="bp-visually-hidden">Nepovezani pružatelji</legend>
+     <label class="bp-provider-tile"><input type="radio" disabled><span><b>Stripe</b><small>Nije povezano</small></span></label>
+     <label class="bp-provider-tile"><input type="radio" disabled><span><b>PayPal</b><small>Nije povezano</small></span></label>
+     <label class="bp-provider-tile"><input type="radio" disabled><span><b>Revolut</b><small>Nije povezano</small></span></label>
+   </fieldset>
+   <div class="bp-choice-step"><span class="bp-step">2</span><div><h2>Način plaćanja</h2><p>Sigurni checkout aktivira se tek nakon što trgovac poveže testnog pružatelja.</p></div></div>
+   <div class="bp-hosted-payment bp-hosted-disabled"><div class="bp-hosted-payment-header"><span>♢</span><strong>Sigurna naplata kod pružatelja</strong><span class="bp-hosted-badge">NEDOSTUPNO</span></div><p>Brendigo Pay ne prikuplja brojeve kartica ni CVC. Naplatni obrazac otvara se na službenoj stranici platnog pružatelja.</p></div>
+   <button type="button" class="btn bp-checkout-submit" disabled aria-disabled="true">Naplata trenutačno nije dostupna</button>
+  <?php endif; ?>
+  <div class="bp-payment-total"><span>Ukupno za plaćanje</span><b><?= minor_format((int) $link['amount_minor']) ?></b></div>
+  <div class="bp-checkout-security">✓ Sigurno preusmjeravanje na platnog pružatelja · poslužiteljska provjera statusa.</div>
   <div class="bp-checkout-note">SANDBOX · Nema stvarnog terećenja. Povratak s platne stranice sam po sebi nije dokaz plaćanja; server provjerava status pružatelja.</div>
 </section></div>
 <?php return (string) ob_get_clean();
