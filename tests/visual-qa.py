@@ -56,7 +56,35 @@ with tempfile.TemporaryDirectory(prefix='brendigo-qa-') as td:
                     if label == 'desktop' and name in ('home','pricing'):
                         page.screenshot(path=str(OUTPUT/('09-home.png' if name=='home' else '08-pricing.png')),full_page=False)
                 html=fetch('/register');csrf=re.search('name="csrf" value="([a-f0-9]+)"',html).group(1)
-                html=fetch('/register',{'name':'Visual Merchant','email':'visual@example.com','password':'visual-qa-long-password-123','csrf':csrf})
+                # Register a test-only merchant, then activate a sandbox entitlement/site
+                # in this temporary fixture. Never bypass paid-plan checks in production code.
+                fetch('/register', {'name':'Visual Merchant','email':'visual@example.com',
+                                    'password':'visual-qa-long-password-123',
+                                    'requested_tier':'business', 'website':base,'csrf':csrf})
+                fixture = r'''
+require "src/JsonStore.php";
+require "src/Support.php";
+require "src/Plans.php";
+require "src/SiteLicenses.php";
+$config = require "config.php";
+$store = new \\BrendigoPay\\JsonStore($config["data_dir"]);
+$matches = array_values(array_filter($store->all("users"),
+    static fn($u) => ($u["email"] ?? "") === "visual@example.com"));
+if (count($matches) !== 1) { throw new \\RuntimeException("Visual test merchant unavailable"); }
+$merchant = $matches[0];
+$plans = new \\BrendigoPay\\Plans($store);
+$plans->grant($merchant["id"], "business", gmdate("c", time() + 60 * 86400), $merchant["id"]);
+$licenses = new \\BrendigoPay\\SiteLicenses($store, $plans, true);
+$issued = $licenses->issue($merchant["id"], getenv("BP_QA_BASE"));
+$licenses->activate($issued["license"], getenv("BP_QA_BASE"), str_repeat("a", 32));
+echo $issued["site"]["id"];
+'''
+                test_env = dict(os.environ, BP_QA_BASE=base)
+                fixture_run = subprocess.run(['php','-r',fixture], cwd=dest,
+                                             env=test_env,check=True,capture_output=True,text=True)
+                site_id = fixture_run.stdout.strip()
+                assert re.fullmatch('[a-f0-9]{24}',site_id), 'Sandbox fixture did not activate a site'
+                html=fetch('/dashboard')
                 scroll=render(page,html)
                 assert page.locator('h1').inner_text().strip()=='Pregled'
                 assert 'Potvrđene sandbox uplate' in page.content()
@@ -78,7 +106,7 @@ with tempfile.TemporaryDirectory(prefix='brendigo-qa-') as td:
                 if label == 'desktop':
                     page.screenshot(path=str(OUTPUT/'05-payment-link-modal.png'),full_page=False)
                 csrf=re.search('name="csrf" value="([a-f0-9]+)"',html).group(1)
-                html=fetch('/dashboard/links',{'title':'Usluga testiranja','description':'Testna usluga','amount':'49,90','csrf':csrf})
+                html=fetch('/dashboard/links',{'site_id':site_id,'title':'Usluga testiranja','description':'Testna usluga','amount':'49,90','csrf':csrf})
                 link_id=re.search('/p/([a-f0-9]{24})',html).group(1)
                 checkout=fetch('/p/'+link_id)
                 scroll=render(page,checkout)
