@@ -1054,3 +1054,35 @@ html {overflow-x:clip;}
   .bp-dashboard-side .bp-provider-list {grid-template-columns:1fr;}
 }
 
+
+
+/* Reference 04 — transaction screen has a persistent, data-backed detail sidebar. */
+@media (min-width:1051px) {
+ .bp-body-merchant .bp-transaction-layout { display:grid;grid-template-columns:minmax(0,1.76fr) minmax(284px,.64fr);gap:13px;align-items:start; }
+ .bp-body-merchant .bp-transaction-layout>.bp-data-card { min-width:0; }
+ .bp-body-merchant .bp-transaction-layout .bp-data-card { padding:15px 13px; }
+ .bp-body-merchant .bp-transaction-layout .bp-table-filters { gap:7px; }
+ .bp-body-merchant .bp-transaction-layout .bp-table-filters label { font-size:.78rem; }
+ .bp-body-merchant .bp-transaction-layout .table-wrap { max-width:100%;overflow-x:auto; }
+ .bp-body-merchant .bp-transaction-layout table { font-size:.74rem;min-width:605px; }
+ .bp-body-merchant .bp-transaction-layout th,.bp-body-merchant .bp-transaction-layout td { padding:9px 7px; }
+}
+.bp-transaction-side { min-width:0; padding:18px 16px; border-radius:16px; }
+.bp-transaction-side .bp-section-top { padding-bottom:11px;border-bottom:1px solid #e2e9f5; }
+.bp-transaction-side .bp-section-top h2 { margin:0;font-size:1.12rem; }
+.bp-side-status { display:flex;gap:11px;align-items:center;margin-top:17px;padding-bottom:13px;border-bottom:1px solid #e3eaf5; }
+.bp-side-status>div { min-width:0; }
+.bp-side-status strong { display:block; max-width:100%;font-size:.77rem;overflow-wrap:anywhere;color:#12204f; }
+.bp-side-status small { display:block;font-size:.73rem;color:#187c4c;margin-top:4px; }
+.bp-side-amount { display:block; margin:15px 0; font-size:2.13rem;letter-spacing:-.045em;color:#111c46;font-variant-numeric:tabular-nums; }
+.bp-side-details { margin:4px 0 14px; }
+.bp-side-details>div { display:grid;grid-template-columns:minmax(82px,.75fr) minmax(0,1.25fr);gap:9px;border-bottom:1px solid #e7edf8;padding:12px 0; }
+.bp-side-details dt { color:#62718c;font-size:.78rem; }
+.bp-side-details dd { margin:0;overflow-wrap:anywhere;color:#142148;font-size:.78rem;font-weight:650; }
+.bp-side-disclaimer,.bp-empty-details { font-size:.74rem;color:#6a7b94;line-height:1.5; }
+.bp-transaction-layout [data-txn-row]:focus-within { outline:2px solid #315bfa;outline-offset:-2px; }
+@media (max-width:1050px) {
+ .bp-transaction-layout { display:grid;grid-template-columns:minmax(0,1fr);gap:13px; }
+ .bp-transaction-side { padding:17px; }
+}
+

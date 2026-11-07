@@ -129,3 +129,11 @@ assert 'bp-dashboard-layout' in merchant
 assert 'bp-dashboard-side' in merchant and 'bp-provider-panel' in merchant
 assert 'bp-dashboard-maincol' in merchant and 'bp-transactions-card' in merchant
 assert '.bp-dashboard-maincol .bp-transactions-card { order:2; }' in web_css
+
+# Transaction list and detail panel must be independent responsive views.
+merchant_ui = (ROOT / 'platform/src/Ui.php').read_text()
+merchant_js = (ROOT / 'platform/public/assets/app.js').read_text()
+assert 'bp-transaction-details-side' in merchant_ui
+assert 'bp-transaction-layout' in merchant_ui
+assert 'detailSide.scrollIntoView' in merchant_js
+assert '.bp-side-details' in web_css

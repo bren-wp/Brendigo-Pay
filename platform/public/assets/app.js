@@ -53,12 +53,24 @@
         const close = event.target.closest('[data-close-dialog]');
         if (close) close.closest('dialog')?.close();
         const detail = event.target.closest('[data-transaction-detail]');
-        if (detail && detailDialog?.showModal) {
-            for (const key of ['id','date','description','provider','amount','status']) {
-                const field = get('[data-txn-output="' + key + '"]', detailDialog);
-                if (field) field.textContent = detail.getAttribute('data-txn-' + key) || '—';
+        if (detail) {
+            const detailSide = get('#bp-transaction-details-side');
+            if (detailSide) {
+                for (const key of ['id','date','description','provider','amount','status']) {
+                    const field = get('[data-txn-output="' + key + '"]', detailSide);
+                    if (field) field.textContent = detail.getAttribute('data-txn-' + key) || '—';
+                }
+                all('[data-txn-row]', filterHost || document).forEach((row) => {
+                    row.classList.toggle('bp-row-selected', row.contains(detail));
+                });
+                detailSide.scrollIntoView({behavior:'smooth',block:'nearest'});
+            } else if (detailDialog?.showModal) {
+                for (const key of ['id','date','description','provider','amount','status']) {
+                    const field = get('[data-txn-output="' + key + '"]', detailDialog);
+                    if (field) field.textContent = detail.getAttribute('data-txn-' + key) || '—';
+                }
+                detailDialog.showModal();
             }
-            detailDialog.showModal();
         }
         const menu = event.target.closest('[data-toggle-menu]');
         if (menu) {

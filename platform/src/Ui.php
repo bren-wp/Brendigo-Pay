@@ -183,6 +183,7 @@ function bp_merchant_ui(array $user, array $links, array $transactions, string $
 </tbody></table></div></section>
 <?php endif; ?>
 <?php if ($tab === 'overview' || $tab === 'transactions'): ?>
+<?php if ($tab === 'transactions'): ?><div class="bp-transaction-layout"><?php endif; ?>
 <section class="bp-surface bp-data-card bp-transactions-card" id="bp-transaction-list"><div class="bp-section-top"><h2>Transakcije (TEST)</h2><a class="btn secondary small" href="/dashboard/transactions.csv">↓ Izvoz CSV</a></div>
 <?php if ($tab === 'transactions'): ?><div class="bp-table-filters" aria-label="Filtri prikazanih transakcija">
 <label>Pretraživanje<input type="search" data-txn-filter="query" placeholder="Pretraži opis ili ID..." aria-label="Pretraži prikazane transakcije"></label>
@@ -192,6 +193,25 @@ function bp_merchant_ui(array $user, array $links, array $transactions, string $
 <div class="table-wrap"><table><thead><tr><th>Datum</th><th>Opis</th><th>Pružatelj</th><th>Iznos</th><th>Status</th></tr></thead><tbody>
 <?php foreach (array_slice($transactions,0,40) as $txn): ?><tr data-txn-row data-txn-provider="<?= e((string)($txn['provider'] ?? 'stripe')) ?>" data-txn-status="<?= e((string)($txn['status'] ?? '')) ?>" data-txn-search="<?= e(strtolower((string)(($txn['description'] ?? '') . ' ' . ($txn['id'] ?? '')))) ?>"><td><?= e(substr((string)$txn['created_at'],0,16)) ?></td><td><b><?= e($txn['description']) ?></b></td><td><?= e(ucfirst((string)($txn['provider'] ?? 'stripe'))) ?></td><td><?= minor_format((int)$txn['amount_minor']) ?></td><td><span class="pill <?= ($txn['status'] === 'paid') ? 'on' : 'off' ?>"><?= $txn['status'] === 'paid' ? '✓ Uspješno' : e($txn['status']) ?></span><button type="button" class="bp-icon-button" data-transaction-detail data-txn-id="<?= e((string)($txn['id'] ?? '')) ?>" data-txn-date="<?= e((string)($txn['created_at'] ?? '')) ?>" data-txn-description="<?= e((string)$txn['description']) ?>" data-txn-provider="<?= e((string)($txn['provider'] ?? '')) ?>" data-txn-amount="<?= e(minor_format((int)$txn['amount_minor'])) ?>" data-txn-status="<?= e((string)$txn['status']) ?>" aria-label="Prikaži detalje transakcije">⋯</button></td></tr><?php endforeach; if ($transactions===[]): ?><tr><td colspan="5">Nema testnih transakcija.</td></tr><?php endif; ?>
 </tbody></table></div></section>
+<?php if ($tab === 'transactions'): ?>
+<?php $selectedTxn = $transactions[0] ?? null; ?>
+<aside class="bp-surface bp-transaction-side" id="bp-transaction-details-side" aria-label="Detalji odabrane testne transakcije" aria-live="polite">
+    <div class="bp-section-top"><h2>Detalji transakcije</h2><span class="bp-kicker">TEST</span></div>
+    <?php if ($selectedTxn === null): ?>
+       <p class="bp-empty-details">Još nema transakcija. Kada se pojave testne uplate, odaberite redak za detalje.</p>
+    <?php else: ?>
+       <div class="bp-side-status"><span class="bp-round-check"><?= ($selectedTxn['status'] ?? '') === 'paid' ? '✓' : '◷' ?></span><div><strong data-txn-output="id"><?= e((string) ($selectedTxn['id'] ?? '')) ?></strong><small data-txn-output="status"><?= e((string) ($selectedTxn['status'] ?? 'pending')) ?></small></div></div>
+       <strong class="bp-side-amount" data-txn-output="amount"><?= minor_format((int) ($selectedTxn['amount_minor'] ?? 0)) ?></strong>
+       <dl class="bp-side-details">
+         <div><dt>Datum (UTC)</dt><dd data-txn-output="date"><?= e((string) ($selectedTxn['created_at'] ?? '—')) ?></dd></div>
+         <div><dt>Opis</dt><dd data-txn-output="description"><?= e((string) ($selectedTxn['description'] ?? '—')) ?></dd></div>
+         <div><dt>Pružatelj</dt><dd data-txn-output="provider"><?= e(ucfirst((string) ($selectedTxn['provider'] ?? '—'))) ?></dd></div>
+         <div><dt>Referenca</dt><dd><?= e((string) ($selectedTxn['reference'] ?? '—')) ?></dd></div>
+       </dl>
+       <p class="bp-side-disclaimer">Prikazani su isključivo postojeći podaci vašeg testnog računa. Podaci kupca koji nisu prikupljeni ne prikazuju se niti se izmišljaju.</p>
+    <?php endif; ?>
+</aside></div>
+<?php endif; ?>
 <?php endif; ?>
 <?php if ($tab === 'overview'): ?></div><aside class="bp-dashboard-side"><section class="bp-surface bp-activity"><div class="bp-section-top"><h2>Aktivnost</h2><a href="/dashboard/audit">Prikaži sve →</a></div><ul><li><span class="bp-round-check">✓</span><div><b><?= count($paid) ?> uspješnih testnih uplata</b><small>Potvrđeni statusi</small></div></li><li><span class="bp-round-check bp-blue">↗</span><div><b><?= count($links) ?> kreiranih linkova</b><small>U vašem računu</small></div></li><li><span class="bp-round-check bp-blue">◇</span><div><b>Integracije</b><small>Konfiguracija u postavkama</small></div></li></ul></section><section class="bp-surface bp-provider-panel"><div class="bp-section-top"><h2>Testni pružatelji</h2><a href="/settings">Postavke →</a></div><div class="bp-provider-list"><?php foreach (['stripe' => 'Stripe', 'paypal' => 'PayPal', 'revolut' => 'Revolut'] as $providerId => $providerName): ?><span><?= e($providerName) ?> <small><?= !empty($providers[$providerId]) ? 'Konfiguriran · Sandbox' : 'Nije povezan' ?></small></span><?php endforeach; ?></div></section></aside></div><?php endif; ?>
 <?php if ($tab === 'integrations'): ?><section class="bp-surface"><h2>Povezivanje pružatelja plaćanja</h2><p>Integracije se konfiguriraju i šifrirano čuvaju na platformi. Navedeni servisi rade u testnom načinu.</p><div class="bp-provider-grid"><?php foreach (['stripe' => 'Stripe', 'paypal' => 'PayPal', 'revolut' => 'Revolut'] as $providerId => $providerName): ?><span><?= e($providerName) ?><small class="bp-provider-state"><?= !empty($providers[$providerId]) ? '✓ Konfiguriran · Sandbox' : 'Nije povezan' ?></small></span><?php endforeach; ?></div><p><a href="/settings" class="btn">Otvori postavke integracija →</a></p></section><?php endif; ?>
