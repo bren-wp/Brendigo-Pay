@@ -137,3 +137,10 @@ assert 'bp-transaction-details-side' in merchant_ui
 assert 'bp-transaction-layout' in merchant_ui
 assert 'detailSide.scrollIntoView' in merchant_js
 assert '.bp-side-details' in web_css
+
+# Public home follows five-part social-proof proportions without synthetic review claims.
+public_ui=(ROOT/'platform/src/Ui.php').read_text()
+assert 'class="bp-home-proof"' in public_ui
+assert 'podržana sandbox pružatelja' in public_ui
+assert '10.000+' not in public_ui
+assert '.bp-home-proof { display:grid' in web_css

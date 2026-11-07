@@ -98,7 +98,7 @@ function render(string $title, string $content): never
     $merchant = $user !== null && (str_starts_with($path, '/dashboard') || $path === '/settings' || $path === '/sites' || $path === '/admin');
     $bodyClass = $merchant ? 'bp-body-merchant' : ($marketing ? 'bp-body-marketing' : 'bp-body-checkout');
     $nav = $user === null
-        ? '<a href="/features">Mogućnosti</a><a href="/integrations">Integracije</a><a href="/pricing">Cijene</a><a href="/plugin">Plugin</a><a href="/docs">Dokumentacija</a><a href="/login">Prijava</a><a class="btn" href="/register">Započni →</a>'
+        ? '<a href="/features">Mogućnosti ▾</a><a href="/pricing">Cijene</a><a href="/plugin">Plugin</a><a href="/docs">Dokumentacija</a><a href="/login" class="bp-nav-login">Prijava</a><a class="btn" href="/register">Započni →</a>'
         : '<a href="/dashboard">Pregled</a><a href="/settings">Postavke</a><form method="post" action="/logout">' . csrf() . '<button class="nav-button" type="submit">Odjava</button></form>';
     if (str_starts_with($path, '/p/')) {
         $nav = '<span class="bp-checkout-nav-label">♢ Sigurna testna naplata</span><a href="/docs">Pomoć</a>';

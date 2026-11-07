@@ -39,6 +39,21 @@ function bp_site_home(): string
     <article class="bp-surface bp-home-link-card"><h2>Platni linkovi i QR kodovi</h2><p>Za naplatu ne treba vam vlastita web-trgovina. Podijelite poveznicu ili QR kod.</p><a class="btn secondary" href="/register">Kreiraj platni link →</a><span class="bp-deco-qr" aria-hidden="true">▦</span></article>
     <article class="bp-surface"><h2>Jasna razvojna faza</h2><p>Trenutačno je dostupno sandbox/testno izdanje. Stvarna plaćanja nisu aktivirana.</p><a class="btn secondary" href="/pricing">Pogledaj predložene pakete →</a></article>
 </section>
+<section class="bp-home-proof" aria-labelledby="bp-home-proof-title">
+  <div class="bp-proof-story">
+    <h2 id="bp-home-proof-title">Povezano poslovanje na jednom mjestu</h2>
+    <p>Web-nadzorna ploča, WordPress dodatak i Android aplikacija dijele isti račun, licence i pregled testnih transakcija.</p>
+    <strong>Jedan račun · više povezanih kanala</strong>
+  </div>
+  <div class="bp-proof-story">
+    <h2>Kontrola pristupa i sigurnosti</h2>
+    <p>Svaki korisnik vidi samo svoje podatke. Plaćanja se testiraju kod službenih pružatelja, a status potvrđuje poslužitelj.</p>
+    <strong>Odvojena korisnička prava</strong>
+  </div>
+  <div class="bp-proof-fact"><span aria-hidden="true">◇</span><strong>3</strong><small>podržana sandbox pružatelja</small></div>
+  <div class="bp-proof-fact"><span aria-hidden="true">▣</span><strong>2</strong><small>WordPress i WooCommerce</small></div>
+  <div class="bp-proof-fact"><span aria-hidden="true">✓</span><strong>1</strong><small>zajednički korisnički račun</small></div>
+</section>
 <section class="bp-showcase" aria-labelledby="bp-showcase-title">
   <header class="bp-showcase-heading"><span class="bp-kicker">PLATFORMA ZA VAŠE POSLOVANJE</span><h2 id="bp-showcase-title">Jedno mjesto za različite načine naplate</h2><p>Web-stranica, WordPress, WooCommerce i platne poveznice rade s istom platformom.</p></header>
   <div class="bp-showcase-steps"><article><span class="bp-number">01</span><h3>Povežite testni račun</h3><p>Koristite vlastite podatke platnog pružatelja. Dostupnost ovisi o konfiguraciji.</p></article><article><span class="bp-number">02</span><h3>Objavite naplatnu poveznicu</h3><p>Postavite gumb ili QR kod na WordPress, web ili u dokument za kupca.</p></article><article><span class="bp-number">03</span><h3>Pratite status plaćanja</h3><p>Server provjerava odgovor pružatelja prije označavanja testne transakcije plaćenom.</p></article></div>
