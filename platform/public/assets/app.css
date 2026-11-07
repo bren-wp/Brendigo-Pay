@@ -600,3 +600,110 @@ html {overflow-x:clip;}
 @media(max-width:900px){.bp-guide-layout{grid-template-columns:1fr;padding-top:19px}.bp-guide-sidebar{position:static}.bp-guide-nav{display:flex;flex-direction:row;flex-wrap:nowrap;overflow-x:auto;padding-bottom:5px;scrollbar-width:thin}.bp-guide-nav a{white-space:nowrap;flex-shrink:0}.bp-guide-sidebar-title{margin-bottom:9px;padding-bottom:8px}.bp-guide-cross{display:none}}
 @media(max-width:560px){.bp-guide-card-grid{grid-template-columns:1fr}.bp-guide-layout{gap:16px}.bp-guide-hero{padding:20px 18px 24px}.bp-guide-hero-actions .btn{width:100%}.bp-guide-section{padding:20px 16px}.bp-guide-end .btn{width:100%;margin:0 0 8px}.bp-guide-breadcrumb{font-size:.74rem;gap:7px}}
 @media(prefers-reduced-motion:reduce){.bp-guide-card{transition:none}.bp-guide-card:hover{transform:none}}
+
+/* Reference refinement: ten supplied Brendigo Pay screens, November 2026.
+   Live components, not screenshot backgrounds. Pricing stays on the paid tiers. */
+:root{
+    --bp-indigo:#1e2bb8;
+    --bp-royal:#3b5bff;
+    --bp-cyan:#06c6b6;
+    --bp-success:#22c55e;
+    --bp-surface:#f3f6fb;
+    --bp-navy:#0f172a;
+    --bp-muted:#66758c;
+    --bp-border:#dce5f5;
+    --bp-panel:#fff;
+    --bp-shadow:0 10px 28px rgba(21,42,115,.075);
+}
+.bp-body-marketing{background:radial-gradient(ellipse at 90% 8%,#def8ff 0,transparent 45%),linear-gradient(180deg,#fafbff 0%,#f3f7ff 100%);}
+.bp-body-marketing .top{background:rgba(255,255,255,.96);backdrop-filter:blur(12px);}
+.bp-body-marketing .bp-home-hero{grid-template-columns:minmax(0,46%) minmax(0,54%);min-height:465px;gap:0;}
+.bp-home-copy h1{font-size:clamp(2.35rem,3.25vw,3.35rem);line-height:1.09;letter-spacing:-.055em;color:#101743;}
+.bp-home-copy>p{max-width:610px;color:#354262;line-height:1.56;}
+.bp-home-copy .bp-kicker,.bp-pricing-intro .bp-kicker{letter-spacing:.12em;background:#f0f4ff;border-color:#d9e3ff;}
+.bp-hero-art{min-width:0;isolation:isolate;}
+.bp-hero-art::before{inset:3% -2% 5% 2%;border-radius:43% 12% 42% 36%;transform:rotate(-11deg);background:linear-gradient(130deg,transparent 4%,#c4ecff 30%,#45b5f8 52%,#04d0c1 70%,#355cf4 100%);opacity:.64;z-index:-1;}
+.bp-laptop{max-width:575px;border-radius:19px 19px 7px 7px;box-shadow:0 24px 45px rgba(20,40,95,.23);}
+.bp-floating-payment{right:0;top:20%;border-color:#dce7fd;box-shadow:0 18px 38px rgba(18,40,105,.18);}
+.bp-floating-payment .bp-fake-button{background:linear-gradient(180deg,#4275ff,#122dd4);}
+.bp-feature-strip{border-radius:16px;padding:16px 8px;}
+.bp-feature-strip>div{padding:10px 13px;}
+.bp-feature-strip .bp-feature-icon{border-radius:50%;width:49px;height:49px;}
+.bp-feature-strip h3{color:#131b48;font-size:.93rem;}
+.bp-feature-strip p{font-size:.77rem;line-height:1.5;}
+.bp-home-grid{gap:15px;}
+.bp-home-grid .bp-surface{min-width:0;border-radius:15px;padding:22px;overflow:hidden;}
+.bp-home-grid .bp-provider-grid span{background:linear-gradient(125deg,#f8f7ff,#e9f4ff);border-radius:11px;}
+.bp-home-grid .bp-integration-chips span{background:#f6f9ff;border-radius:11px;}
+.bp-bottom-cta{background:linear-gradient(109deg,#202a8a 0%,#2458e8 63%,#20cbda 100%);border-radius:16px;box-shadow:0 12px 24px rgba(27,58,170,.12);position:relative;overflow:hidden;}
+.bp-bottom-cta::after{content:"";position:absolute;width:250px;height:160px;border-radius:50%;right:-60px;bottom:-120px;background:#45f4da55;transform:rotate(-20deg);pointer-events:none;}
+.bp-bottom-cta>*{position:relative;z-index:1;}
+.bp-price-cards{gap:17px;}
+.bp-price-cards article{border-radius:18px;padding:28px 27px;box-shadow:0 9px 26px #15347710;}
+.bp-price-cards h2{font-size:1.67rem;letter-spacing:-.03em;color:#101844;}
+.bp-price-cards .bp-price-value{font-variant-numeric:tabular-nums;font-size:clamp(2rem,3.1vw,2.7rem);letter-spacing:-.055em;}
+.bp-price-cards .bp-price-featured{background:linear-gradient(145deg,#284ef1 0%,#0c2cc7 70%,#1947e9 100%);border:2px solid #3678ff;box-shadow:0 15px 32px #183fc42e;}
+.bp-price-cards .bp-price-featured h2{color:#fff;}
+.bp-price-featured .bp-price-ribbon{background:linear-gradient(100deg,#23c66c,#08dfb0);box-shadow:0 3px 8px #104db330;}
+.bp-price-cards article .btn{min-height:43px;}
+.bp-price-cards li{line-height:1.58;padding-block:4px;}
+.bp-pricing-details .bp-surface{border-radius:18px;}
+.bp-pricing-details th{font-weight:750;}
+.bp-faq details{background:#fbfcff;margin-block:8px;border-radius:11px;}
+.bp-faq details[open]{background:#f4f8ff;border-color:#ccdaf9;}
+.bp-faq summary{color:#111a45;}
+.bp-body-merchant .bp-merchant-sidebar{background:linear-gradient(176deg,#141d69,#101e59 71%,#132b8a);}
+.bp-merchant-sidebar a{min-height:44px;transition:background .16s ease;}
+.bp-merchant-sidebar a.active{background:linear-gradient(115deg,#3c79ff,#2038dc);box-shadow:inset 0 1px 0 #ffffff22;}
+.bp-merchant-main .bp-surface{border-radius:15px;}
+.bp-dashboard-metrics .bp-surface{padding:17px 14px;align-items:center;}
+.bp-dashboard-metrics .bp-metric-icon{width:46px;height:48px;border-radius:13px;background:#e9edff;}
+.bp-dashboard-metrics .bp-metric-icon.bp-green{background:#e5faeb;}
+.bp-merchant-heading h1{letter-spacing:-.055em;color:#111747;}
+.bp-provider-list span{min-width:0;}
+.bp-provider-list small{font-size:.7rem;white-space:normal;overflow-wrap:anywhere;}
+.bp-provider-grid .bp-provider-state{display:block;font-size:.72rem;font-weight:650;margin-top:7px;color:#57728e;}
+.bp-merchant-main .table-wrap{border-radius:10px;}
+.bp-merchant-main .table-wrap tbody tr:hover{background:#f0f4ff;}
+.bp-link-dialog .bp-dialog-heading{background:radial-gradient(ellipse at 90% 0%,#bceff7aa,transparent 50%),linear-gradient(130deg,#fff,#f2f7ff);padding-bottom:20px;}
+.bp-link-dialog .bp-dialog-inner{align-items:start;}
+.bp-link-dialog .bp-link-preview{background:linear-gradient(175deg,#f5f9ff,#eef4ff);border-radius:16px;}
+.bp-link-dialog .bp-preview-card{box-shadow:0 12px 24px #17397816;}
+.bp-link-dialog .bp-dialog-actions{align-items:center;}
+.bp-ref-checkout .bp-provider-tile{transition:border-color .15s ease,background .15s ease;}
+.bp-ref-checkout .bp-provider-tile:focus-within{outline:3px solid #9cb6ff;outline-offset:2px;}
+.bp-ref-checkout .bp-provider-tile:has(input:checked){border:2px solid #234df4;background:linear-gradient(130deg,#edf3ff,#fff);}
+.bp-ref-checkout .bp-checkout-payment{padding:clamp(19px,3vw,29px);}
+.bp-ref-checkout .bp-hosted-payment{background:#f5f8ff;}
+.bp-ref-checkout .bp-payment-total{font-variant-numeric:tabular-nums;}
+@media(max-width:1100px){
+    .bp-body-marketing .bp-home-hero{grid-template-columns:minmax(0,49%) minmax(0,51%);}
+    .bp-home-copy h1{font-size:clamp(2.1rem,3.3vw,2.7rem);}
+    .bp-feature-strip>div{flex-direction:column;align-items:flex-start;}
+    .bp-price-cards article{padding:22px 18px;}
+}
+@media(max-width:800px){
+    .bp-body-marketing .bp-home-hero{grid-template-columns:minmax(0,1fr);padding-top:30px;gap:20px;}
+    .bp-hero-art{min-height:340px;}
+    .bp-feature-strip{grid-template-columns:repeat(2,minmax(0,1fr));}
+    .bp-feature-strip>div{flex-direction:row;}
+    .bp-feature-strip>div:nth-child(3){border-left:0;}
+    .bp-feature-strip>div:nth-child(n+3){border-top:1px solid #dbe4f7;}
+    .bp-price-cards{grid-template-columns:1fr;}
+}
+@media(max-width:560px){
+    .bp-home-copy h1{font-size:clamp(2rem,8.5vw,2.65rem);}
+    .bp-feature-strip{grid-template-columns:1fr;}
+    .bp-feature-strip>div{flex-direction:row;border-left:0!important;}
+    .bp-feature-strip>div+div{border-top:1px solid #dbe4f7;}
+    .bp-home-grid .bp-surface{padding:18px;}
+    .bp-bottom-cta{padding:23px 20px;}
+    .bp-floating-payment{max-width:170px;padding:12px;}
+    .bp-pricing-details .table-wrap{overflow-x:auto;}
+    .bp-pricing-details table{min-width:520px;}
+    .bp-link-dialog .bp-dialog-heading{padding:19px 16px 14px;}
+    .bp-link-dialog .bp-dialog-inner{padding:10px 16px 20px;}
+}
+@media(prefers-reduced-motion:reduce){
+    .bp-merchant-sidebar a,.bp-ref-checkout .bp-provider-tile{transition:none;}
+}

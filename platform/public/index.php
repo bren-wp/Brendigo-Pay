@@ -1257,7 +1257,7 @@ if ($path === '/dashboard' && $method === 'GET') {
     $links = array_values(array_filter($store->all('links'), static fn (array $item) => $item['user_id'] === $user['id']));
     usort($links, static fn (array $a, array $b) => strcmp($b['created_at'], $a['created_at']));
     $transactions = array_values(array_filter($store->all('transactions'), static fn (array $item) => $item['user_id'] === $user['id']));
-    render('Nadzorna ploča', bp_merchant_ui($user, $links, $transactions, $base, (string) ($_GET['tab'] ?? 'overview')));
+    render('Nadzorna ploča', bp_merchant_ui($user, $links, $transactions, $base, (string) ($_GET['tab'] ?? 'overview'), configured_providers($user['id'])));
 }
 
 if ($method === 'GET' && preg_match('#^/dashboard/qr/([a-f0-9]{24})$#D', $path, $m)) {

@@ -79,3 +79,21 @@ assert 'bp-admin-guide-links' in (wp / 'views/admin-settings.php').read_text()
 assert 'showSupportGuideMenu()' in (ROOT / 'android/app/src/main/java/com/brendigo/pay/MainActivity.java').read_text()
 assert (ROOT / 'platform/public/assets/screenshots/user-dashboard-desktop.png').is_file()
 print('PASS: version, legal pages, user-facing guides, WP and checkout UI contracts (structural only)')
+
+
+# Provider status must reflect only the authenticated merchant's configured sandbox providers.
+merchant_ui = (ROOT / 'platform/src/Ui.php').read_text(encoding='utf-8')
+merchant_route = (ROOT / 'platform/public/index.php').read_text(encoding='utf-8')
+assert 'configuredProviderCount' in merchant_ui
+assert 'count(array_filter($providers' in merchant_ui
+assert 'Nije povezan' in merchant_ui
+assert "configured_providers($user['id'])" in merchant_route
+assert '<strong>3</strong><small>Stripe, PayPal, Revolut</small>' not in merchant_ui
+
+# Design tokens and responsive desktop/tablet/mobile treatment follow the ten references.
+web_css = (ROOT / 'platform/public/assets/app.css').read_text(encoding='utf-8')
+for token in ['--bp-indigo:#1e2bb8', '--bp-royal:#3b5bff', '--bp-cyan:#06c6b6',
+              '.bp-body-marketing .bp-home-hero', '.bp-price-cards .bp-price-featured',
+              '.bp-link-dialog .bp-dialog-heading', '.bp-ref-checkout .bp-provider-tile',
+              '@media(max-width:800px)', '@media(max-width:560px)']:
+    assert token in web_css, token
