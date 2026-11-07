@@ -76,6 +76,12 @@ assert 'function bp_guide_page(string $path)' in guide_source
 assert '/features' in guide_source and '/integrations' in guide_source
 assert "bp_guide_page($path)" in (ROOT / 'platform/public/index.php').read_text()
 assert 'bp-admin-guide-links' in (wp / 'views/admin-settings.php').read_text()
+assert '<nav class="bp-admin-tabs"' not in wp_admin_view, 'top navigation must be removed'
+assert 'add_submenu_page(' in (wp / 'includes/class-bp-settings.php').read_text()
+assert "'brendigo-pay-logs'" in (wp / 'includes/class-bp-settings.php').read_text()
+assert "'brendigo-pay-qr'" in (wp / 'includes/class-bp-settings.php').read_text()
+assert 'bp-pay-admin' in plugin and "str_starts_with($hook, 'brendigo-pay_page_brendigo-pay-')" in plugin
+assert 'bp-admin-tabs .bp-admin-tab' not in (wp / 'assets/admin.js').read_text()
 assert 'showSupportGuideMenu()' in (ROOT / 'android/app/src/main/java/com/brendigo/pay/MainActivity.java').read_text()
 assert (ROOT / 'platform/public/assets/screenshots/user-dashboard-desktop.png').is_file()
 

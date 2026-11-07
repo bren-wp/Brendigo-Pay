@@ -26,6 +26,17 @@ namespace {
         'default_provider' => 'paypal',
     ];
 
+    $GLOBALS['bp_test_main_menu'] = [];
+    $GLOBALS['bp_test_submenus'] = [];
+    function add_menu_page($page_title, $menu_title, $capability, $slug, $callback, $icon = '', $position = null): string {
+        $GLOBALS['bp_test_main_menu'][] = $slug;
+        return 'toplevel_page_' . $slug;
+    }
+    function add_submenu_page($parent, $page_title, $menu_title, $capability, $slug, $callback): string {
+        $GLOBALS['bp_test_submenus'][] = [$parent, $slug, $menu_title];
+        return $parent . '_page_' . $slug;
+    }
+
     function plugin_dir_path(string $file): string { return dirname($file) . DIRECTORY_SEPARATOR; }
     function plugins_url(string $path, string $file): string { return 'https://example.test/wp-content/plugins/brendigo-pay/' . $path; }
     function add_action(string $hook, callable|array|string $callback, int $priority = 10, int $accepted_args = 1): void {
@@ -59,6 +70,11 @@ namespace {
     }
 
     verify(defined('BP_PAY_VERSION') && BP_PAY_VERSION === '0.8.7', 'plugin loads and version matches');
+    foreach ($GLOBALS['wp_test_actions']['admin_menu'] as $callback) { $callback(); }
+    verify($GLOBALS['bp_test_main_menu'] === ['brendigo-pay'], 'single Brendigo Pay WordPress parent menu');
+    verify(count($GLOBALS['bp_test_submenus']) === 7, 'seven native sidebar sections');
+    verify(array_column($GLOBALS['bp_test_submenus'], 1) === array_keys(\BP_Pay_Settings::admin_sections()),
+        'all sidebar sections have registered and unique page slugs');
     verify(isset($GLOBALS['wp_test_actions']['plugins_loaded']), 'WooCommerce classic hook registered');
     verify(isset($GLOBALS['wp_test_actions']['woocommerce_blocks_loaded']), 'WooCommerce Blocks hook registered');
 

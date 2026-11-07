@@ -214,7 +214,7 @@ add_action('woocommerce_blocks_loaded', static function (): void {
 
 // Design assets are loaded only on relevant WordPress/WooCommerce pages.
 add_action('admin_enqueue_scripts', static function (string $hook): void {
-    if ($hook === 'toplevel_page_brendigo-pay') {
+    if ($hook === 'toplevel_page_brendigo-pay' || str_starts_with($hook, 'brendigo-pay_page_brendigo-pay-')) {
         wp_enqueue_style('bp-pay-admin', plugins_url('assets/admin.css', BP_PAY_FILE), [], BP_PAY_VERSION);
         wp_enqueue_script('bp-pay-admin', plugins_url('assets/admin.js', BP_PAY_FILE), [], BP_PAY_VERSION, true);
     }

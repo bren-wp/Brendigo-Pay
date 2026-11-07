@@ -119,6 +119,7 @@ final class BP_Pay_Settings
             update_option('bp_pay_sync_status', [
                 'status' => 'not_configured', 'last_ok' => 0, 'checked_at' => time(),
             ], false);
+            self::record_sync_event('not_configured');
             return false;
         }
         $wpVersion = function_exists('get_bloginfo') ? (string) get_bloginfo('version') : '';
@@ -146,6 +147,7 @@ final class BP_Pay_Settings
                 'status' => 'unavailable', 'checked_at' => time(),
                 'last_ok' => (int) ($existing['last_ok'] ?? 0),
             ], false);
+            self::record_sync_event('unavailable');
             return false;
         }
         update_option('bp_pay_sync_status', [
@@ -158,7 +160,26 @@ final class BP_Pay_Settings
             'website_limit' => max(0, (int) $response['website_limit']),
             'websites_used' => max(0, (int) $response['websites_used']),
         ], false);
+        self::record_sync_event('active');
         return true;
+    }
+
+    private static function record_sync_event(string $result): void
+    {
+        $allowed = ['active', 'unavailable', 'not_configured'];
+        if (!in_array($result, $allowed, true)) {
+            return;
+        }
+        $history = get_option('bp_pay_sync_log', []);
+        $history = is_array($history) ? array_values($history) : [];
+        array_unshift($history, ['timestamp' => time(), 'status' => $result]);
+        update_option('bp_pay_sync_log', array_slice($history, 0, 20), false);
+    }
+
+    public static function sync_history(): array
+    {
+        $history = get_option('bp_pay_sync_log', []);
+        return is_array($history) ? array_slice($history, 0, 20) : [];
     }
 
     public static function schedule_sync(): void
@@ -293,6 +314,32 @@ final class BP_Pay_Settings
             plugins_url('assets/brand-mark.svg', BP_PAY_FILE),
             56
         );
+
+        // Use native WordPress sidebar items rather than an extra top tab bar.
+        // The first child shares the parent slug, avoiding a duplicate dashboard.
+        foreach (self::admin_sections() as $slug => $title) {
+            add_submenu_page(
+                'brendigo-pay',
+                $title . ' — Brendigo Pay',
+                $title,
+                'manage_options',
+                $slug,
+                [self::class, 'page']
+            );
+        }
+    }
+
+    public static function admin_sections(): array
+    {
+        return [
+            'brendigo-pay' => 'Opće postavke',
+            'brendigo-pay-providers' => 'Pružatelji plaćanja',
+            'brendigo-pay-links' => 'Platni linkovi',
+            'brendigo-pay-qr' => 'QR kodovi',
+            'brendigo-pay-security' => 'Sigurnost',
+            'brendigo-pay-logs' => 'Dnevnici',
+            'brendigo-pay-docs' => 'Dokumentacija',
+        ];
     }
 
     public static function page(): void
@@ -300,6 +347,13 @@ final class BP_Pay_Settings
         if (!current_user_can('manage_options')) {
             return;
         }
+        $slug = isset($_GET['page']) && is_string($_GET['page'])
+            ? sanitize_key(wp_unslash($_GET['page'])) : 'brendigo-pay';
+        if (!isset(self::admin_sections()[$slug])) {
+            wp_die(esc_html__('Nepoznat odjeljak Brendigo Paya.', 'brendigo-pay'));
+        }
+        $screenTab = $slug === 'brendigo-pay' ? 'general' : substr($slug, strlen('brendigo-pay-'));
+        $screenTitle = self::admin_sections()[$slug];
         $tokenSet = self::api_key() !== '';
         $status = isset($_GET['bp_connection']) ? sanitize_key(wp_unslash($_GET['bp_connection'])) : '';
         require BP_PAY_PATH . 'views/admin-settings.php';

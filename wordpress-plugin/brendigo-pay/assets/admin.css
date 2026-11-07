@@ -256,3 +256,10 @@
     .bp-admin-wrap .bp-admin-brand small {letter-spacing:.07em;line-height:1.4;}
     .bp-admin-wrap .bp-admin-sync-summary,.bp-admin-wrap .bp-admin-copy-row {min-width:0;flex-wrap:wrap;}
 }
+
+/* Native WordPress sidebar handles Brendigo Pay navigation (no in-page tabs). */
+.bp-admin-wrap .bp-admin-section-view {margin-top:16px;}
+.bp-admin-wrap .bp-admin-section-view .bp-admin-table-scroller {overflow-x:auto;}
+.bp-admin-wrap .bp-admin-section-view code {overflow-wrap:anywhere;white-space:normal;}
+.bp-admin-wrap .bp-admin-section-view .bp-admin-sync-details {margin-top:18px;}
+@media (max-width:782px){.bp-admin-wrap .bp-admin-section-view{padding:16px;}}
