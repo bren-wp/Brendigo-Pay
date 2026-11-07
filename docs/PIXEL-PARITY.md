@@ -28,6 +28,10 @@
 
 **Stanje v0.7.0:** postoje funkcionalni predlošci i responsive stilovi; potpuna 1:1 podudarnost i produkcijski platni servisi nisu potvrđeni.
 
+## Aktualno stanje mjerenja
+
+Matrica svih deset referenci dostupna je u [VISUAL-10-REFERENCE-STATUS.md](VISUAL-10-REFERENCE-STATUS.md). Workflow `visual-parity.yml` pokušava snimiti šest stvarnih web ekranâ pri 1448×1086. Tri WordPress reference i identitetski koncept zahtijevaju zasebno mjerenje.
+
 ## Reproducibilna usporedba
 
 `python3 scripts/visual_compare.py design/references/09-home.jpeg putanja/do/stvarnog-prikaza.png`

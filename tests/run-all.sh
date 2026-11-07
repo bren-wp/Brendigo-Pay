@@ -16,6 +16,8 @@ php tests/woocommerce-plugin-bootstrap.php
 python3 -m py_compile scripts/visual_audit_wp.py
 python3 tests/ui-contract.py
 python3 tests/security-static.py
+python3 tests/provider-readiness.py
+python3 -m py_compile scripts/visual_audit_10.py
 python3 scripts/css-duplicates.py
 if command -v node >/dev/null 2>&1; then
   node --check wordpress-plugin/brendigo-pay/assets/block.js
