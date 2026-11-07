@@ -1,3 +1,11 @@
+## 0.8.7 — 2026-11-07 (SANDBOX)
+
+- Usklađeni vizualni tokeni i izgled naslovnice, cjenika, korisničke ploče, platnog dijaloga i sandbox checkouta sa slikovnim referencama.
+- Broj povezanih pružatelja i njihovi statusi sada odražavaju konfiguraciju prijavljenog trgovca, bez lažnog prikaza tri povezana pružatelja za svaki račun.
+- Iz korisničkih poruka uklonjeni su nepotrebni detalji o internoj pohrani podataka.
+- Dodane strukturne UI provjere i usklađene verzije weba, WordPress dodatka, Androida, testova i distribucijskih paketa.
+- Izdanje ostaje SANDBOX: 1:1 vizualna podudarnost svih ekrana i produkcijski PSP E2E još nisu potvrđeni. Android debug APK nije Play release, a AAB je nepotpisan.
+
 ## 0.8.6 — 2026-11-04 (SANDBOX)
 
 - 34 zasebnih korisničkih vodiča i podstranice Mogućnosti, Integracije i Dokumentacija; ukupno 37 novih URL-ova uključujući tri indeksa.
