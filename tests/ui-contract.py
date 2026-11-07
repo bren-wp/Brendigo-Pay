@@ -78,7 +78,6 @@ assert "bp_guide_page($path)" in (ROOT / 'platform/public/index.php').read_text(
 assert 'bp-admin-guide-links' in (wp / 'views/admin-settings.php').read_text()
 assert 'showSupportGuideMenu()' in (ROOT / 'android/app/src/main/java/com/brendigo/pay/MainActivity.java').read_text()
 assert (ROOT / 'platform/public/assets/screenshots/user-dashboard-desktop.png').is_file()
-print('PASS: version, legal pages, user-facing guides, WP and checkout UI contracts (structural only)')
 
 
 # Provider status must reflect only the authenticated merchant's configured sandbox providers.
@@ -97,3 +96,5 @@ for token in ['--bp-indigo:#1e2bb8', '--bp-royal:#3b5bff', '--bp-cyan:#06c6b6',
               '.bp-link-dialog .bp-dialog-heading', '.bp-ref-checkout .bp-provider-tile',
               '@media(max-width:800px)', '@media(max-width:560px)']:
     assert token in web_css, token
+
+print('PASS: version, legal pages, user-facing guides, WP and checkout UI contracts (structural only)')
