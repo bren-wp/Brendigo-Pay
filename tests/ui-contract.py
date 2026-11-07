@@ -122,3 +122,10 @@ for marker in ['name="preferred_provider"', 'name="valid_days"', 'bp-preview-qr-
 for marker in ["$preferredProvider = strtolower", "'expires_at' => gmdate", "strtotime((string) $link['expires_at']) <= time()"]:
     assert marker in route_link, marker
 assert 'bp-link-provider-choice:has(input:disabled)' in web_css
+
+# Real desktop merchant dashboard uses independent columns, not a stretched single-row grid.
+merchant = (ROOT / 'platform/src/Ui.php').read_text()
+assert 'bp-dashboard-layout' in merchant
+assert 'bp-dashboard-side' in merchant and 'bp-provider-panel' in merchant
+assert 'bp-dashboard-maincol' in merchant and 'bp-transactions-card' in merchant
+assert '.bp-dashboard-maincol .bp-transactions-card { order:2; }' in web_css

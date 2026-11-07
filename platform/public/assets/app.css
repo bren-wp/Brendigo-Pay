@@ -1002,3 +1002,55 @@ html {overflow-x:clip;}
 }
 @media (max-width:560px) { .bp-link-provider-options { grid-template-columns:1fr 1fr; } .bp-link-provider-choice { min-height:53px; } }
 
+
+
+/* 0.8.8 comparison pass: dashboard screen 06 two independent columns,
+ * real merchant chart + transaction list left, activity + providers right. */
+@media(min-width:1051px) {
+  .bp-body-merchant .top { height:65px; }
+  .bp-body-merchant .top-inner { min-height:65px; }
+  .bp-merchant-shell { min-height:calc(100vh - 65px); }
+  .bp-merchant-sidebar { width:192px; padding:20px 10px; }
+  .bp-merchant-sidebar .bp-sidebar-menu { gap:4px; }
+  .bp-merchant-sidebar a { min-height:43px; padding:11px 12px; }
+  .bp-merchant-main { padding:18px 22px 24px; }
+  .bp-merchant-heading { margin-bottom:11px; }
+  .bp-merchant-heading .bp-kicker { display:none; }
+  .bp-merchant-heading h1 { font-size:2.05rem; margin:0 0 4px; }
+  .bp-merchant-heading>div>p { font-size:.94rem; }
+  .bp-dashboard-metrics { gap:11px; margin:11px 0 13px; }
+  .bp-dashboard-metrics .bp-surface { min-height:106px; padding:13px 13px; }
+  .bp-dashboard-layout { display:grid; grid-template-columns:minmax(0,1.73fr) minmax(310px,1fr); gap:13px; align-items:start; }
+  .bp-dashboard-maincol { display:flex; flex-direction:column; gap:13px; min-width:0; }
+  .bp-dashboard-maincol .bp-chart-card { order:1; padding:15px 16px; min-height:341px; }
+  .bp-dashboard-maincol .bp-transactions-card { order:2; }
+  .bp-dashboard-maincol .bp-links-card { order:3; }
+  .bp-dashboard-maincol .bp-data-card { margin-top:0; padding:13px 15px; }
+  .bp-dashboard-maincol .bp-data-card table { font-size:.73rem; }
+  .bp-dashboard-maincol .bp-data-card thead th,
+  .bp-dashboard-maincol .bp-data-card tbody td { padding:6px 8px; }
+  .bp-dashboard-maincol .bp-chart-card .bp-section-top { margin-bottom:6px; }
+  .bp-dashboard-maincol .bp-chart-card h2 { margin:0; font-size:1.3rem; }
+  .bp-dashboard-maincol .bp-chart-total { font-size:1.85rem; line-height:1.1; }
+  .bp-dashboard-maincol .bp-real-chart { margin:5px 0 0; }
+  .bp-dashboard-maincol .bp-real-chart svg { max-height:205px; }
+  .bp-dashboard-maincol .bp-real-chart figcaption { font-size:.68rem; margin-top:3px; }
+  .bp-dashboard-side { display:grid; grid-template-columns:1fr; gap:13px; min-width:0; }
+  .bp-dashboard-side .bp-surface { margin:0; padding:15px 17px; }
+  .bp-dashboard-side .bp-activity { min-height:241px; }
+  .bp-dashboard-side .bp-provider-panel { min-height:263px; }
+  .bp-dashboard-side .bp-section-top h2 { margin:0; font-size:1.25rem; }
+  .bp-dashboard-side .bp-activity ul { margin:8px 0 0; }
+  .bp-dashboard-side .bp-activity li { padding:8px 0; }
+  .bp-dashboard-side .bp-provider-list { display:grid; gap:8px; margin-top:11px; }
+  .bp-dashboard-side .bp-provider-list span { min-height:53px; }
+  .bp-body-merchant:has(.bp-dashboard-layout) .bp-bottom-cta { margin-top:18px; }
+}
+@media(max-width:1050px){
+  .bp-dashboard-layout { display:grid;grid-template-columns:1fr;gap:13px; }
+  .bp-dashboard-maincol,.bp-dashboard-side {display:grid;gap:13px;min-width:0;}
+}
+@media(max-width:560px) {
+  .bp-dashboard-side .bp-provider-list {grid-template-columns:1fr;}
+}
+
