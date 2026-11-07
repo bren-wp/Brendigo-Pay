@@ -113,3 +113,12 @@ for selector in ['.bp-body-marketing .bp-pricing-intro',
     assert selector in web_css, selector
 
 print('PASS: version, legal pages, user-facing guides, WP and checkout UI contracts (structural only)')
+
+# Functional link expiration, merchant provider preference, no fake QR activation.
+ui_link = (ROOT / 'platform/src/Ui.php').read_text()
+route_link = (ROOT / 'platform/public/index.php').read_text()
+for marker in ['name="preferred_provider"', 'name="valid_days"', 'bp-preview-qr-placeholder']:
+    assert marker in ui_link, marker
+for marker in ["$preferredProvider = strtolower", "'expires_at' => gmdate", "strtotime((string) $link['expires_at']) <= time()"]:
+    assert marker in route_link, marker
+assert 'bp-link-provider-choice:has(input:disabled)' in web_css
