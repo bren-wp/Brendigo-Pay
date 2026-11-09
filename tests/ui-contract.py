@@ -170,3 +170,14 @@ assert 'delete_posts' not in uninstall and 'wc_delete_order' not in uninstall
 # The obsolete dashboard grid was replaced with the responsive two-column layout.
 assert '.bp-dashboard-grid {' not in web_css
 assert 'class="bp-dashboard-layout"' in (ROOT/'platform/src/Ui.php').read_text()
+
+# Independent CTA composition and checkout security/price/payment flow.
+visual=(ROOT/'platform/src/Ui.php').read_text()
+assert visual.count('class="bp-cta-visual" aria-hidden="true"') == 2
+assert 'class="bp-bottom-cta bp-bottom-cta-home"' in visual
+assert 'class="bp-bottom-cta bp-bottom-cta-pricing"' in visual
+assert 'bp-preview-link-placeholder' in visual
+assert visual.count('class="bp-provider-monogram" aria-hidden="true"') >= 2
+checkout=visual.split('function bp_public_payment(',1)[1].split('function bp_site_plugin(',1)[0]
+assert checkout.count('class="bp-payment-total"') == 2
+assert checkout.count('class="bp-checkout-security"') == 2

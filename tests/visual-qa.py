@@ -54,6 +54,16 @@ with tempfile.TemporaryDirectory(prefix='brendigo-qa-') as td:
                     if label in ('desktop','mobile'):
                         page.screenshot(path=str(OUTPUT/f'{name}-{label}.png'),full_page=True)
                     if label == 'desktop' and name in ('home','pricing'):
+                        # Confirm actual CTA lives within the 1086 px reference capture.
+                        banner = page.locator('.bp-bottom-cta')
+                        assert banner.count() == 1, (name, 'single real CTA required')
+                        bounds = banner.bounding_box()
+                        assert bounds is not None and bounds['y'] < 1040 and bounds['width'] >= 0.8 * width, (
+                            name, 'CTA slipped below reference viewport', bounds)
+                        assert banner.locator('.bp-cta-actions a[href]').count() == 2, (name, 'functional CTA links')
+                        assert banner.locator('.bp-cta-payment-card').count() == 1
+                        if name == 'pricing':
+                            assert page.locator('.bp-price-cards article').count() == 3
                         page.screenshot(path=str(OUTPUT/('09-home.png' if name=='home' else '08-pricing.png')),full_page=False)
                 html=fetch('/register');csrf=re.search('name="csrf" value="([a-f0-9]+)"',html).group(1)
                 # Register a test-only merchant, then activate a sandbox entitlement/site
