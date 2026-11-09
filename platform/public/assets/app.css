@@ -1576,15 +1576,16 @@ html {overflow-x:clip;}
    box-shadow:0 10px 20px #0a37b54d;border:2px solid #548eff;
  }
  .bp-body-marketing .bp-price-cards .bp-price-featured::before {
-   content:"";position:absolute;z-index:-1;right:-15%;bottom:-58%;
-   height:93%;width:91%;border-radius:50%;transform:rotate(-20deg);
-   background:linear-gradient(131deg,#6dceff50,#15b7eb5e,#3c61f9c4);
-   pointer-events:none;
+   content:"";position:absolute;z-index:-1;right:0;bottom:0;
+   height:42%;width:78%;border-radius:0 0 15px 0;transform:none;
+   background:linear-gradient(135deg,#62cfff4d,#16c3eb56,#456bf79c);
+   clip-path:ellipse(98% 79% at 100% 100%);pointer-events:none;
  }
  .bp-body-marketing .bp-price-cards .bp-price-featured::after {
-   content:"";position:absolute;z-index:-1;right:-22%;bottom:-72%;
-   height:104%;width:95%;border:2px solid #e9faff66;
-   border-radius:50%;transform:rotate(-25deg);pointer-events:none;
+   content:"";position:absolute;z-index:-1;right:0;bottom:0;
+   height:32%;width:86%;border:2px solid #e9faff66;
+   border-radius:0 0 15px 0;clip-path:ellipse(98% 92% at 100% 100%);
+   transform:none;pointer-events:none;
  }
 }
 .bp-body-marketing .bp-price-cards ul {
