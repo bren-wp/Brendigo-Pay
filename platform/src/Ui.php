@@ -35,9 +35,18 @@ function bp_site_home(): string
 <section class="bp-feature-strip" aria-label="Prednosti"><div><span class="bp-feature-icon">⚡</span><div><h3>Postojeći računi</h3><p>Povežite račune platnih pružatelja.</p></div></div><div><span class="bp-feature-icon">◇</span><div><h3>Prihvat plaćanja</h3><p>Web, WordPress i WooCommerce.</p></div></div><div><span class="bp-feature-icon">♢</span><div><h3>Upravljanje računom</h3><p>Jedinstveni pregled vaših povezanih usluga.</p></div></div><div><span class="bp-feature-icon">▥</span><div><h3>Izvještaji</h3><p>Praćenje statusa i transakcija.</p></div></div></section>
 <section id="mogucnosti" class="bp-home-grid" aria-label="Integracije i mogućnosti">
     <article class="bp-surface"><h2>Povežite svoje platne račune</h2><p>Konfigurirajte testne integracije iz vlastite nadzorne ploče i upravljajte statusom na Androidu.</p><div class="bp-provider-grid"><span>↗ Stripe</span><span>↗ PayPal</span><span>↗ Revolut</span></div><p><a href="/integrations">Sve integracije i status podrške →</a></p></article>
-    <article class="bp-surface"><h2>WordPress i WooCommerce</h2><p>Jedan dodatak za obične WordPress stranice i WooCommerce trgovine.</p><div class="bp-integration-chips"><span>ⓦ WordPress</span><span>▣ WooCommerce</span></div></article>
+    <article class="bp-surface bp-home-wordpress-card"><h2>Integracija s WordPressom i WooCommerceom</h2><p>Jedan dodatak za obične WordPress stranice i WooCommerce trgovine.</p><div class="bp-integration-chips"><span>ⓦ WordPress</span><span>▣ WooCommerce</span></div><div class="bp-wp-decoration" aria-hidden="true"><span>▣</span><span>↗</span><span>◇</span></div></article>
     <article class="bp-surface bp-home-link-card"><h2>Platni linkovi i QR kodovi</h2><p>Za naplatu ne treba vam vlastita web-trgovina. Podijelite poveznicu ili QR kod.</p><a class="btn secondary" href="/register">Kreiraj platni link →</a><span class="bp-deco-qr" aria-hidden="true">▦</span></article>
-    <article class="bp-surface"><h2>Jasna razvojna faza</h2><p>Trenutačno je dostupno sandbox/testno izdanje. Stvarna plaćanja nisu aktivirana.</p><a class="btn secondary" href="/pricing">Pogledaj predložene pakete →</a></article>
+    <article class="bp-surface bp-home-pricing-card">
+        <h2>Jednostavne i fleksibilne cijene</h2>
+        <p>Odaberite jedan od tri plaćena paketa. Testne integracije možete pregledati prije aktivacije.</p>
+        <div class="bp-home-plan-list" aria-label="Pregled mjesečnih cijena">
+            <a href="/register?plan=start" class="bp-home-plan"><span>Start<small>Za jednu web-stranicu</small></span><strong>19,90 € <small>/ mj</small></strong></a>
+            <a href="/register?plan=business" class="bp-home-plan bp-home-plan-featured"><span>Business<small>Za rastuće poslovanje</small></span><strong>49,90 € <small>/ mj</small></strong></a>
+            <a href="/register?plan=pro" class="bp-home-plan"><span>Pro<small>Za veće sustave</small></span><strong>99,90 € <small>/ mj</small></strong></a>
+        </div>
+        <p class="bp-home-pricing-note">Sandbox · prikazane cijene su prijedlog, bez automatske naplate.</p>
+    </article>
 </section>
 <section class="bp-home-proof" aria-labelledby="bp-home-proof-title">
   <div class="bp-proof-story">
