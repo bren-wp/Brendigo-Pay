@@ -41,6 +41,12 @@ jobs:
           BP_VISUAL_ONLY: desktop
           BP_VISUAL_QA_DIR: visual-qa
         run: python tests/visual-qa.py
+      - name: Verify responsive tablet and mobile screens
+        env:
+          BP_VISUAL_QA_DIR: visual-qa
+        run: |
+          BP_VISUAL_ONLY=tablet python tests/visual-qa.py
+          BP_VISUAL_ONLY=mobile python tests/visual-qa.py
       - name: Measure all ten references and identify missing captures
         run: python scripts/visual_audit_10.py --screenshots visual-qa --output visual-qa/assessment --diffs
       - name: Store real screenshots, metrics and missing-screen report
