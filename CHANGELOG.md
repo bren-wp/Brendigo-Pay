@@ -1,3 +1,13 @@
+## 0.8.13 — 2026-11-09 (SANDBOX)
+
+- Nastavak vizualnog usklađivanja prema deset referenci. Modal „Novi platni link” smanjen je s 72,16 % na **43,48 %** (−28,68 postotnih bodova) nakon uklanjanja nadjačanog CSS pravila pozadinske maske.
+- Cjenik smanjen s 59,35 % na **56,65 %** i dobio funkcionalan mjesečni/godišnji prikaz cijena. Godišnji iznos znači 12 × mjesec, bez neodobrenog popusta i bez ugovaranja pretplate.
+- Ugrađene nove dostupne kontrole, browser-regresijski testovi, provjere planova i CSS sukoba; povučena promjena valova koja je pogoršala pixel-diff.
+- Stabiliziran izolirani PHP security smoke-test s osvježavanjem privremene legalne konfiguracije.
+- Detalji: docs/VISUAL-PARITY-ITERATION-2026-11-09-v2.md.
+- 1:1/0% još nije ostvareno. Nisu snimljeni WordPress/Gutenberg/WooCommerce host prikazi; Android nema zasebnu referencu. Live PSP certifikacija nije završena.
+- Izdanje je SANDBOX, s debug APK-om i nepotpisanim AAB-om. Ne koristiti za produkcijsku naplatu.
+
 ## 0.8.12 — 2026-11-09 (SANDBOX)
 
 - Sačuvana najbolja izmjerena verzija nakon povrata promjene koja je pogoršala CTA bannere.
