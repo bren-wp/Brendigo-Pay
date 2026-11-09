@@ -63,9 +63,12 @@ with tempfile.TemporaryDirectory(prefix='brendigo-qa-') as td:
                         assert '598,80' in page.locator('.bp-price-featured .bp-price-value').inner_text()
                         assert page.locator('[data-billing-disclaimer]').is_visible()
                         assert 'Godišnji' in page.locator('[data-billing-price-label]').inner_text()
+                        assert '598,80' in page.locator('.bp-tier-comparison .bp-comparison-featured small').inner_text()
+                        assert page.locator('.bp-faq details').count() == 6
                         assert page.locator('[data-billing-period="yearly"]').get_attribute('aria-pressed') == 'true'
                         page.locator('[data-billing-period="monthly"]').click()
                         assert '49,90' in page.locator('.bp-price-featured .bp-price-value').inner_text()
+                        assert '49,90' in page.locator('.bp-tier-comparison .bp-comparison-featured small').inner_text()
                         assert not page.locator('[data-billing-disclaimer]').is_visible()
                     if label in ('desktop','mobile'):
                         page.screenshot(path=str(OUTPUT/f'{name}-{label}.png'),full_page=True)
@@ -113,6 +116,7 @@ echo $issued["site"]["id"];
                 html=fetch('/dashboard')
                 scroll=render(page,html)
                 assert page.locator('h1').inner_text().strip()=='Pregled'
+                assert 'Zadnjih 30 dana' in page.locator('.bp-merchant-heading .bp-date-chip').inner_text()
                 assert 'Potvrđene sandbox uplate' in page.content()
                 assert scroll<=width+2,('dashboard',label,'overflow',scroll)
                 if label in ('desktop','mobile'):
@@ -120,10 +124,18 @@ echo $issued["site"]["id"];
                 if label == 'desktop':
                     page.screenshot(path=str(OUTPUT/'06-merchant-dashboard.png'),full_page=False)
                     render(page,fetch('/dashboard?tab=transactions'))
+                    assert 'Svi datumi' in page.locator('.bp-merchant-heading .bp-date-chip').inner_text()
                     page.screenshot(path=str(OUTPUT/'04-transactions.png'),full_page=False)
                     render(page,html)
                 page.locator('[data-open-dialog="bp-new-link"]').click()
                 assert page.locator('dialog#bp-new-link').evaluate('(x)=>x.open')
+                assert page.locator('#bp-new-link .bp-link-provider-choice').count() == 4
+                assert page.locator('#bp-new-link [name="preferred_provider"][value="auto"]').is_checked()
+                if label == 'desktop':
+                    provider = page.locator('#bp-new-link .bp-link-provider-choice')
+                    positions = [provider.nth(i).bounding_box() for i in (1, 2, 3)]
+                    assert all(pos is not None for pos in positions)
+                    assert len({round(pos['y']) for pos in positions}) == 1, 'Three PSP choices must share a row'
                 page.locator('[name="title"]').fill('Usluga testiranja')
                 page.locator('[name="amount"]').fill('49,90')
                 assert '49,90' in page.locator('[data-live-amount]').inner_text()
