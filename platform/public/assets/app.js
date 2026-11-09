@@ -18,6 +18,34 @@
         get('[data-live-amount]', newLink).textContent = formatted;
     };
     if (newLink) all('input,textarea', newLink).forEach((el) => el.addEventListener('input', preview));
+    // Price cadence is an informative display only: entitlements and billing remain
+    // operator-verified; never promise an undisclosed annual discount.
+    const billingSwitch = get('.bp-billing-switch');
+    if (billingSwitch) {
+        const showBillingPeriod = (period) => {
+            if (period !== 'monthly' && period !== 'yearly') return;
+            all('[data-billing-period]', billingSwitch).forEach((button) => {
+                const selected = button.dataset.billingPeriod === period;
+                button.classList.toggle('is-current', selected);
+                button.setAttribute('aria-pressed', String(selected));
+            });
+            all('[data-price-monthly][data-price-yearly]').forEach((element) => {
+                element.textContent = period === 'yearly'
+                    ? element.dataset.priceYearly : element.dataset.priceMonthly;
+            });
+            all('[data-billing-term]').forEach((element) => {
+                element.textContent = period === 'yearly' ? '/ god' : '/ mj';
+            });
+            const rowLabel = get('[data-billing-price-label]');
+            if (rowLabel) rowLabel.textContent = period === 'yearly'
+                ? 'Godišnji iznos (12 mjeseci, prijedlog)' : 'Mjesečna cijena (prijedlog)';
+            const disclaimer = get('[data-billing-disclaimer]');
+            if (disclaimer) disclaimer.hidden = period !== 'yearly';
+        };
+        all('[data-billing-period]', billingSwitch).forEach((button) => {
+            button.addEventListener('click', () => showBillingPeriod(button.dataset.billingPeriod));
+        });
+    }
     const filterHost = get('#bp-transaction-list');
     const applyFilters = () => {
         if (!filterHost) return;
