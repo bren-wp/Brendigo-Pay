@@ -76,11 +76,16 @@ function bp_site_pricing(): string
     <div class="bp-benefits"><span>✓ Tri jasna paketa</span><span>✓ Zaseban ključ za svaku stranicu</span><span>✓ Ograničenja na poslužitelju</span><span>✓ Bez automatske naplate</span></div>
     <div class="bp-pricing-illustration" aria-hidden="true"><span class="bp-pricing-illustration-brand">Brendigo <b>Pay</b></span><span class="bp-pricing-card-chip">▦　)))</span></div>
 </section>
+<div class="bp-billing-switch" role="group" aria-label="Informativni prikaz cijena">
+    <button type="button" class="bp-billing-option is-current" data-billing-period="monthly" aria-pressed="true">Mjesečno</button>
+    <button type="button" class="bp-billing-option" data-billing-period="yearly" aria-pressed="false">Godišnje <small>12 mjeseci</small></button>
+</div>
+<p class="bp-billing-disclaimer" data-billing-disclaimer hidden>Godišnji iznos je informativan izračun 12 mjesečnih cijena, bez popusta. Odabir prikaza ne ugovara pretplatu; aktivacija se potvrđuje zasebno.</p>
 <div class="bp-price-cards">
     <article class="bp-surface">
         <span class="bp-feature-icon">⚡</span><h2>Start</h2>
         <p>Za jednu web-stranicu ili manju trgovinu.</p>
-        <p class="bp-price-value">19,90 € <small>/ mj</small></p>
+        <p class="bp-price-value"><span data-price-monthly="19,90 €" data-price-yearly="238,80 €">19,90 €</span> <small data-billing-term>/ mj</small></p>
         <strong class="bp-tier-sites">1 web-stranica</strong>
         <ul><li>1 aktivna licencija za WordPress</li><li>Platni linkovi i QR kodovi (TEST)</li><li>WordPress dodatak</li><li>Osnovni izvještaji</li></ul>
         <a href="/register?plan=start" class="btn secondary">Odaberi Start →</a>
@@ -89,7 +94,7 @@ function bp_site_pricing(): string
         <span class="bp-price-ribbon">NAJPOPULARNIJE · PRIJEDLOG</span>
         <span class="bp-feature-icon">◇</span><h2>Business</h2>
         <p>Za trgovine koje upravljaju s više domena.</p>
-        <p class="bp-price-value">49,90 € <small>/ mj</small></p>
+        <p class="bp-price-value"><span data-price-monthly="49,90 €" data-price-yearly="598,80 €">49,90 €</span> <small data-billing-term>/ mj</small></p>
         <strong class="bp-tier-sites">5 web-stranica</strong>
         <ul><li>Sve iz Start paketa</li><li>5 zasebnih WordPress licenci</li><li>WooCommerce integracija (TEST)</li><li>Stripe / PayPal / Revolut sandbox</li><li>Detaljniji izvještaji</li></ul>
         <a href="/register?plan=business" class="btn btn-white">Odaberi Business →</a>
@@ -97,7 +102,7 @@ function bp_site_pricing(): string
     <article class="bp-surface">
         <span class="bp-feature-icon">♛</span><h2>Pro</h2>
         <p>Za agencije i sustave s mnogo web-stranica.</p>
-        <p class="bp-price-value">99,90 € <small>/ mj</small></p>
+        <p class="bp-price-value"><span data-price-monthly="99,90 €" data-price-yearly="1.198,80 €">99,90 €</span> <small data-billing-term>/ mj</small></p>
         <strong class="bp-tier-sites">25 web-stranica</strong>
         <ul><li>Sve iz Business paketa</li><li>25 zasebnih WordPress licenci</li><li>Upravljanje web-stranicama</li><li>API pristup po instalaciji (TEST)</li><li>Administracija licencija</li></ul>
         <a href="/register?plan=pro" class="btn secondary">Odaberi Pro →</a>
@@ -106,7 +111,7 @@ function bp_site_pricing(): string
 <div class="bp-pricing-details">
     <section class="bp-surface"><h2>▥ Usporedba paketa</h2>
         <div class="table-wrap"><table><thead><tr><th>Značajka</th><th>Start</th><th>Business</th><th>Pro</th></tr></thead><tbody>
-            <tr><td>Mjesečna cijena (prijedlog)</td><td>19,90 €</td><td>49,90 €</td><td>99,90 €</td></tr>
+            <tr><td data-billing-price-label>Mjesečna cijena (prijedlog)</td><td data-price-monthly="19,90 €" data-price-yearly="238,80 €">19,90 €</td><td data-price-monthly="49,90 €" data-price-yearly="598,80 €">49,90 €</td><td data-price-monthly="99,90 €" data-price-yearly="1.198,80 €">99,90 €</td></tr>
             <tr><td>Najveći broj web-stranica</td><td><strong>1</strong></td><td><strong>5</strong></td><td><strong>25</strong></td></tr>
             <tr><td>Licenca za svaku WordPress stranicu</td><td>✓</td><td>✓</td><td>✓</td></tr>
             <tr><td>QR kodovi i naplatne poveznice (TEST)</td><td>✓</td><td>✓</td><td>✓</td></tr>
