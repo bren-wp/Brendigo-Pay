@@ -259,7 +259,7 @@ def main():
             assert json.loads(snapshot)['last_seen_at'] is None
             payload = {
                 'site_url': base, 'installation_id': 'a' * 32,
-                'plugin_version': '0.8.14', 'wordpress_version': '6.9.1',
+                'plugin_version': '0.8.15', 'wordpress_version': '6.9.1',
                 'woocommerce_version': '10.3.0',
             }
             assert req('/api/v1/sites/sync', {**payload, 'installation_id': 'b' * 32}, token=token)[0] == 403
@@ -267,15 +267,15 @@ def main():
             assert req('/api/v1/sites/sync', {**payload, 'plugin_version': '<script>'}, token=token)[0] == 422
             assert req('/api/v1/sites/sync', payload, token=token)[0] == 200
             site_status = json.loads(req('/api/v1/sites/status', token=token)[1])
-            assert site_status['plugin_version'] == '0.8.14' and site_status['last_seen_at']
-            assert '0.8.14' in req('/admin')[1] and site_status['origin'] in req('/sites')[1]
+            assert site_status['plugin_version'] == '0.8.15' and site_status['last_seen_at']
+            assert '0.8.15' in req('/admin')[1] and site_status['origin'] in req('/sites')[1]
             print('PASS: authenticated, version-bounded WordPress heartbeat and synchronized admin/user views')
             mobile_status, mobile_body, _ = req('/api/v1/mobile/overview', token=mobile_token)
             assert mobile_status == 200
             mobile_data = json.loads(mobile_body)
             assert mobile_data['subscription']['sites_used'] == 1
             assert mobile_data['sites'][0]['id'] == site_id
-            assert mobile_data['sites'][0]['plugin_version'] == '0.8.14'
+            assert mobile_data['sites'][0]['plugin_version'] == '0.8.15'
             mobile_create_status, created, _ = req('/api/v1/mobile/links', {
                 'site_id': site_id, 'title': 'Created on Android',
                 'amount': '24.90', 'description': 'Synced from user panel',
