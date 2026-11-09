@@ -1662,3 +1662,24 @@ html {overflow-x:clip;}
    min-height:875px;
  }
 }
+
+
+/* Reference 09: fixed two-line headline with the branded words grouped,
+   while allowing natural wrapping on narrower phones/tablets. */
+.bp-home-copy h1 .bp-hero-second-line {display:block;color:#111a42;}
+.bp-home-copy h1 .bp-hero-second-line em {color:#224de9;font-style:normal;}
+@media(min-width:1061px) {
+ .bp-body-marketing .bp-home-copy h1 .bp-hero-second-line {
+   white-space:nowrap;
+   font-size:clamp(2rem,2.62vw,2.52rem);
+   letter-spacing:-.045em;
+ }
+ .bp-body-marketing .bp-home-copy .bp-benefits {
+   flex-wrap:nowrap;gap:16px;font-size:.73rem;
+ }
+ .bp-body-marketing .bp-home-copy .bp-benefits span {white-space:nowrap;}
+}
+@media(max-width:1060px) {
+ .bp-home-copy h1 .bp-hero-second-line {white-space:normal;}
+ .bp-home-copy .bp-benefits {flex-wrap:wrap;}
+}
