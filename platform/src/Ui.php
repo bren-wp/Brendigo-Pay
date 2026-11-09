@@ -69,7 +69,7 @@ function bp_site_home(): string
 function bp_site_pricing(): string
 {
     ob_start(); ?>
-<section class="bp-pricing-intro">
+<section class="bp-pricing-intro bp-pricing-only">
     <span class="bp-kicker">⚡ TRI PLAĆENA PAKETA • LICENCIJE PO DOMENI</span>
     <h1>Jednostavne i transparentne <span>cijene</span></h1>
     <p>Odaberite plan prema broju WordPress stranica koje povezujete s Brendigo Payom. Nema besplatnog paketa. Cijene su prijedlog cjenika; online naplata pretplate još nije omogućena.</p>
