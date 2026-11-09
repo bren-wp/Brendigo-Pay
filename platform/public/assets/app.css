@@ -1479,3 +1479,27 @@ html {overflow-x:clip;}
 @media (min-width:1061px) {
   .bp-link-dialog { transform: translate(-6px, 12px); }
 }
+
+
+/* Reference 05: curved cyan/royal accent confined to the dialog heading. */
+@media (min-width:801px) {
+  .bp-link-dialog .bp-dialog-heading {
+    position:relative;isolation:isolate;overflow:hidden;
+    background:linear-gradient(105deg,#fff 0%,#fff 51%,#eaf6ff 85%,#d4f9fc 100%);
+  }
+  .bp-link-dialog .bp-dialog-heading::before {
+    content:"";position:absolute;z-index:0;right:-42px;top:-104px;
+    width:370px;height:218px;border-radius:0 0 67% 70%;
+    transform:rotate(-18deg);
+    background:linear-gradient(127deg,#effcff 3%,#c5f9f9 38%,#6fd4f8 65%,#4e83f4 100%);
+    opacity:.66;pointer-events:none;
+  }
+  .bp-link-dialog .bp-dialog-heading::after {
+    content:"";position:absolute;z-index:0;right:-45px;top:45px;
+    width:322px;height:115px;border-radius:74% 0 0 22%;
+    transform:rotate(-18deg);
+    background:linear-gradient(110deg,#ffffffbc 2%,#98f5f2bb 50%,#75aefa75 100%);
+    opacity:.66;pointer-events:none;
+  }
+  .bp-link-dialog .bp-dialog-heading>* {position:relative;z-index:1;}
+}
