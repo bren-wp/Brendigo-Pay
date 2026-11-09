@@ -1479,3 +1479,79 @@ html {overflow-x:clip;}
 @media (min-width:1061px) {
   .bp-link-dialog { transform: translate(-6px, 12px); }
 }
+
+
+/* Reference 09: compact, actionable three-tier price preview within the
+ * marketing card. Every price is the real paid sandbox plan price. */
+.bp-home-pricing-card {position:relative;min-width:0;}
+.bp-home-pricing-card .bp-home-plan-list {
+ display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;
+}
+.bp-home-pricing-card .bp-home-plan {
+ display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;
+ min-width:0;min-height:115px;padding:12px 10px 10px;
+ border:1px solid #dee6f7;border-radius:12px;
+ background:linear-gradient(135deg,#fff,#f7f9ff);color:#142154;
+ box-shadow:0 5px 13px #123c9a0e;text-decoration:none;transition:box-shadow .15s,transform .15s;
+}
+.bp-home-pricing-card .bp-home-plan:hover {transform:translateY(-2px);box-shadow:0 9px 18px #173baa28;}
+.bp-home-pricing-card .bp-home-plan:focus-visible {outline:3px solid #315bfa;outline-offset:3px;}
+.bp-home-pricing-card .bp-home-plan>span {font-weight:800;font-size:.87rem;line-height:1.2;}
+.bp-home-pricing-card .bp-home-plan small {display:block;font-size:.62rem;line-height:1.35;font-weight:500;margin-top:4px;}
+.bp-home-pricing-card .bp-home-plan strong {white-space:nowrap;font-weight:850;font-size:1.25rem;letter-spacing:-.04em;}
+.bp-home-pricing-card .bp-home-plan strong small {display:inline;font-weight:500;font-size:.62rem;letter-spacing:0;}
+.bp-home-pricing-card .bp-home-plan-featured {
+ background:linear-gradient(150deg,#3b73ff 0%,#2351e8 47%,#1134c9 100%);
+ border-color:#3157e9;color:#fff;box-shadow:0 8px 17px #2048d638;
+}
+.bp-home-pricing-card .bp-home-plan-featured small {color:#f3f7ff;}
+.bp-home-pricing-card .bp-home-pricing-note {font-size:.65rem;color:#586989;line-height:1.32;}
+.bp-home-wordpress-card {position:relative;overflow:hidden;isolation:isolate;}
+.bp-home-wordpress-card .bp-integration-chips {position:relative;z-index:2;max-width:64%;}
+.bp-home-wordpress-card .bp-wp-decoration {
+ position:absolute;right:10px;bottom:-10px;display:flex;align-items:center;justify-content:center;
+ width:185px;height:146px;transform:rotate(-10deg);opacity:.8;pointer-events:none;
+ border-radius:32px;background:linear-gradient(130deg,#dff5ff,#91d6ff80 42%,#82edec80 85%);
+ border:2px solid #a6e0ff8a;box-shadow:0 12px 22px #1278bf25;
+}
+.bp-home-wordpress-card .bp-wp-decoration span {position:absolute;display:grid;place-items:center;}
+.bp-home-wordpress-card .bp-wp-decoration span:nth-child(1) {
+ width:92px;height:72px;border-radius:13px;background:#edf7ff;border:1px solid #91c8f4;
+ color:#225add;font-size:3.4rem;left:14px;top:24px;box-shadow:0 6px 11px #1747a822;
+}
+.bp-home-wordpress-card .bp-wp-decoration span:nth-child(2) {
+ width:69px;height:68px;border-radius:14px;background:#fff;color:#1c41d4;
+ font-size:2.3rem;right:9px;bottom:16px;box-shadow:0 5px 16px #1338aa25;
+}
+.bp-home-wordpress-card .bp-wp-decoration span:nth-child(3) {color:#069eb8;right:12px;top:8px;font-size:1.7rem;}
+@media(min-width:1100px) {
+  .bp-body-marketing .bp-home-grid>.bp-home-pricing-card {
+     display:grid;grid-template-columns:minmax(0,1fr) minmax(325px,1.16fr);
+     grid-template-areas:"title plans" "copy plans" "note plans";
+     grid-template-rows:auto auto 1fr;column-gap:13px;align-items:start;
+     min-height:147px;padding:13px 17px;
+  }
+  .bp-body-marketing .bp-home-pricing-card h2 {grid-area:title;font-size:1.12rem;margin:0 0 6px;}
+  .bp-body-marketing .bp-home-pricing-card>p:not(.bp-home-pricing-note) {grid-area:copy;font-size:.75rem;line-height:1.35;margin:0 0 5px;}
+  .bp-body-marketing .bp-home-pricing-card .bp-home-pricing-note {grid-area:note;align-self:end;margin:3px 0 0;}
+  .bp-body-marketing .bp-home-pricing-card .bp-home-plan-list {grid-area:plans;align-self:center;}
+}
+@media(min-width:801px) and (max-width:1099px) {
+  .bp-home-pricing-card .bp-home-plan-list {margin-top:10px;}
+  .bp-home-wordpress-card .bp-integration-chips {max-width:100%;}
+  .bp-home-wordpress-card .bp-wp-decoration {opacity:.25;}
+}
+@media(max-width:800px) {
+  .bp-home-pricing-card .bp-home-plan-list {margin:12px 0 7px;}
+  .bp-home-wordpress-card .bp-integration-chips {max-width:100%;}
+  .bp-home-wordpress-card .bp-wp-decoration {display:none;}
+}
+@media(max-width:390px) {
+  .bp-home-pricing-card .bp-home-plan-list {gap:5px;}
+  .bp-home-pricing-card .bp-home-plan {min-height:100px;padding:9px 6px;}
+  .bp-home-pricing-card .bp-home-plan strong {font-size:.98rem;}
+  .bp-home-pricing-card .bp-home-plan>span {font-size:.72rem;}
+}
+@media(prefers-reduced-motion:reduce) {
+ .bp-home-pricing-card .bp-home-plan {transition:none;}
+}
