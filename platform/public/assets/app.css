@@ -1472,3 +1472,10 @@ html {overflow-x:clip;}
  .bp-billing-switch {margin:8px auto 14px;}
  .bp-billing-option {font-size:.78rem;}
 }
+
+
+/* Empirically measured dialog alignment on 1448×1086 source screenshots.
+   Keep centered native dialog behavior on tablets and phones. */
+@media (min-width:1061px) {
+  .bp-link-dialog { transform: translate(-6px, 12px); }
+}
