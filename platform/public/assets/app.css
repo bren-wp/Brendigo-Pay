@@ -1617,3 +1617,15 @@ html {overflow-x:clip;}
  }
  .bp-body-merchant .bp-merchant-sidebar .bp-brand {margin-top:2px;}
 }
+
+
+/* Reference 09: laptop composition sits behind the standalone payment panel,
+   beginning just to the right of the hero copy rather than at the far right. */
+@media(min-width:1061px) {
+ .bp-body-marketing:has(.bp-home-proof) .bp-home-hero .bp-laptop {
+   left:-95px;width:89%;max-width:610px;
+ }
+ .bp-body-marketing:has(.bp-home-proof) .bp-home-hero .bp-floating-payment {
+   right:0;top:19%;
+ }
+}
