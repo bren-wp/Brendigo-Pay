@@ -1397,3 +1397,30 @@ html {overflow-x:clip;}
  .bp-link-dialog .bp-preview-qr-placeholder {grid-template-columns:90px minmax(0,1fr);padding:11px 10px;}
  .bp-link-dialog .bp-preview-qr-placeholder>span {width:88px;height:88px;}
 }
+
+
+/* Checkout visual pass: preserve provider-hosted PCI boundary while mirroring
+   the reference's security -> order summary -> primary action hierarchy. */
+.bp-provider-tile .bp-provider-monogram {
+ display:grid;place-items:center;flex:0 0 29px;width:29px;height:29px;
+ color:#123bd1;background:#e9edff;border:1px solid #d7e0ff;
+ border-radius:9px;font-size:1.1rem;font-weight:850;margin-right:5px;
+}
+.bp-provider-tile .bp-provider-monogram+span {min-width:0;}
+.bp-body-checkout .bp-provider-tile {align-items:center;gap:8px;}
+.bp-body-checkout .bp-checkout-security {margin:12px 0 9px;padding:13px 15px;}
+.bp-body-checkout .bp-payment-total {margin:8px 0 13px;padding:15px 17px;border-radius:13px;}
+.bp-body-checkout .bp-checkout-submit {min-height:51px;font-size:1.06rem;width:100%;}
+.bp-body-checkout .bp-checkout-note {
+ background:transparent;border:0;text-align:center;padding:11px 8px 0;
+ font-size:.72rem;line-height:1.5;color:#5f7191;
+}
+@media(min-width:1051px) {
+ .bp-body-checkout .bp-ref-checkout>.bp-checkout-payment {min-height:860px;}
+ .bp-body-checkout .bp-checkout-payment>p {max-width:610px;}
+ .bp-body-checkout .bp-provider-tile {min-height:62px;border-radius:12px;}
+ .bp-body-checkout .bp-checkout-provider-fieldset {margin:20px 0 21px;}
+ .bp-body-checkout .bp-choice-step {margin:13px 0;}
+ .bp-body-checkout .bp-hosted-payment {min-height:135px;margin:15px 0;padding:18px 18px;}
+ .bp-body-checkout .bp-hosted-payment p {font-size:.83rem;line-height:1.55;}
+}
