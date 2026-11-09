@@ -1331,3 +1331,62 @@ html {overflow-x:clip;}
  .bp-body-marketing .bp-home-grid .bp-surface p {margin:2px 0 5px;}
  .bp-body-marketing .bp-home-grid>.bp-surface:nth-child(n+3) {min-height:136px;}
 }
+
+
+/* Reference 05/06/04: preview proportions and tenant sidebar geometry. */
+.bp-preview-link-placeholder {
+ display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #dee6f8;
+ padding:11px 12px;border-radius:13px;margin-top:11px;min-width:0;
+ box-shadow:0 3px 10px #122d720a;
+}
+.bp-preview-link-placeholder .bp-preview-link-icon {
+ display:grid;place-items:center;width:37px;height:37px;flex:0 0 37px;
+ background:#eaf0ff;color:#254bf1;border-radius:10px;font-size:1.5rem;
+}
+.bp-preview-link-placeholder div {min-width:0;}
+.bp-preview-link-placeholder strong,.bp-preview-link-placeholder small {display:block;font-size:.77rem;}
+.bp-preview-link-placeholder small {font-size:.67rem;color:#697790;margin-top:3px;overflow-wrap:anywhere;}
+.bp-link-preview .bp-preview-card {overflow:hidden;box-shadow:0 9px 18px #153b8317;border-radius:14px;}
+.bp-link-preview .bp-preview-header {min-height:69px;}
+.bp-link-preview .bp-preview-amount {font-size:1.7rem;letter-spacing:-.05em;}
+.bp-link-preview .bp-preview-qr-placeholder {min-height:114px;display:grid;grid-template-columns:81px minmax(0,1fr);gap:13px;align-items:center;}
+.bp-link-preview .bp-preview-qr-placeholder>span {
+ width:80px;height:80px;display:grid;place-items:center;background:#f5f8ff;
+ border-radius:11px;border:1px dashed #a9bdf0;color:#163cd5;font-size:3.1rem;
+}
+.bp-link-preview .bp-preview-qr-placeholder div {min-width:0;}
+.bp-link-preview .bp-preview-qr-placeholder strong {display:block;font-size:.84rem;}
+.bp-link-preview .bp-preview-qr-placeholder small {display:block;font-size:.7rem;margin-top:5px;line-height:1.35;color:#677790;}
+@media(min-width:1051px) {
+ /* Reference's 236 px overview rail and 203 px transaction rail are not identical.
+    Keep menu items real; do not add non-functional "Customers"/"Reports" links. */
+ .bp-body-merchant:has(.bp-dashboard-layout) .bp-merchant-sidebar {width:236px;}
+ .bp-body-merchant:has(.bp-transaction-layout) .bp-merchant-sidebar {width:203px;}
+ .bp-body-merchant .bp-merchant-sidebar {background:linear-gradient(172deg,#14246e 0%,#121d60 59%,#0e287b 100%);}
+ .bp-body-merchant .bp-merchant-sidebar .bp-brand {font-size:1.2rem;margin:3px 7px 27px;}
+ .bp-body-merchant .bp-merchant-sidebar .bp-sidebar-menu {gap:6px;}
+ .bp-body-merchant .bp-merchant-sidebar .bp-sidebar-menu a {
+   min-height:47px;font-size:.9rem;font-weight:650;border-radius:11px;gap:13px;
+ }
+ .bp-body-merchant .bp-merchant-sidebar .bp-sidebar-menu a span:first-child {min-width:21px;font-size:1.15rem;text-align:center;}
+ .bp-body-merchant .bp-merchant-sidebar .bp-sidebar-bottom {
+    position:relative;overflow:hidden;min-height:199px;
+    margin-top:45px;border-radius:15px;padding:18px 16px;
+    background:linear-gradient(139deg,#17276c 0%,#244dce 75%,#15d5d1 100%);
+ }
+ .bp-body-merchant .bp-merchant-sidebar .bp-sidebar-bottom::after {
+   content:"S    P    R";position:absolute;right:14px;bottom:17px;
+   padding:13px 15px;letter-spacing:.12em;color:#214ad6;font-size:1.1rem;font-weight:900;
+   background:linear-gradient(145deg,#fff,#edf4ff);border-radius:12px;transform:rotate(-7deg);
+   box-shadow:0 10px 16px #0c206b55;
+ }
+ .bp-body-merchant .bp-merchant-sidebar .bp-sidebar-bottom p {max-width:150px;line-height:1.5;}
+ .bp-body-merchant:has(.bp-transaction-layout) .bp-merchant-heading {padding-top:18px;margin-bottom:17px;}
+ .bp-body-merchant:has(.bp-transaction-layout) .bp-merchant-heading .bp-kicker {display:inline-flex;margin-bottom:2px;}
+ .bp-body-merchant:has(.bp-transaction-layout) .bp-merchant-heading h1 {margin:8px 0 5px;font-size:2.4rem;}
+ .bp-body-merchant:has(.bp-transaction-layout) .bp-dashboard-metrics {margin-top:14px;margin-bottom:15px;}
+}
+@media(max-width:1050px) {
+ .bp-link-preview .bp-preview-qr-placeholder {grid-template-columns:70px minmax(0,1fr);}
+ .bp-link-preview .bp-preview-qr-placeholder>span {width:68px;height:68px;}
+}
