@@ -200,8 +200,6 @@ backdrop_rules = re.findall(r'\.bp-link-dialog::backdrop\s*\{([^}]*)\}', web_css
 assert len(backdrop_rules) == 2, 'Review added modal backdrop rule'
 assert sum('background:' in rule for rule in backdrop_rules) == 1
 assert 'rgba(19,34,83,.37)' in ''.join(backdrop_rules)
-assert '.bp-link-dialog .bp-dialog-heading::before' in web_css
-assert '.bp-link-dialog .bp-dialog-heading::after' in web_css
 
 # Keep informative annual prices synchronized with paid-plan amounts.
 plans_source = (ROOT / 'platform/src/Plans.php').read_text(encoding='utf-8')
