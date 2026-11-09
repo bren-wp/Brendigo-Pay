@@ -7,7 +7,7 @@ import hashlib
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
 
-VERSION = '0.8.14'
+VERSION = '0.8.15'
 ROOT = Path(__file__).resolve().parent.parent
 
 
