@@ -1619,3 +1619,44 @@ html {overflow-x:clip;}
    right:0;top:19%;
  }
 }
+
+
+/* Pricing reference: highlighted Business comparison column and discreet FAQ rows.
+ * Specific to pricing only; no effect on real transactions or provider flows. */
+.bp-body-marketing .bp-tier-comparison {
+ border-collapse:separate;border-spacing:0;width:100%;
+}
+.bp-body-marketing .bp-tier-comparison thead th {
+ background:#f1f5fe;color:#122047;text-align:center;
+ padding:10px 9px;font-size:.8rem;vertical-align:middle;
+}
+.bp-body-marketing .bp-tier-comparison thead th:first-child {
+ text-align:left;border-radius:9px 0 0 9px;
+}
+.bp-body-marketing .bp-tier-comparison thead th:last-child {border-radius:0 9px 9px 0;}
+.bp-body-marketing .bp-tier-comparison thead th small {
+ display:block;font-size:.68rem;font-weight:600;margin-top:4px;color:#586e9f;
+}
+.bp-body-marketing .bp-tier-comparison thead th.bp-comparison-featured {
+ background:linear-gradient(150deg,#3a70ff,#1238d9);
+ color:#fff;border-radius:10px;box-shadow:0 4px 12px #2453e22b;
+}
+.bp-body-marketing .bp-tier-comparison thead .bp-comparison-featured small {color:#ecf4ff;}
+.bp-body-marketing .bp-tier-comparison tbody td:nth-child(3) {
+ background:#eff4ffb8;border-left:1px solid #e3eaff;border-right:1px solid #e3eaff;
+}
+.bp-body-marketing .bp-tier-comparison tbody tr:last-child td:nth-child(3) {border-radius:0 0 10px 10px;}
+.bp-body-marketing .bp-faq details {
+ background:#fff;border:1px solid #e0e7f7;
+ border-radius:11px;margin:6px 0;padding:10px 12px;
+}
+.bp-body-marketing .bp-faq details[open] {background:#f6f9ff;border-color:#cbdcff;}
+.bp-body-marketing .bp-faq summary {
+ display:list-item;cursor:pointer;font-size:.79rem;line-height:1.35;
+}
+.bp-body-marketing .bp-faq details p {font-size:.75rem;line-height:1.45;margin:7px 0 0;}
+@media(max-width:700px) {
+ .bp-body-marketing .bp-tier-comparison {min-width:580px;}
+ .bp-body-marketing .bp-tier-comparison thead th {font-size:.72rem;}
+ .bp-body-marketing .bp-faq details {padding:11px 12px;}
+}
