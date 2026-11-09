@@ -191,3 +191,19 @@ for amount in ('238,80 €', '598,80 €', '1.198,80 €'):
     assert amount in pricing, amount
 assert 'data-billing-disclaimer' in pricing
 assert 'showBillingPeriod' in pricing_js and "setAttribute('aria-pressed'" in pricing_js
+
+
+# Visual regression guard: there must be one effective overlay background,
+# not a stronger late declaration silently overriding the intended opacity.
+web_css = (ROOT / 'platform/public/assets/app.css').read_text(encoding='utf-8')
+backdrop_rules = re.findall(r'\.bp-link-dialog::backdrop\s*\{([^}]*)\}', web_css)
+assert len(backdrop_rules) == 2, 'Review added modal backdrop rule'
+assert sum('background:' in rule for rule in backdrop_rules) == 1
+assert 'rgba(19,34,83,.37)' in ''.join(backdrop_rules)
+assert '.bp-link-dialog .bp-dialog-heading::before' in web_css
+assert '.bp-link-dialog .bp-dialog-heading::after' in web_css
+
+# Keep informative annual prices synchronized with paid-plan amounts.
+plans_source = (ROOT / 'platform/src/Plans.php').read_text(encoding='utf-8')
+for tier, minor in [('start', 1990), ('business', 4990), ('pro', 9990)]:
+    assert re.search(r"'"+tier+r"'\s*=>\s*\[[^\]]*'monthly_minor'\s*=>\s*"+str(minor), plans_source), tier
