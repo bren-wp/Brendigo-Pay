@@ -180,11 +180,30 @@ def main():
             )
             assert replacements == 1, 'missing operator configuration'
             # Operator-provided legal identity is escaped even when config has markup.
+            previous_config = config_text
             config_text = config_text.replace(
                 "'legal_operator_name' => ''",
                 "'legal_operator_name' => '<script>alert(1)</script>'",
             )
+            assert config_text != previous_config, 'legal operator test fixture was not injected'
             config_file.write_text(config_text)
+            # Reboot the disposable PHP test server so the modified config is
+            # always reloaded. Otherwise fast CI machines may retain a cached
+            # require() from the same second and falsely fail this XSS check.
+            server.terminate()
+            server.wait(timeout=10)
+            server = subprocess.Popen(
+                ['php', '-S', f'127.0.0.1:{port}', 'router.php'], cwd=project,
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+            )
+            for attempt in range(30):
+                try:
+                    if req('/api/v1/health')[0] == 200:
+                        break
+                except urllib.error.URLError:
+                    time.sleep(0.1)
+            else:
+                raise RuntimeError('Reloaded smoke-test server did not start')
             public_contact_status, public_contact, _ = req('/contact')
             assert public_contact_status == 200
             assert '&lt;script&gt;alert(1)&lt;/script&gt;' in public_contact
