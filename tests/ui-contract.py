@@ -215,3 +215,16 @@ assert 'bp-home-plan-list' in public_ui and 'bp-home-wordpress-card' in public_u
 assert 'Jasna razvojna faza' not in public_ui
 assert '.bp-home-plan-featured' in web_css
 assert '.bp-price-featured li::before' in web_css
+
+
+# v0.8.15: cross-screen visual/behavior invariants.
+assert 'class="bp-hero-second-line"' in public_ui
+assert 'Sigurna testna naplata' in public_ui
+assert '.bp-home-copy h1 .bp-hero-second-line' in web_css
+assert 'class="bp-tier-comparison"' in public_ui
+assert 'class="bp-comparison-featured"' in public_ui
+assert 'Koje načine plaćanja podržava Brendigo Pay?' in public_ui
+assert 'grid-template-columns:repeat(3,minmax(0,1fr))' in web_css
+assert "windowStart = $todayUtc - 29 * 86400" in public_ui
+assert "Svi datumi" in public_ui
+assert 'min-height:552px' in web_css
