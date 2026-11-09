@@ -146,7 +146,7 @@ function render(string $title, string $content): never
         . 'nije banka ni licencirana financijska ili platna institucija, ne drži sredstva kupaca. '
         . 'Platne transakcije izvršavaju vanjski, zasebno ugovoreni pružatelji. '
         . 'Trenutačno izdanje dostupno je samo za testna plaćanja.</div>'
-        . '<div class="container bp-footer-bottom"><span>© ' . date('Y') . ' Brendigo Pay · v0.8.13 (SANDBOX)</span>'
+        . '<div class="container bp-footer-bottom"><span>© ' . date('Y') . ' Brendigo Pay · v0.8.14 (SANDBOX)</span>'
         . '<span>Built with <a href="https://brendigo.com" rel="noopener noreferrer">Brendigo</a></span></div>'
         . '</footer></body></html>';
     exit;

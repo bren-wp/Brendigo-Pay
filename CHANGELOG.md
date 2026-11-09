@@ -1,3 +1,13 @@
+## 0.8.14 — 2026-11-09 (SANDBOX)
+
+- Nastavljena usporedba deset Brendigo Pay referenci. Naslovnica: 51,05 % → 48,21 %; cjenik: 56,65 % → 56,28 % uz istu Chromium pixel-diff metriku (1448×1086). Ostala četiri izmjerena web prikaza nisu pogoršana.
+- Naslovnica sada ima stvarne poveznice za tri plaćena paketa Start, Business i Pro, responzivni pregled cjenika te dorađenu WordPress/WooCommerce karticu i položaj hero prijenosnog računala.
+- Cjenik: referentni simboli pogodnosti, poboljšana Business kartica i dekoracija ograničena na karticu bez prelijevanja na FAQ/tablicu.
+- Eksperimentalne promjene sidebar položaja vraćene su nakon izmjerene regresije.
+- Automatske strukturne i stvarne browser provjere podržavaju nove komponente. Izvještaj: docs/VISUAL-PARITY-ITERATION-2026-11-09-v3.md.
+- Cilj 1:1 / 0 % nije postignut. WordPress/Gutenberg/WooCommerce host snimke te Android referentni prikazi još nedostaju.
+- Izdanje je SANDBOX. Produkcijska naplata nije certificirana; Android APK je debug, AAB nepotpisan.
+
 ## 0.8.13 — 2026-11-09 (SANDBOX)
 
 - Nastavak vizualnog usklađivanja prema deset referenci. Modal „Novi platni link” smanjen je s 72,16 % na **43,48 %** (−28,68 postotnih bodova) nakon uklanjanja nadjačanog CSS pravila pozadinske maske.

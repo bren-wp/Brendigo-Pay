@@ -3,7 +3,7 @@ Contributors: brendigo
 Tags: payment links, woocommerce, qr codes, checkout, integrations
 Requires at least: 6.4
 Requires PHP: 8.1
-Stable tag: 0.8.13
+Stable tag: 0.8.14
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -55,6 +55,12 @@ WooCommerce has a separate built-in Direct Bank Transfer (BACS) method. Bank tra
 No. The current version is a sandbox preview. Live provider and regulatory verification are not complete.
 
 == Changelog ==
+
+= 0.8.14 =
+* Ažurirana usklađena verzija web-platforme i Android aplikacije.
+* Poboljšani prikazi paketa na naslovnici te vizualne dorade cjenika i postojećih testnih platnih tokova.
+* Izdanje ostaje SANDBOX. Pixel-perfect 1:1 i produkcijska PSP certifikacija nisu dovršeni.
+
 
 = 0.8.13 =
 * Usklađena verzija s web platformom i Android aplikacijom.
