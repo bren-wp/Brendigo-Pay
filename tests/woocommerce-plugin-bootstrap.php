@@ -69,7 +69,7 @@ namespace {
         echo "PASS: {$label}\n";
     }
 
-    verify(defined('BP_PAY_VERSION') && BP_PAY_VERSION === '0.8.11', 'plugin loads and version matches');
+    verify(defined('BP_PAY_VERSION') && BP_PAY_VERSION === '0.8.12', 'plugin loads and version matches');
     foreach ($GLOBALS['wp_test_actions']['admin_menu'] as $callback) { $callback(); }
     verify($GLOBALS['bp_test_main_menu'] === ['brendigo-pay'], 'single Brendigo Pay WordPress parent menu');
     verify(count($GLOBALS['bp_test_submenus']) === 7, 'seven native sidebar sections');
@@ -103,7 +103,7 @@ namespace {
         'Blocks settings loaded correctly');
     verify(count($data['providers']) === 3 && $data['supports'] === ['products'], 'provider data exposed to Checkout Blocks');
     verify($method->get_payment_method_script_handles() === ['bp-pay-woocommerce-block'] &&
-        $GLOBALS['wp_test_registered_scripts']['bp-pay-woocommerce-block'][2] === '0.8.11',
+        $GLOBALS['wp_test_registered_scripts']['bp-pay-woocommerce-block'][2] === '0.8.12',
         'Blocks frontend script registered locally at current version');
 
     // Corrupted WP option rows sometimes return false/non-array data.
