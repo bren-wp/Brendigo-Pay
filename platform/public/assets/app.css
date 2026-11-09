@@ -173,7 +173,6 @@ code { overflow-wrap: anywhere; font-size: .85em; background: #f3f5fc; border-ra
 .bp-metric-icon.bp-green { color: #109b38; background: #e2faed; }
 .bp-dashboard-metrics span:not(.bp-metric-icon), .bp-dashboard-metrics small { font-size: .76rem; display: block; }
 .bp-dashboard-metrics strong { display: block; font-size: clamp(1.1rem, 1.7vw, 1.7rem); font-weight: 850; letter-spacing: -.05em; color: #121844; overflow-wrap: anywhere; }
-.bp-dashboard-grid { display: grid; grid-template-columns: minmax(0,1.85fr) minmax(260px,1fr); gap: 14px; margin-bottom: 15px; }
 .bp-section-top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 12px; }
 .bp-section-top h2 { margin: 0; }
 .bp-chart-total { font-size: 2.1rem; letter-spacing: -.04em; }
@@ -243,7 +242,6 @@ hr { border: 0; border-top: 1px solid #e2e9f6; margin: 22px 0; }
     .bp-feature-strip>div:nth-child(3) { border-left: none; }
     .bp-dashboard-metrics { grid-template-columns: repeat(2,1fr); }
     .bp-merchant-sidebar { width: 204px; }
-    .bp-dashboard-grid { grid-template-columns: 1fr; }
     .bp-hero-art { transform: scale(.93); transform-origin: center right; }
 }
 @media (max-width: 800px) {

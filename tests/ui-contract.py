@@ -166,3 +166,7 @@ for option in ['brendigo_pay_settings', 'bp_pay_installation_id', 'bp_pay_sync_s
     assert option in uninstall, option
 assert 'wp_clear_scheduled_hook' in uninstall
 assert 'delete_posts' not in uninstall and 'wc_delete_order' not in uninstall
+
+# The obsolete dashboard grid was replaced with the responsive two-column layout.
+assert '.bp-dashboard-grid {' not in web_css
+assert 'class="bp-dashboard-layout"' in (ROOT/'platform/src/Ui.php').read_text()
