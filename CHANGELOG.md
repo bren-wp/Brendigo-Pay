@@ -1,3 +1,11 @@
+## 0.8.12 — 2026-11-09 (SANDBOX)
+
+- Sačuvana najbolja izmjerena verzija nakon povrata promjene koja je pogoršala CTA bannere.
+- Poboljšani Transakcije, Pregled, cjenik, naslovnica i checkout. Modal novog platnog linka još zahtijeva dodatni vizualni rad.
+- Metrički izvještaj i regionalni cropovi: docs/VISUAL-PARITY-ITERATION-2026-11-09.md.
+- Nijedan zaslon još nema dokazani rezultat 1:1 / 0 % odstupanja. WordPress/Gutenberg/WooCommerce host snimke i Android UI certifikacija nisu dovršeni.
+- SANDBOX — bez produkcijske naplate; Android debug APK i nepotpisani AAB.
+
 ## 0.8.11 — 2026-11-09 (SANDBOX)
 
 - Dorade osam prioritetnih vizualnih regija: oba CTA bannera, hero i paketi cjenika, bočna navigacija, naslov Transakcija, modal za novi link te redoslijed sadržaja checkouta.
