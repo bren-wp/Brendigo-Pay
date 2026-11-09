@@ -1555,3 +1555,52 @@ html {overflow-x:clip;}
 @media(prefers-reduced-motion:reduce) {
  .bp-home-pricing-card .bp-home-plan {transition:none;}
 }
+
+
+/* Reference 08 — detailed paid tier cards: green checkmarks, curved
+   highlighted Business gradient, and left-aligned hero copy. */
+@media(min-width:1061px) {
+ .bp-body-marketing .bp-pricing-only {padding-left:2px;}
+ .bp-body-marketing .bp-pricing-only .bp-pricing-illustration {
+   right:9%;border-radius:22px;box-shadow:0 16px 27px #15379e60;
+ }
+ .bp-body-marketing .bp-pricing-only .bp-benefits {gap:16px;}
+ .bp-body-marketing .bp-price-cards article .bp-feature-icon {
+   display:grid;place-items:center;width:54px;height:54px;
+   border-radius:17px;box-shadow:inset 0 1px 0 #fff9,0 6px 12px #2444bd14;
+   background:linear-gradient(145deg,#e7e9ff,#d5defb);
+ }
+ .bp-body-marketing .bp-price-cards .bp-price-featured {
+   isolation:isolate;position:relative;
+   background:linear-gradient(145deg,#305ffb 0%,#174adf 45%,#092abe 100%);
+   box-shadow:0 10px 20px #0a37b54d;border:2px solid #548eff;
+ }
+ .bp-body-marketing .bp-price-cards .bp-price-featured::before {
+   content:"";position:absolute;z-index:-1;right:-15%;bottom:-58%;
+   height:93%;width:91%;border-radius:50%;transform:rotate(-20deg);
+   background:linear-gradient(131deg,#6dceff50,#15b7eb5e,#3c61f9c4);
+   pointer-events:none;
+ }
+ .bp-body-marketing .bp-price-cards .bp-price-featured::after {
+   content:"";position:absolute;z-index:-1;right:-22%;bottom:-72%;
+   height:104%;width:95%;border:2px solid #e9faff66;
+   border-radius:50%;transform:rotate(-25deg);pointer-events:none;
+ }
+}
+.bp-body-marketing .bp-price-cards ul {
+ list-style:none;padding-left:0;margin-left:0;
+}
+.bp-body-marketing .bp-price-cards li {
+ list-style:none;position:relative;padding-left:23px!important;
+}
+.bp-body-marketing .bp-price-cards li::before {
+ content:"✓";position:absolute;left:0;top:0;display:grid;place-items:center;
+ width:16px;height:16px;line-height:1;font-size:.67rem;font-weight:900;
+ color:#138a52;background:#e1f8e9;border-radius:50%;
+}
+.bp-body-marketing .bp-price-featured li::before {
+ background:#6bd3ba5e;color:#e5fff2;border:1px solid #8df3c16b;
+}
+@media(max-width:800px) {
+ .bp-body-marketing .bp-price-cards li {padding-left:22px!important;}
+}
