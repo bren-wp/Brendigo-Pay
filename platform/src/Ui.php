@@ -119,7 +119,7 @@ function bp_site_pricing(): string
 </div>
 <div class="bp-pricing-details">
     <section class="bp-surface"><h2>▥ Usporedba paketa</h2>
-        <div class="table-wrap"><table><thead><tr><th>Značajka</th><th>Start</th><th>Business</th><th>Pro</th></tr></thead><tbody>
+        <div class="table-wrap"><table class="bp-tier-comparison"><thead><tr><th scope="col">Značajka</th><th scope="col">Start<small>19,90 € / mj</small></th><th scope="col" class="bp-comparison-featured">Business<small>49,90 € / mj</small></th><th scope="col">Pro<small>99,90 € / mj</small></th></tr></thead><tbody>
             <tr><td data-billing-price-label>Mjesečna cijena (prijedlog)</td><td data-price-monthly="19,90 €" data-price-yearly="238,80 €">19,90 €</td><td data-price-monthly="49,90 €" data-price-yearly="598,80 €">49,90 €</td><td data-price-monthly="99,90 €" data-price-yearly="1.198,80 €">99,90 €</td></tr>
             <tr><td>Najveći broj web-stranica</td><td><strong>1</strong></td><td><strong>5</strong></td><td><strong>25</strong></td></tr>
             <tr><td>Licenca za svaku WordPress stranicu</td><td>✓</td><td>✓</td><td>✓</td></tr>
@@ -136,6 +136,7 @@ function bp_site_pricing(): string
         <details><summary>Kako aktiviram WordPress dodatak?</summary><p>U korisničkom panelu otvorite Web-stranice, dodajte domenu i prepišite jednokratni licencni ključ u dodatak. Povezivanje je moguće samo uz aktivan plaćeni paket.</p></details>
         <details><summary>Mogu li promijeniti paket?</summary><p>Administrator može potvrditi nadogradnju. Prije prelaska na paket s manjim limitom potrebno je ukloniti višak domena.</p></details>
         <details><summary>Je li automatska naplata pretplate dostupna?</summary><p>Ne. Trenutačno se paket potvrđuje ručno nakon provjerene uplate. Prikazane cijene još su prijedlog, a stvarne transakcije nisu omogućene.</p></details>
+        <details><summary>Koje načine plaćanja podržava Brendigo Pay?</summary><p>U testnom okruženju moguće je povezati Stripe, PayPal i Revolut ako su dostupni vašem računu. Dostupnost pojedine metode ovisi o odobrenju i konfiguraciji samog pružatelja.</p></details>
     </section>
 </div>
 <section class="bp-bottom-cta bp-bottom-cta-pricing" aria-labelledby="bp-pricing-cta-title">
