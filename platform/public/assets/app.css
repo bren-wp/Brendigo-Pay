@@ -1605,3 +1605,15 @@ html {overflow-x:clip;}
 @media(max-width:800px) {
  .bp-body-marketing .bp-price-cards li {padding-left:22px!important;}
 }
+
+
+/* Desktop merchant rail y-origin correction: keep the functional main layout
+ * and routing unchanged while bringing only the navy sidebar to the viewport top. */
+@media(min-width:1051px) {
+ .bp-body-merchant .bp-merchant-sidebar {
+    position:relative;z-index:2;
+    margin-top:-65px;margin-bottom:0;min-height:calc(100vh + 65px);
+    padding-top:14px;
+ }
+ .bp-body-merchant .bp-merchant-sidebar .bp-brand {margin-top:2px;}
+}
