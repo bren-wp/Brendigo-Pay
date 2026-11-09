@@ -1297,3 +1297,37 @@ html {overflow-x:clip;}
 @media(prefers-reduced-motion:reduce) {
  .bp-bottom-cta .bp-cta-payment-card {transition:none;}
 }
+
+
+/* Follow-up visual measurement: fix legacy inset conflict on pricing art.
+   Keep decorative waves solely at the right; compress pricing cards into the
+   reference's y=310..602 band without sacrificing text legibility. */
+@media(min-width:1061px) {
+ .bp-body-marketing .bp-pricing-intro::before {
+   inset:auto;top:-95px;right:-13%;left:auto;bottom:auto;
+   width:55%;height:285px;pointer-events:none;
+ }
+ .bp-body-marketing .bp-pricing-intro::after {
+   inset:auto;top:-75px;right:-12%;left:auto;bottom:auto;
+   width:59%;height:266px;pointer-events:none;
+ }
+ .bp-body-marketing .bp-price-cards article {
+   min-height:294px;height:294px;padding:13px 17px 12px;
+ }
+ .bp-body-marketing .bp-price-cards article>h2 {font-size:1.54rem;margin:0;line-height:1.05;}
+ .bp-body-marketing .bp-price-cards article>.bp-feature-icon {width:49px;height:49px;}
+ .bp-body-marketing .bp-price-cards article>p:not(.bp-price-value) {font-size:.75rem;margin:2px 0 0;min-height:0;}
+ .bp-body-marketing .bp-price-cards .bp-price-value {font-size:2.15rem;margin:2px 0 1px;}
+ .bp-body-marketing .bp-price-cards .bp-tier-sites {font-size:.72rem;padding:5px 9px;}
+ .bp-body-marketing .bp-price-cards ul {margin:3px 0 4px;padding-left:19px;line-height:1.35;}
+ .bp-body-marketing .bp-price-cards li {font-size:.73rem;padding:0;}
+ .bp-body-marketing .bp-price-cards .btn {min-height:36px;padding:6px 12px;}
+ .bp-body-marketing .bp-home-grid {row-gap:13px;}
+ .bp-body-marketing .bp-home-grid>.bp-surface:nth-child(-n+2) {min-height:145px;padding:13px 17px;}
+ .bp-body-marketing .bp-home-grid .bp-provider-grid,
+ .bp-body-marketing .bp-home-grid .bp-integration-chips {margin-top:10px;}
+ .bp-body-marketing .bp-home-grid .bp-provider-grid span,
+ .bp-body-marketing .bp-home-grid .bp-integration-chips span {padding:8px 10px;font-size:.77rem;}
+ .bp-body-marketing .bp-home-grid .bp-surface p {margin:2px 0 5px;}
+ .bp-body-marketing .bp-home-grid>.bp-surface:nth-child(n+3) {min-height:136px;}
+}
