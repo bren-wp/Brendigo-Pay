@@ -181,3 +181,13 @@ assert visual.count('class="bp-provider-monogram" aria-hidden="true"') >= 2
 checkout=visual.split('function bp_public_payment(',1)[1].split('function bp_site_plugin(',1)[0]
 assert checkout.count('class="bp-payment-total"') == 2
 assert checkout.count('class="bp-checkout-security"') == 2
+
+# Pricing estimator changes visible prices and table only, never creates a billing entitlement.
+pricing=(ROOT/'platform/src/Ui.php').read_text(encoding='utf-8')
+pricing_js=(ROOT/'platform/public/assets/app.js').read_text(encoding='utf-8')
+assert 'bp-pricing-intro bp-pricing-only' in pricing
+assert 'data-billing-period="monthly"' in pricing and 'data-billing-period="yearly"' in pricing
+for amount in ('238,80 €', '598,80 €', '1.198,80 €'):
+    assert amount in pricing, amount
+assert 'data-billing-disclaimer' in pricing
+assert 'showBillingPeriod' in pricing_js and "setAttribute('aria-pressed'" in pricing_js

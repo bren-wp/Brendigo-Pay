@@ -51,6 +51,18 @@ with tempfile.TemporaryDirectory(prefix='brendigo-qa-') as td:
                     scroll=render(page,html)
                     assert page.locator('h1').count()>=1,(name,'heading missing')
                     assert scroll<=width+2,(name,label,'horizontal overflow',scroll)
+                    if name == 'pricing':
+                        # Both options must update card and comparison-table amounts,
+                        # and the 12-month estimate must disclose that it is not a paid contract.
+                        assert page.locator('[data-billing-period]').count() == 2
+                        page.locator('[data-billing-period="yearly"]').click()
+                        assert '598,80' in page.locator('.bp-price-featured .bp-price-value').inner_text()
+                        assert page.locator('[data-billing-disclaimer]').is_visible()
+                        assert 'Godišnji' in page.locator('[data-billing-price-label]').inner_text()
+                        assert page.locator('[data-billing-period="yearly"]').get_attribute('aria-pressed') == 'true'
+                        page.locator('[data-billing-period="monthly"]').click()
+                        assert '49,90' in page.locator('.bp-price-featured .bp-price-value').inner_text()
+                        assert not page.locator('[data-billing-disclaimer]').is_visible()
                     if label in ('desktop','mobile'):
                         page.screenshot(path=str(OUTPUT/f'{name}-{label}.png'),full_page=True)
                     if label == 'desktop' and name in ('home','pricing'):
