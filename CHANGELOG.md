@@ -1,3 +1,13 @@
+## 0.8.11 — 2026-11-09 (SANDBOX)
+
+- Dorade osam prioritetnih vizualnih regija: oba CTA bannera, hero i paketi cjenika, bočna navigacija, naslov Transakcija, modal za novi link te redoslijed sadržaja checkouta.
+- Naslovnica prikazuje CTA prije dopunske sekcije, kao u referentnom viewportu. Oba CTA gumba vode na stvarne, postojeće rute.
+- Vizualne ilustracije izrađene su CSS-om i postojećim brendingom; bez umetanja referentnog screenshot-a u UI i bez generiranih korisničkih transakcija.
+- Checkout ostaje hosted kod službenog pružatelja; nema lokalnog spremanja kartičnih brojeva ni CVC-a. U neaktivnom sandboxu izbor je onemogućen.
+- Dodatna provjera točne prisutnosti CTA-a u desktop viewportu, preglednog modala i sažetka prije nastavka na naplatu.
+- **Pixel-perfect cilj 1:1 / 0% još nije ostvaren.** Referentni rezultati se moraju iskreno izvještavati; 3 WordPress snimke još nisu snimljene, a za Android ne postoji zasebna referenca.
+- Ovo izdanje nije certificirano za produkcijsku platnu obradu. Windows aplikacija nije dio repozitorija.
+
 ## 0.8.10 — 2026-11-09 (SANDBOX)
 
 - Jedinstvena provjera isteka platnih poveznica u webu, WordPress API-ju i Androidu; zabranjena reaktivacija isteklih poveznica, a stanje u svim panelima je usklađeno.
