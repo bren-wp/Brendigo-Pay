@@ -21,6 +21,14 @@ jobs:
         run: python3 --version
       - name: PHP lint and offline test suite
         run: bash tests/run-all.sh
+      - name: Non-destructive source dead-code/security inventory
+        run: python3 scripts/dead_code_audit.py --output-dir audit-results
+      - name: Archive audited code candidates
+        uses: actions/upload-artifact@v4
+        with:
+          name: brendigo-pay-static-code-audit
+          path: audit-results/
+          retention-days: 30
       - name: Android structural security contract
         run: python3 tests/android-contract.py
       - name: Build release archives
