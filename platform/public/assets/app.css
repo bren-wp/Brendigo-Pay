@@ -1649,3 +1649,16 @@ html {overflow-x:clip;}
 @media(max-width:360px) {
   .bp-link-dialog .bp-link-provider-options {grid-template-columns:minmax(0,1fr);}
 }
+
+
+/* Checkout reference: align the tall merchant summary and provider surface.
+ * Desktop-only geometry; card data and PSP-hosted collection remain unchanged. */
+@media(min-width:1051px) {
+ .bp-body-checkout .bp-checkout-left .bp-order-description {
+   min-height:552px;
+ }
+ .bp-body-checkout .bp-ref-checkout>.bp-checkout-payment {
+   margin-top:-183px;
+   min-height:875px;
+ }
+}
