@@ -57,7 +57,7 @@ jobs:
           adb shell am start -n com.brendigo.pay.debug/com.brendigo.pay.MainActivity
           sleep 6
           mkdir -p screenshots
-          adb exec-out screencap -p > screenshots/Brendigo-Pay-Android-0.8.11-login.png
+          adb exec-out screencap -p > screenshots/Brendigo-Pay-Android-0.8.12-login.png
           # Inspect the actual accessible text tree; scroll based on emulator resolution.
           python3 - <<'PY'
           import re, subprocess, xml.etree.ElementTree as ET
@@ -95,18 +95,18 @@ jobs:
               raise SystemExit('Registration screen was not opened successfully')
           PY
           sleep 5
-          adb exec-out screencap -p > screenshots/Brendigo-Pay-Android-0.8.11-registration.png
-          test "$(stat -c%s screenshots/Brendigo-Pay-Android-0.8.11-login.png)" -gt 20000
-          test "$(stat -c%s screenshots/Brendigo-Pay-Android-0.8.11-registration.png)" -gt 20000
+          adb exec-out screencap -p > screenshots/Brendigo-Pay-Android-0.8.12-registration.png
+          test "$(stat -c%s screenshots/Brendigo-Pay-Android-0.8.12-login.png)" -gt 20000
+          test "$(stat -c%s screenshots/Brendigo-Pay-Android-0.8.12-registration.png)" -gt 20000
           file screenshots/*.png
           sha256sum screenshots/*.png
       - uses: actions/upload-artifact@v4
         with:
-          name: brendigo-android-real-screenshots-0.8.11
+          name: brendigo-android-real-screenshots-0.8.12
           path: screenshots/*.png
           retention-days: 30
       - name: Upload verified emulator screenshots to existing sandbox release
         if: success()
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release upload v0.8.11 screenshots/*.png --clobber
+        run: gh release upload v0.8.12 screenshots/*.png --clobber
