@@ -119,7 +119,7 @@ function bp_site_pricing(): string
 </div>
 <div class="bp-pricing-details">
     <section class="bp-surface"><h2>▥ Usporedba paketa</h2>
-        <div class="table-wrap"><table class="bp-tier-comparison"><thead><tr><th scope="col">Značajka</th><th scope="col">Start<small>19,90 € / mj</small></th><th scope="col" class="bp-comparison-featured">Business<small>49,90 € / mj</small></th><th scope="col">Pro<small>99,90 € / mj</small></th></tr></thead><tbody>
+        <div class="table-wrap"><table class="bp-tier-comparison"><thead><tr><th scope="col">Značajka</th><th scope="col">Start<small data-price-monthly="19,90 € / mj" data-price-yearly="238,80 € / god">19,90 € / mj</small></th><th scope="col" class="bp-comparison-featured">Business<small data-price-monthly="49,90 € / mj" data-price-yearly="598,80 € / god">49,90 € / mj</small></th><th scope="col">Pro<small data-price-monthly="99,90 € / mj" data-price-yearly="1.198,80 € / god">99,90 € / mj</small></th></tr></thead><tbody>
             <tr><td data-billing-price-label>Mjesečna cijena (prijedlog)</td><td data-price-monthly="19,90 €" data-price-yearly="238,80 €">19,90 €</td><td data-price-monthly="49,90 €" data-price-yearly="598,80 €">49,90 €</td><td data-price-monthly="99,90 €" data-price-yearly="1.198,80 €">99,90 €</td></tr>
             <tr><td>Najveći broj web-stranica</td><td><strong>1</strong></td><td><strong>5</strong></td><td><strong>25</strong></td></tr>
             <tr><td>Licenca za svaku WordPress stranicu</td><td>✓</td><td>✓</td><td>✓</td></tr>
