@@ -51,6 +51,10 @@ with tempfile.TemporaryDirectory(prefix='brendigo-qa-') as td:
                     scroll=render(page,html)
                     assert page.locator('h1').count()>=1,(name,'heading missing')
                     assert scroll<=width+2,(name,label,'horizontal overflow',scroll)
+                    if name == 'home':
+                        for tier in ('start', 'business', 'pro'):
+                            assert page.locator('.bp-home-plan-list a[href="/register?plan='+tier+'"]').count() == 1
+                        assert page.locator('.bp-home-wordpress-card .bp-wp-decoration').count() == 1
                     if name == 'pricing':
                         # Both options must update card and comparison-table amounts,
                         # and the 12-month estimate must disclose that it is not a paid contract.

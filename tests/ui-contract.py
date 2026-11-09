@@ -205,3 +205,13 @@ assert 'rgba(19,34,83,.37)' in ''.join(backdrop_rules)
 plans_source = (ROOT / 'platform/src/Plans.php').read_text(encoding='utf-8')
 for tier, minor in [('start', 1990), ('business', 4990), ('pro', 9990)]:
     assert re.search(r"'"+tier+r"'\s*=>\s*\[[^\]]*'monthly_minor'\s*=>\s*"+str(minor), plans_source), tier
+
+# Reference 09 home preview must reflect paid, selectable plan prices.
+public_ui = (ROOT / 'platform/src/Ui.php').read_text(encoding='utf-8')
+for tier, amount in [('start','19,90 €'),('business','49,90 €'),('pro','99,90 €')]:
+    assert f'href="/register?plan={tier}" class="bp-home-plan' in public_ui
+    assert amount in public_ui
+assert 'bp-home-plan-list' in public_ui and 'bp-home-wordpress-card' in public_ui
+assert 'Jasna razvojna faza' not in public_ui
+assert '.bp-home-plan-featured' in web_css
+assert '.bp-price-featured li::before' in web_css
