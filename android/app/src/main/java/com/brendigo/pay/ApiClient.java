@@ -44,7 +44,7 @@ final class ApiClient {
         connection.setRequestMethod(method);
         connection.setRequestProperty("Accept", "application/json");
         connection.setRequestProperty("Cache-Control", "no-store");
-        connection.setRequestProperty("User-Agent", "BrendigoPayAndroid/0.8.14");
+        connection.setRequestProperty("User-Agent", "BrendigoPayAndroid/0.8.15");
         if (bearer != null && !bearer.isEmpty()) {
             connection.setRequestProperty("Authorization", "Bearer " + bearer);
         }

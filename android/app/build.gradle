@@ -10,8 +10,8 @@ android {
         applicationId 'com.brendigo.pay'
         minSdk 24
         targetSdk 36
-        versionCode 94
-        versionName '0.8.14'
+        versionCode 95
+        versionName '0.8.15'
     }
     buildTypes {
         debug { applicationIdSuffix '.debug' }

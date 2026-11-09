@@ -1,3 +1,15 @@
+## 0.8.15 — 2026-11-09 (SANDBOX)
+
+- Nastavljeno vizualno usklađivanje šest web zaslona sa stvarnim Chromium referentnim snimkama: Transakcije 35,70 %, Novi platni link 43,37 %, Korisnička ploča 47,39 %, Checkout 39,47 %, Cjenik 55,97 % i Naslovnica 48,28 %.
+- Cjenik: kompletiran usporedni prikaz triju plaćenih paketa, uključujući sinkronizirani mjesečni/godišnji prikaz i dodatni FAQ. Neodobreni vizualni eksperiment uklonjen nakon izmjerene regresije.
+- Pregled: KPI-jevi za zadnjih 30 UTC kalendarskih dana koriste isti vremenski okvir kao grafikon; transakcije zadržavaju pregled svih datuma.
+- Novi platni link: tri testna pružatelja u jednom retku, uz zaseban automatski odabir i onemogućene nepovezane pružatelje.
+- Checkout: usklađene proporcije sažetka i vanjske naplate, bez lokalne pohrane kartičnih podataka.
+- Naslovnica: točnija struktura dvorednog naslova i kraće, provjerljive pogodnosti.
+- Visual CI provjerava desktop, tablet i mobilni browser, kao i prelijevanje sadržaja. Izvještaj: docs/VISUAL-PARITY-ITERATION-2026-11-09-v4.md.
+- Cilj 1:1 / 0% još nije ostvaren; sve mjerne vrijednosti to potvrđuju. WordPress/Gutenberg/WooCommerce snimke hosta još nisu snimljene.
+- Ovo je SANDBOX izdanje. Android APK je debug, AAB nepotpisan; produkcijska PSP certifikacija još nije dovršena.
+
 ## 0.8.14 — 2026-11-09 (SANDBOX)
 
 - Nastavljena usporedba deset Brendigo Pay referenci. Naslovnica: 51,05 % → 48,21 %; cjenik: 56,65 % → 56,28 % uz istu Chromium pixel-diff metriku (1448×1086). Ostala četiri izmjerena web prikaza nisu pogoršana.
