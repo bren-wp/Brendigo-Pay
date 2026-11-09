@@ -19,10 +19,10 @@ function bp_site_home(): string
 <section class="bp-home-hero" aria-labelledby="hero-heading">
     <div class="bp-home-copy">
         <span class="bp-kicker">⚡ FINTECH SAAS • POVEŽITE SVOJE PLATNE RAČUNE</span>
-        <h1 id="hero-heading">Pametna naplata za <span>WordPress, WooCommerce</span> i web</h1>
+        <h1 id="hero-heading">Pametna naplata za <span class="bp-hero-second-line"><em>WordPress, WooCommerce</em> i web</span></h1>
         <p>Povežite postojeće Stripe, PayPal i Revolut testne račune. Upravljajte naplatnim poveznicama, QR kodovima i integracijama na jednom mjestu.</p>
         <div class="bp-actions"><a href="/pricing" class="btn">Odaberi paket <span aria-hidden="true">→</span></a><a href="/login" class="btn secondary">Pogledaj nadzornu ploču</a></div>
-        <div class="bp-benefits"><span>✓ Jednostavna integracija</span><span>✓ Plaćanja kod vanjskih pružatelja</span><span>✓ WordPress, WooCommerce i Android</span></div>
+        <div class="bp-benefits"><span>✓ Jednostavna integracija</span><span>✓ Sigurna testna naplata</span><span>✓ Web i WordPress kanali</span></div>
     </div>
     <div class="bp-hero-art" aria-label="Prikaz sučelja Brendigo Paya">
         <div class="bp-laptop">
