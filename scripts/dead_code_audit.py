@@ -23,7 +23,7 @@ PHP_DEF = re.compile(r"\bfunction\s+([a-zA-Z_]\w*)\s*\(")
 JS_DEF = re.compile(r"\bfunction\s+([a-zA-Z_]\w*)\s*\(")
 CSS_CLASS = re.compile(r"\.((?:bp|brendigo|wc)-[A-Za-z_][A-Za-z0-9_-]*)")
 RISKY_PHP = re.compile(r"\b(?:eval|shell_exec|passthru|unserialize|system)\s*\(")
-RISKY_JS = re.compile(r"\\b(?:eval|new\\s+Function)\\s*\\(")
+RISKY_JS = re.compile(r"\b(?:eval|new\s+Function)\s*\(")
 # Required callbacks invoked by PHP interfaces or WordPress/WooCommerce runtime hooks:
 # absence of an explicit source call is not dead-code evidence.
 FRAMEWORK_CALLBACKS = {
