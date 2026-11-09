@@ -54,11 +54,15 @@ function bp_site_home(): string
   <div class="bp-proof-fact"><span aria-hidden="true">▣</span><strong>2</strong><small>WordPress i WooCommerce</small></div>
   <div class="bp-proof-fact"><span aria-hidden="true">✓</span><strong>1</strong><small>zajednički korisnički račun</small></div>
 </section>
+<section class="bp-bottom-cta bp-bottom-cta-home" aria-labelledby="bp-home-cta-title">
+  <div class="bp-cta-copy"><h2 id="bp-home-cta-title">Spremni pojednostaviti naplatu?</h2><p>Povežite svoje Stripe, PayPal i Revolut testne račune, integrirajte Brendigo Pay u WordPress ili WooCommerce i pratite status na jednom mjestu.</p></div>
+  <div class="bp-cta-actions"><a href="/register" class="btn btn-white">Započni s paketom <span aria-hidden="true">→</span></a><a href="/docs" class="btn bp-cta-outline">Pogledaj vodič</a></div>
+  <div class="bp-cta-visual" aria-hidden="true"><div class="bp-cta-payment-card"><span class="bp-cta-card-brand">Brendigo <b>Pay</b></span><span class="bp-cta-chip">▦ <i>)))</i></span></div></div>
+</section>
 <section class="bp-showcase" aria-labelledby="bp-showcase-title">
   <header class="bp-showcase-heading"><span class="bp-kicker">PLATFORMA ZA VAŠE POSLOVANJE</span><h2 id="bp-showcase-title">Jedno mjesto za različite načine naplate</h2><p>Web-stranica, WordPress, WooCommerce i platne poveznice rade s istom platformom.</p></header>
   <div class="bp-showcase-steps"><article><span class="bp-number">01</span><h3>Povežite testni račun</h3><p>Koristite vlastite podatke platnog pružatelja. Dostupnost ovisi o konfiguraciji.</p></article><article><span class="bp-number">02</span><h3>Objavite naplatnu poveznicu</h3><p>Postavite gumb ili QR kod na WordPress, web ili u dokument za kupca.</p></article><article><span class="bp-number">03</span><h3>Pratite status plaćanja</h3><p>Server provjerava odgovor pružatelja prije označavanja testne transakcije plaćenom.</p></article></div>
 </section>
-<section class="bp-bottom-cta"><div><h2>Jednostavnija naplata za vaše poslovanje</h2><p>Otvorite testni račun i isprobajte Brendigo Pay.</p></div><a href="/register" class="btn btn-white">Odaberi paket →</a></section>
 <?php return (string) ob_get_clean();
 }
 
@@ -70,7 +74,7 @@ function bp_site_pricing(): string
     <h1>Jednostavne i transparentne <span>cijene</span></h1>
     <p>Odaberite plan prema broju WordPress stranica koje povezujete s Brendigo Payom. Nema besplatnog paketa. Cijene su prijedlog cjenika; online naplata pretplate još nije omogućena.</p>
     <div class="bp-benefits"><span>✓ Tri jasna paketa</span><span>✓ Zaseban ključ za svaku stranicu</span><span>✓ Ograničenja na poslužitelju</span><span>✓ Bez automatske naplate</span></div>
-    <div class="bp-pricing-illustration" aria-hidden="true"><b>Brendigo Pay</b><span>▣　)))</span></div>
+    <div class="bp-pricing-illustration" aria-hidden="true"><span class="bp-pricing-illustration-brand">Brendigo <b>Pay</b></span><span class="bp-pricing-card-chip">▦　)))</span></div>
 </section>
 <div class="bp-price-cards">
     <article class="bp-surface">
@@ -120,7 +124,11 @@ function bp_site_pricing(): string
         <details><summary>Je li automatska naplata pretplate dostupna?</summary><p>Ne. Trenutačno se paket potvrđuje ručno nakon provjerene uplate. Prikazane cijene još su prijedlog, a stvarne transakcije nisu omogućene.</p></details>
     </section>
 </div>
-<section class="bp-bottom-cta"><div><h2>Odaberite paket i povežite svoju trgovinu</h2><p>Registrirajte poslovni račun, odaberite jedan od tri plaćena plana i povežite licence nakon aktivacije.</p></div><a href="/register?plan=business" class="btn btn-white">Odaberi paket →</a></section>
+<section class="bp-bottom-cta bp-bottom-cta-pricing" aria-labelledby="bp-pricing-cta-title">
+  <div class="bp-cta-copy"><h2 id="bp-pricing-cta-title">Spremni početi primati uplate?</h2><p>Odaberite plaćeni paket, povežite WordPress ili WooCommerce i prvo sigurno isprobajte testne platne integracije.</p></div>
+  <div class="bp-cta-actions"><a href="/register?plan=business" class="btn btn-white">Odaberi Business <span aria-hidden="true">→</span></a><a href="/docs" class="btn bp-cta-outline">Pogledaj vodič</a></div>
+  <div class="bp-cta-visual" aria-hidden="true"><div class="bp-cta-payment-card"><span class="bp-cta-card-brand">Brendigo <b>Pay</b></span><span class="bp-cta-chip">▦ <i>)))</i></span></div></div>
+</section>
 <?php return (string) ob_get_clean();
 }
 
