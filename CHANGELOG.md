@@ -1,3 +1,12 @@
+## 0.8.10 — 2026-11-09 (SANDBOX)
+
+- Jedinstvena provjera isteka platnih poveznica u webu, WordPress API-ju i Androidu; zabranjena reaktivacija isteklih poveznica, a stanje u svim panelima je usklađeno.
+- WordPress uninstall sada čisti vlastite API vjerodajnice, registraciju instalacije, sinkronizacijske statuse i cron, bez brisanja WooCommerce narudžbi.
+- Uklonjena zastarjela CSS pravila `.bp-dashboard-grid` nakon prelaska na `.bp-dashboard-layout`.
+- Uveden nedestruktivni CI inventar PHP/JS/CSS mrtvog koda i sigurnosnih primitiva; odvojeno se štite dinamički WordPress/WooCommerce callbackovi.
+- Objavljen sigurnosni i vizualni audit od 9. studenoga te regionalne metrike odstupanja. Cilj manje od 10 % **još nije ostvaren**.
+- Nema Windows implementacije u repozitoriju. SANDBOX način rada ostaje obvezan; nema produkcijske naplate bez zasebnog odobrenja.
+
 ## 0.8.9 — 2026-11-07 (SANDBOX)
 
 - Nastavljena pixel-perfect geometrija korisničke nadzorne ploče, tablice transakcija, detaljnog panela i javnog checkouta prema referencama.

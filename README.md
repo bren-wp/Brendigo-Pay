@@ -12,7 +12,7 @@ Web-platforma, korisnički panel, WordPress, WooCommerce i Android — jedan ra�
 
 [![CI](https://github.com/bren-wp/Brendigo-Pay/actions/workflows/ci.yml/badge.svg)](https://github.com/bren-wp/Brendigo-Pay/actions/workflows/ci.yml)
 
-**Brendigo Pay v0.8.9 — testno izdanje (SANDBOX)**
+**Brendigo Pay v0.8.10 — testno izdanje (SANDBOX)**
 
 </div>
 
@@ -100,7 +100,7 @@ Samo povratak kupca na stranicu za potvrdu nije dokaz stvarne naplate. Konačni 
 ## Instalacija i prvi koraci
 
 1. Preuzmite najnovije izdanje iz [GitHub Releases](https://github.com/bren-wp/Brendigo-Pay/releases).
-2. Postavite web-platformu na vlastiti HTTPS hosting prema [uputama za postavljanje](docs/DEPLOYMENT-0.8.9.md). Poslovni identitet i administratorski pristup trebaju biti sigurno konfigurirani prije javnog pristupa.
+2. Postavite web-platformu na vlastiti HTTPS hosting prema [uputama za postavljanje](docs/DEPLOYMENT-0.8.10.md). Poslovni identitet i administratorski pristup trebaju biti sigurno konfigurirani prije javnog pristupa.
 3. Registrirajte se na webu ili Androidu, odaberite plaćeni plan i pričekajte njegovu aktivaciju.
 4. Na webu otvorite **Web-stranice**, dodajte HTTPS domenu i preuzmite odgovarajuću licencu.
 5. Prenesite ZIP dodatka kroz **WordPress → Dodaci → Dodaj novi → Prenesi dodatak**.
