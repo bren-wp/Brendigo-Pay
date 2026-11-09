@@ -154,7 +154,7 @@ final class MobileApi
                 'paid_minor' => $revenue,
                 'successful_payments' => count($paid),
                 'transactions' => count($transactions),
-                'active_links' => count(array_filter($links, static fn (array $l): bool => ($l['active'] ?? true) === true)),
+                'active_links' => count(array_filter($links, static fn (array $l): bool => payment_link_is_current($l))),
             ],
             'integrations' => [
                 'stripe' => $this->store->read('stripe', $id) !== null
@@ -174,7 +174,8 @@ final class MobileApi
                 'site_id' => (string) $l['site_id'],
                 'title' => (string) $l['title'],
                 'amount_minor' => (int) $l['amount_minor'],
-                'active' => ($l['active'] ?? true) === true,
+                'active' => payment_link_is_current($l),
+                'expires_at' => $l['expires_at'] ?? null,
                 'url' => $this->baseUrl . '/p/' . $l['id'],
             ], array_slice($links, 0, 50)),
             'transactions' => array_map(static fn (array $t): array => [
@@ -234,7 +235,8 @@ final class MobileApi
         $link = [
             'id' => random_id(12), 'user_id' => $merchant['id'], 'site_id' => $siteId,
             'title' => $title, 'description' => $description, 'amount_minor' => $amount,
-            'currency' => 'EUR', 'active' => true, 'created_at' => gmdate('c'),
+            'currency' => 'EUR', 'active' => true,
+            'expires_at' => gmdate('c', time() + 7 * 86400), 'created_at' => gmdate('c'),
         ];
         $this->store->write('links', $link['id'], $link);
         return ['id' => $link['id'], 'url' => $this->baseUrl . '/p/' . $link['id']];

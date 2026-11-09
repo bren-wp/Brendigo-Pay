@@ -13,6 +13,7 @@ use function BrendigoPay\bp_guide_page;
 use function BrendigoPay\e;
 use function BrendigoPay\minor_format;
 use function BrendigoPay\money_to_minor;
+use function BrendigoPay\payment_link_is_current;
 use function BrendigoPay\random_id;
 use function BrendigoPay\safe_origin;
 use function BrendigoPay\token_decrypt;
@@ -998,7 +999,7 @@ if ($path === '/api/v1/me' && $method === 'GET') {
 
 if (preg_match('#^/api/v1/links/([a-f0-9]{24})$#D', $path, $m) && $method === 'GET') {
     $link = $store->read('links', $m[1]);
-    if ($link === null || ($link['active'] ?? true) !== true) {
+    if ($link === null || !payment_link_is_current($link)) {
         fail_api(404, 'Not found');
     }
     $token = authenticate_api();
@@ -1015,7 +1016,7 @@ if ($path === '/api/v1/links' && $method === 'GET') {
     $links = array_values(array_filter($store->all('links'), static function (array $link) use ($token): bool {
         return ($link['user_id'] ?? '') === $token['user_id']
             && ($link['site_id'] ?? '') === $token['site_id']
-            && ($link['active'] ?? true) === true;
+            && payment_link_is_current($link);
     }));
     usort($links, static fn(array $a, array $b): int => strcmp((string) ($b['created_at'] ?? ''), (string) ($a['created_at'] ?? '')));
     $items = [];
@@ -1041,7 +1042,7 @@ if ($path === '/api/v1/links' && $method === 'POST') {
     if (strlen($title) < 2 || strlen($title) > 160 || strlen($description) > 500 || $amount === null) {
         fail_api(422, 'Invalid title or EUR amount');
     }
-    $link = ['id' => random_id(12), 'user_id' => $token['user_id'], 'site_id' => $token['site_id'], 'title' => $title, 'description' => $description, 'amount_minor' => $amount, 'currency' => 'EUR', 'active' => true, 'created_at' => gmdate('c')];
+    $link = ['id' => random_id(12), 'user_id' => $token['user_id'], 'site_id' => $token['site_id'], 'title' => $title, 'description' => $description, 'amount_minor' => $amount, 'currency' => 'EUR', 'active' => true, 'expires_at' => gmdate('c', time() + 7 * 86400), 'created_at' => gmdate('c')];
     $store->write('links', $link['id'], $link);
     audit_event($token['user_id'], 'payment_link_created', ['link_id' => $link['id'], 'via' => 'api']);
     json_response(['id' => $link['id'], 'url' => $base . '/p/' . $link['id']], 201);
@@ -1088,8 +1089,7 @@ if ($method === 'GET' && preg_match('#^/api/v1/payments/([a-f0-9]{32,64})$#D', $
 // Public links: display only configured sandbox payment providers.
 if ($method === 'GET' && preg_match('#^/p/([a-f0-9]{24})$#D', $path, $m)) {
     $link = $store->read('links', $m[1]);
-    if ($link === null || ($link['active'] ?? true) !== true
-        || (!empty($link['expires_at']) && strtotime((string) $link['expires_at']) <= time())
+    if ($link === null || !payment_link_is_current($link)
         || $plans->current((string) ($link['user_id'] ?? '')) === null
         || (!empty($link['site_id']) && (($store->read('sites', $link['site_id'])['status'] ?? '') !== 'active'))) {
         http_response_code(404);
@@ -1105,8 +1105,7 @@ if ($method === 'GET' && preg_match('#^/p/([a-f0-9]{24})$#D', $path, $m)) {
 if ($method === 'POST' && preg_match('#^/p/([a-f0-9]{24})/checkout$#D', $path, $m)) {
     check_csrf();
     $link = $store->read('links', $m[1]);
-    if ($link === null || ($link['active'] ?? true) !== true
-        || (!empty($link['expires_at']) && strtotime((string) $link['expires_at']) <= time())
+    if ($link === null || !payment_link_is_current($link)
         || $plans->current((string) ($link['user_id'] ?? '')) === null
         || (!empty($link['site_id']) && (($store->read('sites', $link['site_id'])['status'] ?? '') !== 'active'))) {
         http_response_code(404);

@@ -178,7 +178,7 @@ function bp_merchant_ui(array $user, array $links, array $transactions, string $
     $tab = in_array($tab, ['overview','links','transactions','integrations'], true) ? $tab : 'overview';
     $paid = array_values(array_filter($transactions, static fn(array $t): bool => ($t['status'] ?? '') === 'paid'));
     $total = array_sum(array_map(static fn(array $t): int => (int) $t['amount_minor'], $paid));
-    $active = count(array_filter($links, static fn(array $l): bool => ($l['active'] ?? true) === true));
+    $active = count(array_filter($links, static fn(array $l): bool => \BrendigoPay\payment_link_is_current($l)));
     $configuredProviderCount = count(array_filter($providers, static fn(mixed $enabled): bool => $enabled === true));
     $sort = static fn(array $a, array $b): int => strcmp((string) ($b['created_at'] ?? ''), (string) ($a['created_at'] ?? ''));
     usort($links, $sort);
@@ -192,7 +192,7 @@ function bp_merchant_ui(array $user, array $links, array $transactions, string $
 <?php endif; ?>
 <?php if ($tab !== 'integrations' && $tab !== 'transactions'): ?>
 <section class="bp-surface bp-data-card bp-links-card"><div class="bp-section-top"><h2>Platni linkovi</h2><span class="bp-muted">Upravljajte aktivnim i isključenim poveznicama</span></div><div class="table-wrap"><table><thead><tr><th>Naziv</th><th>Iznos</th><th>Status</th><th>Adresa i QR</th><th>Upravljanje</th></tr></thead><tbody>
-<?php foreach ($links as $link): $enabled = ($link['active'] ?? true) === true; $url = $base . '/p/' . $link['id']; ?>
+<?php foreach ($links as $link): $enabled = \BrendigoPay\payment_link_is_current($link); $url = $base . '/p/' . $link['id']; ?>
 <tr><td><b><?= e($link['title']) ?></b></td><td><?= minor_format((int)$link['amount_minor']) ?></td><td><span class="pill <?= $enabled ? 'on' : 'off' ?>"><?= $enabled ? '● Aktivna' : 'Isključena' ?></span></td><td><a href="<?= e($url) ?>" target="_blank" rel="noopener">Otvori link ↗</a> · <a href="/dashboard/qr/<?= e($link['id']) ?>">QR kod</a></td><td><form method="post" action="/dashboard/links/<?= e($link['id']) ?>/toggle"><?= csrf() ?><button type="submit" class="btn secondary small"><?= $enabled ? 'Isključi' : 'Uključi' ?></button></form></td></tr>
 <?php endforeach; if ($links === []): ?><tr><td colspan="5">Još nemate platnih linkova. Kreirajte prvi putem gumba iznad.</td></tr><?php endif; ?>
 </tbody></table></div></section>

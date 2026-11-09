@@ -29,6 +29,17 @@ function minor_format(int $amount): string
     return number_format($amount / 100, 2, ',', '.') . ' €';
 }
 
+/** A single fail-closed payment-link expiry rule for web, WP and Android. */
+function payment_link_is_current(array $link, ?int $now = null): bool
+{
+    if (($link['active'] ?? true) !== true) return false;
+    $expires = $link['expires_at'] ?? null;
+    if ($expires === null || $expires === '') return true; // legacy links
+    if (!is_string($expires)) return false;
+    $timestamp = strtotime($expires);
+    return $timestamp !== false && $timestamp > ($now ?? time());
+}
+
 function safe_origin(string $url, bool $allowLocal = false): ?string
 {
     $p = parse_url($url);
