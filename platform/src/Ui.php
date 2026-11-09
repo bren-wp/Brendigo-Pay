@@ -192,8 +192,12 @@ function bp_merchant_ui(array $user, array $links, array $transactions, string $
 <?php endif; ?>
 <?php if ($tab !== 'integrations' && $tab !== 'transactions'): ?>
 <section class="bp-surface bp-data-card bp-links-card"><div class="bp-section-top"><h2>Platni linkovi</h2><span class="bp-muted">Upravljajte aktivnim i isključenim poveznicama</span></div><div class="table-wrap"><table><thead><tr><th>Naziv</th><th>Iznos</th><th>Status</th><th>Adresa i QR</th><th>Upravljanje</th></tr></thead><tbody>
-<?php foreach ($links as $link): $enabled = \BrendigoPay\payment_link_is_current($link); $url = $base . '/p/' . $link['id']; ?>
-<tr><td><b><?= e($link['title']) ?></b></td><td><?= minor_format((int)$link['amount_minor']) ?></td><td><span class="pill <?= $enabled ? 'on' : 'off' ?>"><?= $enabled ? '● Aktivna' : 'Isključena' ?></span></td><td><a href="<?= e($url) ?>" target="_blank" rel="noopener">Otvori link ↗</a> · <a href="/dashboard/qr/<?= e($link['id']) ?>">QR kod</a></td><td><form method="post" action="/dashboard/links/<?= e($link['id']) ?>/toggle"><?= csrf() ?><button type="submit" class="btn secondary small"><?= $enabled ? 'Isključi' : 'Uključi' ?></button></form></td></tr>
+<?php foreach ($links as $link):
+    $enabled = \BrendigoPay\payment_link_is_current($link);
+    $expired = !\BrendigoPay\payment_link_is_current(['active' => true, 'expires_at' => $link['expires_at'] ?? null]);
+    $url = $base . '/p/' . $link['id'];
+?>
+<tr><td><b><?= e($link['title']) ?></b></td><td><?= minor_format((int)$link['amount_minor']) ?></td><td><span class="pill <?= $enabled ? 'on' : 'off' ?>"><?= $expired ? 'Istekla' : ($enabled ? '● Aktivna' : 'Isključena') ?></span></td><td><a href="<?= e($url) ?>" target="_blank" rel="noopener">Otvori link ↗</a> · <a href="/dashboard/qr/<?= e($link['id']) ?>">QR kod</a></td><td><?php if ($expired): ?><span class="bp-muted" aria-label="Istekla poveznica">Istekla — kreirajte novu</span><?php else: ?><form method="post" action="/dashboard/links/<?= e($link['id']) ?>/toggle"><?= csrf() ?><button type="submit" class="btn secondary small"><?= $enabled ? 'Isključi' : 'Uključi' ?></button></form><?php endif; ?></td></tr>
 <?php endforeach; if ($links === []): ?><tr><td colspan="5">Još nemate platnih linkova. Kreirajte prvi putem gumba iznad.</td></tr><?php endif; ?>
 </tbody></table></div></section>
 <?php endif; ?>

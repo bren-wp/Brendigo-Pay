@@ -1327,7 +1327,12 @@ if ($method === 'POST' && preg_match('#^/dashboard/links/([a-f0-9]{24})/toggle$#
         if ($link === null || $link['user_id'] !== $user['id']) {
             return null;
         }
-        $link['active'] = !(($link['active'] ?? true) === true);
+        // Expiration cannot be circumvented by toggling an old link back on.
+        $enable = ($link['active'] ?? true) !== true;
+        if ($enable && !payment_link_is_current(['active' => true, 'expires_at' => $link['expires_at'] ?? null])) {
+            return null;
+        }
+        $link['active'] = $enable;
         $link['updated_at'] = gmdate('c');
         $store->write('links', $m[1], $link);
         return $link['active'];

@@ -199,7 +199,11 @@ final class MobileApi
             if ($link === null || ($link['user_id'] ?? '') !== $merchant['id']) {
                 return null;
             }
-            $link['active'] = !(($link['active'] ?? true) === true);
+            $enable = ($link['active'] ?? true) !== true;
+            if ($enable && !payment_link_is_current(['active' => true, 'expires_at' => $link['expires_at'] ?? null])) {
+                return null;
+            }
+            $link['active'] = $enable;
             $link['updated_at'] = gmdate('c');
             $this->store->write('links', $linkId, $link);
             return $link['active'];

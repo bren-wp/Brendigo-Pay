@@ -119,7 +119,7 @@ ui_link = (ROOT / 'platform/src/Ui.php').read_text()
 route_link = (ROOT / 'platform/public/index.php').read_text()
 for marker in ['name="preferred_provider"', 'name="valid_days"', 'bp-preview-qr-placeholder']:
     assert marker in ui_link, marker
-for marker in ["$preferredProvider = strtolower", "'expires_at' => gmdate", "strtotime((string) $link['expires_at']) <= time()"]:
+for marker in ["$preferredProvider = strtolower", "'expires_at' => gmdate", "payment_link_is_current($link)"]:
     assert marker in route_link, marker
 assert 'bp-link-provider-choice:has(input:disabled)' in web_css
 
@@ -158,3 +158,11 @@ assert 'all_nine_screens_below_target' in audit_code
 assert 'unmeasured_screens' in audit_code
 assert 'args.require_target and not target_met' in audit_code
 assert 'below-10-percent acceptance' in (ROOT/'.github/workflows/visual-parity.yml').read_text()
+
+# Plugin uninstall must remove its own sensitive installation metadata, never order data.
+uninstall=(wp/'uninstall.php').read_text()
+for option in ['brendigo_pay_settings', 'bp_pay_installation_id', 'bp_pay_sync_status',
+               'bp_pay_sync_log', 'woocommerce_brendigo_pay_settings']:
+    assert option in uninstall, option
+assert 'wp_clear_scheduled_hook' in uninstall
+assert 'delete_posts' not in uninstall and 'wc_delete_order' not in uninstall
