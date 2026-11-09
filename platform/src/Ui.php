@@ -199,7 +199,17 @@ function bp_test_chart(array $transactions): string
 function bp_merchant_ui(array $user, array $links, array $transactions, string $base, string $tab, array $providers = []): string
 {
     $tab = in_array($tab, ['overview','links','transactions','integrations'], true) ? $tab : 'overview';
-    $paid = array_values(array_filter($transactions, static fn(array $t): bool => ($t['status'] ?? '') === 'paid'));
+    // The overview chart shows the most recent 30 UTC calendar days. Its KPIs
+    // must use the same interval; the transactions tab remains an all-time ledger.
+    $todayUtc = strtotime(gmdate('Y-m-d') . ' 00:00:00 UTC');
+    $windowStart = $todayUtc - 29 * 86400;
+    $visibleMetricsTransactions = $tab === 'overview'
+        ? array_values(array_filter($transactions, static function (array $t) use ($windowStart): bool {
+            $created = strtotime((string) ($t['created_at'] ?? ''));
+            return $created !== false && $created >= $windowStart;
+        }))
+        : $transactions;
+    $paid = array_values(array_filter($visibleMetricsTransactions, static fn(array $t): bool => ($t['status'] ?? '') === 'paid'));
     $total = array_sum(array_map(static fn(array $t): int => (int) $t['amount_minor'], $paid));
     $active = count(array_filter($links, static fn(array $l): bool => \BrendigoPay\payment_link_is_current($l)));
     $configuredProviderCount = count(array_filter($providers, static fn(mixed $enabled): bool => $enabled === true));
@@ -207,7 +217,7 @@ function bp_merchant_ui(array $user, array $links, array $transactions, string $
     usort($links, $sort);
     usort($transactions, $sort);
     ob_start(); ?>
-<div class="bp-merchant-heading"><div><span class="bp-kicker">BRENDIGO PAY · TESTNO OKRUŽENJE · <?= e($user['name']) ?></span><h1><?= e(['overview'=>'Pregled','links'=>'Platni linkovi','transactions'=>'Transakcije','integrations'=>'Integracije'][$tab]) ?></h1><p><?= e($tab === 'overview' ? 'Sažetak plaćanja, aktivnosti i povezanih pružatelja.' : 'Pregled i upravljanje podacima vašeg testnog računa.') ?></p></div><div class="bp-heading-actions"><span class="bp-date-chip">▦ Zadnjih 30 dana</span><button class="btn" type="button" data-open-dialog="bp-new-link">↗ Kreiraj link za plaćanje</button></div></div>
+<div class="bp-merchant-heading"><div><span class="bp-kicker">BRENDIGO PAY · TESTNO OKRUŽENJE · <?= e($user['name']) ?></span><h1><?= e(['overview'=>'Pregled','links'=>'Platni linkovi','transactions'=>'Transakcije','integrations'=>'Integracije'][$tab]) ?></h1><p><?= e($tab === 'overview' ? 'Sažetak plaćanja, aktivnosti i povezanih pružatelja.' : 'Pregled i upravljanje podacima vašeg testnog računa.') ?></p></div><div class="bp-heading-actions"><span class="bp-date-chip"><?= $tab === 'overview' ? '▦ Zadnjih 30 dana' : '▦ Svi datumi' ?></span><button class="btn" type="button" data-open-dialog="bp-new-link">↗ Kreiraj link za plaćanje</button></div></div>
 <div class="bp-dashboard-metrics"><article class="bp-surface"><span class="bp-metric-icon">▣</span><div><span>Ukupna testna naplata</span><strong><?= minor_format($total) ?></strong><small>Potvrđeni testni zapisi</small></div></article><article class="bp-surface"><span class="bp-metric-icon bp-green">✓</span><div><span>Uspješna plaćanja</span><strong><?= count($paid) ?></strong><small>Potvrđeni sandbox događaji</small></div></article><article class="bp-surface"><span class="bp-metric-icon">↗</span><div><span>Aktivni linkovi</span><strong><?= $active ?></strong><small>Ukupno <?= count($links) ?> poveznica</small></div></article><article class="bp-surface"><span class="bp-metric-icon">◇</span><div><span>Konfigurirani testni pružatelji</span><strong><?= $configuredProviderCount ?></strong><small>Od 3 podržana sandbox pružatelja</small></div></article></div>
 <?php if ($tab === 'overview'): ?>
 <div class="bp-dashboard-layout"><div class="bp-dashboard-maincol"><section class="bp-surface bp-chart-card"><div class="bp-section-top"><h2>▥ Prihod</h2><span class="bp-date-chip">Testno okruženje</span></div><strong class="bp-chart-total"><?= minor_format($total) ?></strong><p>Ukupno potvrđenih testnih uplata</p><?= bp_test_chart($transactions) ?></section>
