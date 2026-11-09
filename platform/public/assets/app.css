@@ -1424,3 +1424,17 @@ html {overflow-x:clip;}
  .bp-body-checkout .bp-hosted-payment {min-height:135px;margin:15px 0;padding:18px 18px;}
  .bp-body-checkout .bp-hosted-payment p {font-size:.83rem;line-height:1.55;}
 }
+
+
+/* Reference CTA crop calibration, viewport 1448×1086 / DPR 1:
+   reference banners slightly bleed beyond the inner cards and sit higher. */
+@media(min-width:1061px) {
+ .bp-body-marketing .bp-bottom-cta-home,
+ .bp-body-marketing .bp-bottom-cta-pricing {
+   width:calc(100% + 36px);
+   margin-left:-42px;
+   margin-top:0;
+ }
+ .bp-body-marketing .bp-home-proof>div {padding-top:11px;padding-bottom:11px;}
+ .bp-body-marketing .bp-home-proof {margin-bottom:7px;}
+}
